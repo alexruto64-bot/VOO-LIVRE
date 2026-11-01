@@ -1,7 +1,7 @@
 # VOO-LIVRE
 MELHOR JOGO DE AVIAO
 
-**Jogar agora:** https://alexruto64-bot.github.io/voo-livre/
+**Jogar agora:** https://alexruto64-bot.github.io/VOO-LIVRE/
 
 Jogo de avião em 3D para o navegador do computador: um avião, o céu e o teclado. Sem inimigos, sem missão e sem
 história, só voar sobre campos, matas, lagos e estradas de terra.
