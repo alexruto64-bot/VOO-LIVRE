@@ -1,0 +1,1152 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Voo Livre</title>
+<meta name="description" content="Jogo de avião 3D no navegador: voe livre sobre campos, matas e lagos usando o teclado.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2714%27 fill=%27%2374e0ff%27/%3E%3Cpath d=%27M32 8c2 0 3 3 3 7v10l19 10v5l-19-5v11l6 5v4l-9-3-9 3v-4l6-5V35L10 40v-5l19-10V15c0-4 1-7 3-7z%27 fill=%27%23c8352b%27/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=B612:wght@400;700&family=B612+Mono:wght@400;700&display=swap">
+<style>
+/* Layout: céu 3D em tela cheia; instrumentos em painéis de vidro escuro nos cantos, como numa cabine.
+   Visual único, igual nos temas claro e escuro: o próprio céu é o fundo do jogo. */
+:root {
+  --ceu: #a9cfeb;
+  --painel: rgba(8, 22, 36, 0.76);
+  --painel-borda: rgba(168, 208, 238, 0.24);
+  --veu-forte: rgba(5, 18, 31, 0.62);
+  --veu: rgba(5, 18, 31, 0.45);
+  --veu-zero: rgba(5, 18, 31, 0);
+  --texto: #eef5fb;
+  --texto-suave: #a3bccf;
+  --ciano: #74e0ff;
+  --ambar: #ffb547;
+  --ambar-fundo: rgba(48, 30, 0, 0.6);
+  --tinta: #05192a;
+  --tecla: rgba(238, 245, 251, 0.08);
+  --trilho: rgba(238, 245, 251, 0.14);
+  --fonte-rotulo: "B612", "Segoe UI", system-ui, sans-serif;
+  --fonte-numero: "B612 Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  color-scheme: dark;
+}
+[hidden] { display: none !important; }
+html, body { height: 100%; margin: 0; }
+body {
+  background: var(--ceu);
+  color: var(--texto);
+  font-family: var(--fonte-rotulo);
+  overflow: hidden;
+}
+#cena { position: fixed; inset: 0; width: 100%; height: 100%; display: block; outline: none; }
+
+.painel {
+  background: var(--painel);
+  border: 1px solid var(--painel-borda);
+  border-radius: 8px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+/* Instrumentos */
+.instrumentos {
+  position: fixed;
+  z-index: 2;
+  top: calc(16px + env(safe-area-inset-top, 0px));
+  left: max(16px, env(safe-area-inset-left, 0px));
+  display: grid;
+  grid-template-columns: auto minmax(4.2ch, auto) auto;
+  align-items: baseline;
+  gap: 8px 10px;
+  padding: 12px 16px 14px;
+  margin: 0;
+}
+.prefixo {
+  grid-column: 1 / -1;
+  margin: 0 0 2px;
+  font: 700 11px/1 var(--fonte-numero);
+  letter-spacing: 0.18em;
+  color: var(--ciano);
+}
+.rot {
+  font: 700 11px/1 var(--fonte-rotulo);
+  letter-spacing: 0.14em;
+  color: var(--texto-suave);
+}
+.val {
+  font: 700 clamp(20px, 4.6vw, 26px)/1 var(--fonte-numero);
+  font-variant-numeric: tabular-nums;
+  color: var(--texto);
+  text-align: right;
+}
+.uni {
+  font: 400 12px/1 var(--fonte-rotulo);
+  color: var(--texto-suave);
+  font-variant-numeric: tabular-nums;
+}
+.barra {
+  align-self: center;
+  display: block;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--trilho);
+  overflow: hidden;
+}
+.nivel {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: var(--ciano);
+  transform-origin: left center;
+  transform: scaleX(0.45);
+}
+
+/* Avisos e mensagens */
+.aviso {
+  position: fixed;
+  z-index: 3;
+  top: calc(18px + env(safe-area-inset-top, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 7px 14px;
+  border: 2px solid var(--ambar);
+  border-radius: 6px;
+  background: var(--ambar-fundo);
+  color: var(--ambar);
+  font: 700 15px/1.2 var(--fonte-numero);
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+  animation: piscar 0.9s steps(2, jump-none) infinite;
+}
+@keyframes piscar { 50% { opacity: 0.45; } }
+.mensagem {
+  position: fixed;
+  z-index: 3;
+  left: 50%;
+  bottom: calc(28px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  max-width: calc(100% - 32px);
+  margin: 0;
+  padding: 10px 16px;
+  background: var(--painel);
+  border: 1px solid var(--painel-borda);
+  border-radius: 8px;
+  font: 400 15px/1.35 var(--fonte-rotulo);
+  text-align: center;
+}
+
+/* Comandos */
+.ajuda {
+  position: fixed;
+  z-index: 2;
+  left: max(16px, env(safe-area-inset-left, 0px));
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  padding: 12px 14px;
+  display: grid;
+  gap: 10px;
+}
+.ajuda-titulo {
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font: 700 11px/1 var(--fonte-rotulo);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--texto-suave);
+}
+.ajuda-titulo span { letter-spacing: 0.04em; text-transform: none; font-weight: 400; }
+.comandos {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 7px 12px;
+  margin: 0;
+}
+.comandos dt { display: flex; gap: 4px; }
+.comandos dd { margin: 0; font-size: 13px; line-height: 1.3; color: var(--texto); }
+kbd {
+  display: inline-grid;
+  place-items: center;
+  min-width: 26px;
+  height: 24px;
+  padding: 0 6px;
+  font: 700 12px/1 var(--fonte-numero);
+  color: var(--texto);
+  background: var(--tecla);
+  border: 1px solid var(--painel-borda);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+}
+
+/* Telas: início, pausa e erro */
+.tela {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: calc(16px + env(safe-area-inset-top, 0px)) calc(16px + env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(90deg, var(--veu-forte) 0%, var(--veu) 40%, var(--veu-zero) 78%);
+}
+.tela.centro { justify-content: center; background: var(--veu); }
+.cartao {
+  width: min(400px, 100%);
+  max-height: 100%;
+  overflow-y: auto;
+  margin-left: clamp(0px, 6vw, 88px);
+  padding: 24px 24px 22px;
+  display: grid;
+  gap: 16px;
+}
+.tela.centro .cartao { margin-left: 0; width: min(340px, 100%); }
+.olho {
+  margin: 0;
+  font: 700 11px/1 var(--fonte-numero);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ciano);
+}
+h1 {
+  margin: 0;
+  font: 700 clamp(38px, 7vw, 56px)/1 var(--fonte-rotulo);
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+.sub { margin: 0; font-size: 15px; line-height: 1.5; color: var(--texto-suave); }
+.nota { margin: 0; font-size: 12px; line-height: 1.45; color: var(--texto-suave); }
+.principal {
+  justify-self: start;
+  padding: 12px 22px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--ciano);
+  color: var(--tinta);
+  font: 700 14px/1 var(--fonte-rotulo);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.principal:hover { filter: brightness(1.08); }
+.principal:focus-visible { outline: 3px solid var(--texto); outline-offset: 3px; }
+
+@media (max-width: 640px) {
+  .ajuda { display: none; }
+  .cartao { margin-left: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .aviso { animation: none; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="cena" aria-label="Vista do avião voando sobre campos e matas"></canvas>
+
+<div id="hud" hidden>
+  <section class="painel instrumentos" aria-label="Instrumentos de voo">
+    <p class="prefixo">PR-VOO</p>
+    <span class="rot">VEL</span><span class="val" id="vel">0</span><span class="uni">km/h</span>
+    <span class="rot">ALT</span><span class="val" id="alt">0</span><span class="uni">m</span>
+    <span class="rot">RUMO</span><span class="val" id="rumo">000°</span><span class="uni" id="cardeal">N</span>
+    <span class="rot">MOTOR</span><span class="barra" aria-hidden="true"><span class="nivel" id="motor-nivel"></span></span><span class="uni" id="motor">45%</span>
+  </section>
+
+  <p class="aviso" id="aviso" hidden>ESTOL · baixe o nariz e acelere</p>
+  <p class="mensagem" id="mensagem" hidden></p>
+
+  <section class="painel ajuda" id="ajuda" aria-label="Comandos">
+    <p class="ajuda-titulo">Comandos <span>H esconde</span></p>
+    <dl class="comandos">
+      <dt><kbd>↑</kbd><kbd>↓</kbd></dt><dd>Nariz para cima / para baixo</dd>
+      <dt><kbd>←</kbd><kbd>→</kbd></dt><dd>Inclinar as asas e fazer curva</dd>
+      <dt><kbd>A</kbd><kbd>D</kbd></dt><dd>Leme: vira o nariz de lado</dd>
+      <dt><kbd>W</kbd><kbd>S</kbd></dt><dd>Mais motor / menos motor</dd>
+      <dt><kbd>C</kbd></dt><dd>Trocar câmera</dd>
+      <dt><kbd>I</kbd></dt><dd>Inverter ↑ ↓</dd>
+      <dt><kbd>P</kbd></dt><dd>Pausar</dd>
+      <dt><kbd>R</kbd></dt><dd>Recomeçar</dd>
+    </dl>
+  </section>
+</div>
+
+<div class="tela" id="inicio">
+  <div class="painel cartao">
+    <p class="olho">Lista de verificação</p>
+    <h1>Voo Livre</h1>
+    <p class="sub">Só você, o avião e o céu. Voe para onde quiser.</p>
+    <dl class="comandos">
+      <dt><kbd>↑</kbd><kbd>↓</kbd></dt><dd>Nariz para cima / para baixo</dd>
+      <dt><kbd>←</kbd><kbd>→</kbd></dt><dd>Inclinar as asas e fazer curva</dd>
+      <dt><kbd>A</kbd><kbd>D</kbd></dt><dd>Leme: vira o nariz de lado</dd>
+      <dt><kbd>W</kbd><kbd>S</kbd></dt><dd>Mais motor / menos motor</dd>
+      <dt><kbd>C</kbd></dt><dd>Trocar câmera</dd>
+      <dt><kbd>I</kbd></dt><dd>Inverter ↑ ↓</dd>
+      <dt><kbd>P</kbd></dt><dd>Pausar</dd>
+      <dt><kbd>R</kbd></dt><dd>Recomeçar</dd>
+    </dl>
+    <button class="principal" id="decolar" type="button">Decolar</button>
+    <p class="nota">Precisa de teclado. Se as teclas pararem de responder, clique no jogo.</p>
+  </div>
+</div>
+
+<div class="tela centro" id="pausa" hidden>
+  <div class="painel cartao">
+    <p class="olho">Pausado</p>
+    <p class="sub">O avião espera você voltar.</p>
+    <button class="principal" id="continuar" type="button">Continuar</button>
+    <p class="nota">Ou aperte P.</p>
+  </div>
+</div>
+
+<div class="tela centro" id="erro" hidden>
+  <div class="painel cartao">
+    <p class="olho">Não deu para decolar</p>
+    <p class="sub" id="erro-msg"></p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"></script>
+<script>
+(() => {
+  'use strict';
+
+  const $ = (id) => document.getElementById(id);
+
+  function mostrarErro(texto) {
+    $('erro-msg').textContent = texto;
+    $('erro').hidden = false;
+    $('inicio').hidden = true;
+    $('hud').hidden = true;
+  }
+
+  if (!window.THREE) {
+    mostrarErro('O motor 3D não carregou. Confira a internet e recarregue a página.');
+    return;
+  }
+
+  const canvas = $('cena');
+  let renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+  } catch (e) {
+    mostrarErro('Este navegador não conseguiu ligar o 3D (WebGL). Tente o Chrome, o Edge ou o Firefox atualizados.');
+    return;
+  }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+
+  const reduzirMovimento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---------- utilidades ----------
+  // Números aleatórios com semente: o mundo é sempre o mesmo.
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  const rand = mulberry32(20261101);
+  const entre = (a, b) => a + (b - a) * rand();
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const aproximar = (atual, alvo, taxa, dt) => atual + (alvo - atual) * (1 - Math.exp(-taxa * dt));
+
+  const EIXO_X = new THREE.Vector3(1, 0, 0);
+  const EIXO_Y = new THREE.Vector3(0, 1, 0);
+  const EIXO_Z = new THREE.Vector3(0, 0, 1);
+  const MUNDO_BAIXO = new THREE.Vector3(0, -1, 0);
+
+  // ---------- cena, luz e céu ----------
+  const scene = new THREE.Scene();
+  const COR_HORIZONTE = new THREE.Color(0xcfe3f2);
+  scene.background = COR_HORIZONTE.clone();
+  scene.fog = new THREE.Fog(COR_HORIZONTE.clone(), 1200, 9000);
+
+  const camera = new THREE.PerspectiveCamera(62, 1, 0.5, 20000);
+
+  const SOL_DIR = new THREE.Vector3(-0.5, 0.62, -0.6).normalize();
+  const sol = new THREE.DirectionalLight(0xfff1dc, 0.95);
+  sol.position.copy(SOL_DIR);
+  scene.add(sol);
+  scene.add(new THREE.HemisphereLight(0xd6ecff, 0x8c8a80, 0.7));
+
+  const ceu = new THREE.Mesh(
+    new THREE.SphereGeometry(15000, 32, 16),
+    new THREE.ShaderMaterial({
+      side: THREE.BackSide,
+      depthWrite: false,
+      fog: false,
+      uniforms: {
+        corTopo: { value: new THREE.Color(0x2f6db5) },
+        corHorizonte: { value: COR_HORIZONTE.clone() },
+        corBaixo: { value: new THREE.Color(0xb7d0e2) },
+        solDir: { value: SOL_DIR.clone() },
+      },
+      vertexShader: `
+        varying vec3 vDir;
+        void main() {
+          vDir = position;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }`,
+      fragmentShader: `
+        uniform vec3 corTopo;
+        uniform vec3 corHorizonte;
+        uniform vec3 corBaixo;
+        uniform vec3 solDir;
+        varying vec3 vDir;
+        void main() {
+          vec3 d = normalize(vDir);
+          vec3 cor = d.y > 0.0
+            ? mix(corHorizonte, corTopo, pow(d.y, 0.55))
+            : mix(corHorizonte, corBaixo, min(1.0, -d.y * 4.0));
+          float s = max(dot(d, normalize(solDir)), 0.0);
+          cor += vec3(1.0, 0.93, 0.78) * (pow(s, 900.0) * 1.4 + pow(s, 14.0) * 0.16);
+          gl_FragColor = vec4(cor, 1.0);
+        }`,
+    })
+  );
+  ceu.renderOrder = -1;
+  ceu.frustumCulled = false;
+  scene.add(ceu);
+
+  // ---------- chão: talhões, matas, lagos e estradas desenhados numa textura que se repete ----------
+  const PERIODO = 1600;            // metros cobertos por uma repetição da textura
+  const TEX = 2048;                // pixels da textura
+  const M_POR_PX = PERIODO / TEX;
+  const ESTRADA_Y = Math.round(TEX * 0.37);
+  const ESTRADA_X = Math.round(TEX * 0.71);
+  const LARG_ESTRADA = 11;
+  const matas = [];
+  const lagos = [];
+
+  const naEstrada = (cx, cy, folga) =>
+    Math.abs(cy - ESTRADA_Y) < LARG_ESTRADA / 2 + folga || Math.abs(cx - ESTRADA_X) < LARG_ESTRADA / 2 + folga;
+
+  function noLago(cx, cy) {
+    for (const l of lagos) {
+      const dx = (cx - l.x) / (l.rx * 1.35);
+      const dy = (cy - l.y) / (l.ry * 1.35);
+      if (dx * dx + dy * dy < 1) return true;
+    }
+    return false;
+  }
+
+  function criarTexturaChao() {
+    const c = document.createElement('canvas');
+    c.width = c.height = TEX;
+    const g = c.getContext('2d');
+    g.fillStyle = '#86aa56';
+    g.fillRect(0, 0, TEX, TEX);
+
+    // Divide o quadrado em talhões, como uma colcha de lavouras.
+    const talhoes = [];
+    (function dividir(x, y, w, h, nivel) {
+      if ((w < 210 && h < 210) || (nivel > 3 && rand() < 0.22)) { talhoes.push({ x, y, w, h }); return; }
+      if (w / h > entre(0.75, 1.33)) {
+        const corte = Math.round(w * entre(0.32, 0.68));
+        dividir(x, y, corte, h, nivel + 1);
+        dividir(x + corte, y, w - corte, h, nivel + 1);
+      } else {
+        const corte = Math.round(h * entre(0.32, 0.68));
+        dividir(x, y, w, corte, nivel + 1);
+        dividir(x, y + corte, w, h - corte, nivel + 1);
+      }
+    })(0, 0, TEX, TEX, 0);
+
+    const cores = ['#7ea552', '#8ab35b', '#97b95f', '#a9bd66', '#c3c070', '#cdb77a', '#9aae5c', '#76a04f', '#b2a86a'];
+    for (const t of talhoes) {
+      if (rand() < 0.15 && t.w > 60 && t.h > 60) {
+        g.fillStyle = '#3d6633';
+        g.fillRect(t.x, t.y, t.w, t.h);
+        const n = (t.w * t.h) / 90;
+        for (let i = 0; i < n; i++) {
+          g.fillStyle = rand() < 0.5 ? 'rgba(28, 58, 26, 0.55)' : 'rgba(92, 132, 66, 0.45)';
+          g.beginPath();
+          g.arc(t.x + rand() * t.w, t.y + rand() * t.h, 2 + rand() * 4, 0, Math.PI * 2);
+          g.fill();
+        }
+        matas.push(t);
+        continue;
+      }
+      g.fillStyle = cores[Math.floor(rand() * cores.length)];
+      g.fillRect(t.x, t.y, t.w, t.h);
+      if (rand() < 0.55) {
+        // linhas de plantio
+        g.save();
+        g.beginPath();
+        g.rect(t.x, t.y, t.w, t.h);
+        g.clip();
+        g.strokeStyle = 'rgba(52, 70, 28, 0.16)';
+        g.lineWidth = 2;
+        const passo = 6 + Math.floor(rand() * 6);
+        g.beginPath();
+        if (rand() < 0.5) {
+          for (let yy = t.y + 2; yy < t.y + t.h; yy += passo) { g.moveTo(t.x, yy); g.lineTo(t.x + t.w, yy); }
+        } else {
+          for (let xx = t.x + 2; xx < t.x + t.w; xx += passo) { g.moveTo(xx, t.y); g.lineTo(xx, t.y + t.h); }
+        }
+        g.stroke();
+        g.restore();
+      }
+    }
+
+    // cercas entre os talhões
+    g.strokeStyle = 'rgba(58, 82, 38, 0.55)';
+    g.lineWidth = 3;
+    for (const t of talhoes) g.strokeRect(t.x + 0.5, t.y + 0.5, t.w - 1, t.h - 1);
+
+    // granulado para o chão não parecer liso
+    g.fillStyle = 'rgba(0, 0, 0, 0.05)';
+    for (let i = 0; i < 35000; i++) g.fillRect(rand() * TEX, rand() * TEX, 2, 2);
+    g.fillStyle = 'rgba(255, 255, 255, 0.05)';
+    for (let i = 0; i < 35000; i++) g.fillRect(rand() * TEX, rand() * TEX, 2, 2);
+
+    // lagos, longe das estradas e da borda (para a repetição não cortar nenhum)
+    let tentativas = 0;
+    while (lagos.length < 2 && tentativas++ < 300) {
+      const l = { x: entre(320, TEX - 320), y: entre(320, TEX - 320), rx: entre(90, 170), ry: entre(60, 115) };
+      const raio = Math.max(l.rx, l.ry) * 1.35 + 20;
+      if (Math.abs(l.y - ESTRADA_Y) < raio || Math.abs(l.x - ESTRADA_X) < raio) continue;
+      if (lagos.some((o) => Math.hypot(o.x - l.x, o.y - l.y) < raio + Math.max(o.rx, o.ry) * 1.35)) continue;
+      l.bolhas = [];
+      for (let i = 0; i < 4; i++) {
+        const a = rand() * Math.PI * 2;
+        l.bolhas.push({ x: l.x + Math.cos(a) * l.rx * 0.55, y: l.y + Math.sin(a) * l.ry * 0.55, r: Math.min(l.rx, l.ry) * entre(0.45, 0.7) });
+      }
+      lagos.push(l);
+    }
+    const formaLago = (l, extra) => {
+      g.beginPath();
+      g.ellipse(l.x, l.y, l.rx + extra, l.ry + extra, 0, 0, Math.PI * 2);
+      for (const b of l.bolhas) {
+        g.moveTo(b.x + b.r + extra, b.y);
+        g.arc(b.x, b.y, b.r + extra, 0, Math.PI * 2);
+      }
+    };
+    for (const l of lagos) {
+      formaLago(l, 7); g.fillStyle = '#d6cb9c'; g.fill();
+      formaLago(l, 0); g.fillStyle = '#4a7fa3'; g.fill();
+      formaLago(l, -10); g.fillStyle = 'rgba(120, 170, 205, 0.35)'; g.fill();
+    }
+
+    // estradas de terra, que atravessam a textura inteira e se emendam na repetição
+    g.fillStyle = '#b9ad8f';
+    g.fillRect(0, ESTRADA_Y - LARG_ESTRADA / 2 - 2, TEX, LARG_ESTRADA + 4);
+    g.fillRect(ESTRADA_X - LARG_ESTRADA / 2 - 2, 0, LARG_ESTRADA + 4, TEX);
+    g.fillStyle = '#d3c7a6';
+    g.fillRect(0, ESTRADA_Y - LARG_ESTRADA / 2, TEX, LARG_ESTRADA);
+    g.fillRect(ESTRADA_X - LARG_ESTRADA / 2, 0, LARG_ESTRADA, TEX);
+
+    const tex = new THREE.CanvasTexture(c);
+    tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+    tex.flipY = false;
+    tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    return tex;
+  }
+
+  const uniChao = THREE.UniformsUtils.merge([THREE.UniformsLib.fog]);
+  uniChao.mapa = { value: criarTexturaChao() };
+  uniChao.periodo = { value: PERIODO };
+  const chao = new THREE.Mesh(
+    new THREE.PlaneGeometry(40000, 40000),
+    new THREE.ShaderMaterial({
+      uniforms: uniChao,
+      fog: true,
+      vertexShader: `
+        varying vec2 vMundo;
+        #include <fog_pars_vertex>
+        void main() {
+          vec4 mundo = modelMatrix * vec4(position, 1.0);
+          vMundo = mundo.xz;
+          vec4 mvPosition = viewMatrix * mundo;
+          gl_Position = projectionMatrix * mvPosition;
+          #include <fog_vertex>
+        }`,
+      fragmentShader: `
+        uniform sampler2D mapa;
+        uniform float periodo;
+        varying vec2 vMundo;
+        #include <fog_pars_fragment>
+        void main() {
+          vec3 cor = texture2D(mapa, vMundo / periodo).rgb;
+          // manchas de luz bem grandes, para esconder a repetição da textura vista do alto
+          float n = sin(vMundo.x * 0.00041 + 1.3 * sin(vMundo.y * 0.00023))
+                  * sin(vMundo.y * 0.00033 + 0.9 * sin(vMundo.x * 0.00017));
+          cor *= 0.93 + 0.09 * n;
+          gl_FragColor = vec4(cor, 1.0);
+          #include <fog_fragment>
+        }`,
+    })
+  );
+  chao.rotation.x = -Math.PI / 2;
+  chao.frustumCulled = false;
+  scene.add(chao);
+
+  // ---------- árvores: nascem nas matas da textura e se repetem em volta do avião ----------
+  const arvores = [];
+  function plantar(cx, cy) {
+    if (naEstrada(cx, cy, 6) || noLago(cx, cy)) return;
+    arvores.push({
+      x: cx * M_POR_PX,
+      z: cy * M_POR_PX,
+      s: entre(0.75, 1.45),
+      q: new THREE.Quaternion().setFromAxisAngle(EIXO_Y, rand() * Math.PI * 2),
+    });
+  }
+  for (const t of matas) {
+    const n = Math.floor((t.w * t.h) / 700);
+    for (let i = 0; i < n; i++) plantar(t.x + 4 + rand() * (t.w - 8), t.y + 4 + rand() * (t.h - 8));
+  }
+  for (let i = 0; i < 90; i++) plantar(rand() * TEX, rand() * TEX);
+
+  const COPIAS = 4;                 // 2 x 2 repetições: janela de 3,2 km em volta do avião
+  const JAN_ARV = PERIODO * 2;
+  const FADE_ARV = 260;
+  const nArv = arvores.length * COPIAS;
+  const geoTronco = new THREE.CylinderGeometry(0.35, 0.5, 3, 5);
+  geoTronco.translate(0, 1.5, 0);
+  const geoCopa = new THREE.ConeGeometry(2.4, 7, 7);
+  geoCopa.translate(0, 6.2, 0);
+  const troncos = new THREE.InstancedMesh(geoTronco, new THREE.MeshLambertMaterial({ color: 0x6a4a30 }), nArv);
+  const copas = new THREE.InstancedMesh(
+    geoCopa,
+    new THREE.MeshPhongMaterial({ color: 0xffffff, flatShading: true, shininess: 4, specular: 0x000000 }),
+    nArv
+  );
+  for (const m of [troncos, copas]) {
+    m.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    m.frustumCulled = false;
+    scene.add(m);
+  }
+  const corArv = new THREE.Color();
+  for (let i = 0; i < nArv; i++) {
+    corArv.setHSL(entre(0.24, 0.33), entre(0.35, 0.55), entre(0.2, 0.3));
+    copas.setColorAt(i, corArv);
+  }
+
+  const mArv = new THREE.Matrix4();
+  const pArv = new THREE.Vector3();
+  const eArv = new THREE.Vector3();
+  // Reposiciona as árvores em volta do avião e diz se ele bateu em alguma.
+  function atualizarArvores(px, py, pz) {
+    let i = 0;
+    let bateu = false;
+    for (let k = 0; k < COPIAS; k++) {
+      const ox = (k & 1) * PERIODO;
+      const oz = (k >> 1) * PERIODO;
+      for (const a of arvores) {
+        const bx = a.x + ox;
+        const bz = a.z + oz;
+        const x = bx + JAN_ARV * Math.round((px - bx) / JAN_ARV);
+        const z = bz + JAN_ARV * Math.round((pz - bz) / JAN_ARV);
+        const dx = x - px;
+        const dz = z - pz;
+        const f = clamp((JAN_ARV / 2 - Math.max(Math.abs(dx), Math.abs(dz))) / FADE_ARV, 0, 1);
+        const s = a.s * f;
+        pArv.set(x, 0, z);
+        eArv.set(s, s, s);
+        mArv.compose(pArv, a.q, eArv);
+        troncos.setMatrixAt(i, mArv);
+        copas.setMatrixAt(i, mArv);
+        if (py < 9.7 * a.s && Math.abs(dx) < 2.4 * a.s && Math.abs(dz) < 2.4 * a.s) bateu = true;
+        i++;
+      }
+    }
+    troncos.instanceMatrix.needsUpdate = true;
+    copas.instanceMatrix.needsUpdate = true;
+    return bateu;
+  }
+
+  // ---------- nuvens: grupos de bolhas que andam com o vento ----------
+  const JAN_NUV = 9000;
+  const FADE_NUV = 800;
+  const VENTO = 3;                  // m/s, para leste
+  const nuvens = [];
+  let nPuffs = 0;
+  for (let i = 0; i < 75; i++) {
+    const raio = entre(28, 70);
+    const n = { x: rand() * JAN_NUV, y: entre(380, 1500), z: rand() * JAN_NUV, puffs: [] };
+    const k = 5 + Math.floor(rand() * 6);
+    for (let j = 0; j < k; j++) {
+      const a = rand() * Math.PI * 2;
+      const d = rand() * raio * 1.5;
+      n.puffs.push({
+        ox: Math.cos(a) * d * 1.5,
+        oy: entre(-0.15, 0.45) * raio,
+        oz: Math.sin(a) * d,
+        r: raio * entre(0.55, 1.1),
+        q: new THREE.Quaternion().setFromAxisAngle(EIXO_Y, rand() * Math.PI * 2),
+      });
+    }
+    nPuffs += k;
+    nuvens.push(n);
+  }
+  const puffs = new THREE.InstancedMesh(
+    new THREE.IcosahedronGeometry(1, 1),
+    new THREE.MeshPhongMaterial({ color: 0xffffff, emissive: 0x6b7d90, specular: 0x000000, shininess: 1, flatShading: true }),
+    nPuffs
+  );
+  puffs.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+  puffs.frustumCulled = false;
+  scene.add(puffs);
+
+  const mNuv = new THREE.Matrix4();
+  const pNuv = new THREE.Vector3();
+  const eNuv = new THREE.Vector3();
+  function atualizarNuvens(dt, px, pz) {
+    let i = 0;
+    for (const n of nuvens) {
+      n.x += VENTO * dt;
+      const cx = n.x + JAN_NUV * Math.round((px - n.x) / JAN_NUV);
+      const cz = n.z + JAN_NUV * Math.round((pz - n.z) / JAN_NUV);
+      const f = clamp((JAN_NUV / 2 - Math.max(Math.abs(cx - px), Math.abs(cz - pz))) / FADE_NUV, 0, 1);
+      for (const p of n.puffs) {
+        pNuv.set(cx + p.ox * f, n.y + p.oy, cz + p.oz * f);
+        eNuv.set(p.r * f, p.r * 0.72 * f, p.r * f);
+        mNuv.compose(pNuv, p.q, eNuv);
+        puffs.setMatrixAt(i++, mNuv);
+      }
+    }
+    puffs.instanceMatrix.needsUpdate = true;
+  }
+
+  // ---------- o avião (a frente é o eixo -Z) ----------
+  let helice;
+  let disco;
+  function criarAviao() {
+    const g = new THREE.Group();
+    const phong = (cor, extra) => new THREE.MeshPhongMaterial(Object.assign({ color: cor, shininess: 50, specular: 0x2a2a2a }, extra));
+    const vermelho = phong(0xc8352b);
+    const branco = phong(0xf1efe9);
+    const escuro = phong(0x2a2e35, { shininess: 20 });
+    const vidro = phong(0x8fc8ee, { shininess: 120, specular: 0xffffff, transparent: true, opacity: 0.75 });
+    const peca = (geo, mat, x, y, z, pai) => {
+      const m = new THREE.Mesh(geo, mat);
+      m.position.set(x, y, z);
+      (pai || g).add(m);
+      return m;
+    };
+
+    // fuselagem: grossa na frente, fina na cauda
+    peca(new THREE.CylinderGeometry(0.62, 0.22, 6.4, 14), vermelho, 0, 0, 0.6).rotation.x = -Math.PI / 2;
+    peca(new THREE.CylinderGeometry(0.58, 0.62, 1.1, 14), branco, 0, 0, -3.15).rotation.x = -Math.PI / 2;
+    peca(new THREE.ConeGeometry(0.26, 0.55, 14), vermelho, 0, 0, -3.98).rotation.x = -Math.PI / 2;
+
+    // hélice e o borrão dela girando
+    helice = new THREE.Group();
+    helice.position.set(0, 0, -3.85);
+    g.add(helice);
+    peca(new THREE.BoxGeometry(0.16, 2.5, 0.05), escuro, 0, 0, 0, helice);
+    disco = new THREE.Mesh(
+      new THREE.CircleGeometry(1.25, 28),
+      new THREE.MeshBasicMaterial({ color: 0xdfe6ec, transparent: true, opacity: 0.12, depthWrite: false, side: THREE.DoubleSide })
+    );
+    disco.position.set(0, 0, -3.84);
+    g.add(disco);
+
+    // cabine
+    const cabine = peca(new THREE.SphereGeometry(0.5, 16, 10, 0, Math.PI * 2, 0, Math.PI / 2), vidro, 0, 0.42, -0.9);
+    cabine.scale.set(1, 0.85, 2.1);
+
+    // asas baixas com um pouco de diedro, pontas vermelhas e luzes de navegação
+    for (const lado of [-1, 1]) {
+      const raiz = new THREE.Group();
+      raiz.position.set(0, -0.32, -0.7);
+      raiz.rotation.z = lado * 0.055;
+      g.add(raiz);
+      peca(new THREE.BoxGeometry(4.3, 0.16, 1.55), branco, lado * 2.15, 0, 0, raiz);
+      peca(new THREE.BoxGeometry(0.75, 0.165, 1.55), vermelho, lado * 4.675, 0, 0, raiz);
+      // vermelha na asa esquerda, verde na direita, como nos aviões de verdade
+      peca(new THREE.SphereGeometry(0.09, 8, 6), new THREE.MeshBasicMaterial({ color: lado < 0 ? 0xff2a2a : 0x2aff6a }), lado * 5.07, 0, -0.2, raiz);
+    }
+
+    // cauda
+    peca(new THREE.BoxGeometry(3.4, 0.11, 0.85), branco, 0, 0.12, 3.45);
+    peca(new THREE.BoxGeometry(0.1, 1.35, 1.0), vermelho, 0, 0.78, 3.55).rotation.x = 0.32;
+    peca(new THREE.SphereGeometry(0.07, 8, 6), new THREE.MeshBasicMaterial({ color: 0xffffff }), 0, 0.12, 3.95);
+
+    // trem de pouso fixo
+    for (const lado of [-1, 1]) {
+      peca(new THREE.BoxGeometry(0.08, 0.76, 0.14), escuro, lado * 1.31, -0.7, -1.0).rotation.z = lado * 0.17;
+      peca(new THREE.CylinderGeometry(0.3, 0.3, 0.18, 14), escuro, lado * 1.38, -1.08, -1.0).rotation.z = Math.PI / 2;
+    }
+    peca(new THREE.CylinderGeometry(0.12, 0.12, 0.08, 10), escuro, 0, -0.3, 3.6).rotation.z = Math.PI / 2;
+
+    // matrícula pintada nos dois lados da fuselagem
+    const c = document.createElement('canvas');
+    c.width = 256;
+    c.height = 64;
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = '#f1efe9';
+    ctx.font = 'bold 44px "B612", "Segoe UI", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('PR-VOO', 128, 34);
+    const matMatricula = new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(c), transparent: true, depthWrite: false });
+    for (const lado of [-1, 1]) {
+      const placa = peca(new THREE.PlaneGeometry(1.3, 0.33), matMatricula, lado * 0.4, 0.02, 1.7);
+      placa.rotation.y = lado * Math.PI / 2;
+    }
+    return g;
+  }
+  const aviaoModelo = criarAviao();
+  scene.add(aviaoModelo);
+
+  // sombra redonda no chão, que só aparece quando o avião voa baixo
+  const sombra = (() => {
+    const c = document.createElement('canvas');
+    c.width = c.height = 128;
+    const g = c.getContext('2d');
+    const gr = g.createRadialGradient(64, 64, 4, 64, 64, 62);
+    gr.addColorStop(0, 'rgba(0, 0, 0, 0.75)');
+    gr.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    g.fillStyle = gr;
+    g.fillRect(0, 0, 128, 128);
+    const m = new THREE.Mesh(
+      new THREE.PlaneGeometry(1, 1),
+      new THREE.MeshBasicMaterial({
+        map: new THREE.CanvasTexture(c),
+        transparent: true,
+        depthWrite: false,
+        fog: false,
+        polygonOffset: true,
+        polygonOffsetFactor: -4,
+        polygonOffsetUnits: -4,
+      })
+    );
+    m.rotation.x = -Math.PI / 2;
+    m.scale.set(9, 9, 1);
+    scene.add(m);
+    return m;
+  })();
+
+  // ---------- estado do voo ----------
+  const INICIO = { x: 0, y: 320, z: 0, vel: 58, motor: 0.45 };
+  const VEL_ESTOL = 24;             // m/s (86 km/h): abaixo disso as asas perdem sustentação
+  const aviao = {
+    pos: new THREE.Vector3(INICIO.x, INICIO.y, INICIO.z),
+    quat: new THREE.Quaternion(),
+    vel: INICIO.vel,
+    motor: INICIO.motor,
+    estol: false,
+  };
+  const ctrl = { arfagem: 0, rolagem: 0, guinada: 0 };   // comandos suavizados
+  let estado = 'inicio';            // inicio | voando | pausado | batido
+  let modoCamera = 'atras';         // atras | cabine
+  let inverter = false;
+  let tempoBatida = 0;
+
+  // ---------- teclado ----------
+  const teclas = new Set();
+  const apertada = (codigo) => teclas.has(codigo);
+  const BLOQUEAR = new Set(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space']);
+
+  window.addEventListener('keydown', (e) => {
+    if (BLOQUEAR.has(e.code)) e.preventDefault();
+    teclas.add(e.code);
+    if (e.repeat) return;
+    if (estado === 'inicio') {
+      if (e.code === 'Enter' || e.code === 'Space') iniciar();
+      return;
+    }
+    switch (e.code) {
+      case 'KeyC': trocarCamera(); break;
+      case 'KeyI':
+        inverter = !inverter;
+        mensagem(inverter ? 'Invertido: ↑ desce o nariz, ↓ sobe' : 'Normal: ↑ sobe o nariz, ↓ desce');
+        break;
+      case 'KeyP':
+      case 'Escape':
+        if (estado === 'pausado') continuar(); else pausar();
+        break;
+      case 'KeyR': recomecar(); break;
+      case 'KeyH': elAjuda.hidden = !elAjuda.hidden; break;
+    }
+  });
+  window.addEventListener('keyup', (e) => teclas.delete(e.code));
+  window.addEventListener('blur', () => { teclas.clear(); pausar(); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) pausar(); });
+
+  // ---------- telas e mensagens ----------
+  const elHud = $('hud');
+  const elAjuda = $('ajuda');
+  const elPausa = $('pausa');
+  const elMsg = $('mensagem');
+  const elAviso = $('aviso');
+  let tempoMsg = 0;
+
+  function mensagem(texto, segundos) {
+    elMsg.textContent = texto;
+    elMsg.hidden = false;
+    tempoMsg = segundos || 2.4;
+  }
+
+  function iniciar() {
+    if (estado !== 'inicio') return;
+    $('inicio').hidden = true;
+    elHud.hidden = false;
+    estado = 'voando';
+    mensagem('Dica: ← → fazem curva e W acelera', 4.5);
+  }
+  function pausar() {
+    if (estado !== 'voando') return;
+    estado = 'pausado';
+    teclas.clear();
+    elPausa.hidden = false;
+  }
+  function continuar() {
+    if (estado !== 'pausado') return;
+    estado = 'voando';
+    elPausa.hidden = true;
+  }
+  function baterAviao() {
+    estado = 'batido';
+    tempoBatida = 2.2;
+    aviao.estol = false;
+    mensagem('Você bateu! Recomeçando…', 2.2);
+  }
+  function recomecar() {
+    if (estado === 'inicio') return;
+    aviao.pos.set(INICIO.x, INICIO.y, INICIO.z);
+    aviao.quat.identity();
+    aviao.vel = INICIO.vel;
+    aviao.motor = INICIO.motor;
+    aviao.estol = false;
+    ctrl.arfagem = ctrl.rolagem = ctrl.guinada = 0;
+    camQuat.copy(aviao.quat);
+    estado = 'voando';
+    elPausa.hidden = true;
+  }
+  function trocarCamera() {
+    modoCamera = modoCamera === 'atras' ? 'cabine' : 'atras';
+    camQuat.copy(aviao.quat);
+    mensagem(modoCamera === 'atras' ? 'Câmera: atrás do avião' : 'Câmera: cabine');
+  }
+
+  $('decolar').addEventListener('click', iniciar);
+  $('continuar').addEventListener('click', continuar);
+
+  // ---------- física de voo (simples, de fliperama) ----------
+  const frente = new THREE.Vector3();
+  const cimaAv = new THREE.Vector3();
+  const direita = new THREE.Vector3();
+  const eixoTmp = new THREE.Vector3();
+  const qTmp = new THREE.Quaternion();
+
+  function simular(dt, comPiloto) {
+    let alvoArf = 0;
+    let alvoRol = 0;
+    let alvoGui = 0;
+    if (comPiloto) {
+      alvoArf = (apertada('ArrowUp') ? 1 : 0) - (apertada('ArrowDown') ? 1 : 0);
+      if (inverter) alvoArf = -alvoArf;
+      alvoRol = (apertada('ArrowLeft') ? 1 : 0) - (apertada('ArrowRight') ? 1 : 0);
+      alvoGui = (apertada('KeyA') ? 1 : 0) - (apertada('KeyD') ? 1 : 0);
+      if (apertada('KeyW')) aviao.motor = Math.min(1, aviao.motor + 0.45 * dt);
+      if (apertada('KeyS')) aviao.motor = Math.max(0, aviao.motor - 0.45 * dt);
+    }
+    ctrl.arfagem = aproximar(ctrl.arfagem, alvoArf, 7, dt);
+    ctrl.rolagem = aproximar(ctrl.rolagem, alvoRol, 9, dt);
+    ctrl.guinada = aproximar(ctrl.guinada, alvoGui, 6, dt);
+
+    const q = aviao.quat;
+    const autoridade = clamp(aviao.vel / 55, 0.25, 1.25);   // devagar, os comandos ficam moles
+
+    // giros em torno dos eixos do próprio avião
+    qTmp.setFromAxisAngle(EIXO_X, ctrl.arfagem * 1.15 * autoridade * dt); q.multiply(qTmp);
+    qTmp.setFromAxisAngle(EIXO_Z, ctrl.rolagem * 2.0 * autoridade * dt); q.multiply(qTmp);
+    qTmp.setFromAxisAngle(EIXO_Y, ctrl.guinada * 0.55 * autoridade * dt); q.multiply(qTmp);
+
+    frente.set(0, 0, -1).applyQuaternion(q);
+    cimaAv.set(0, 1, 0).applyQuaternion(q);
+    direita.set(1, 0, 0).applyQuaternion(q);
+
+    // asas inclinadas fazem o avião curvar para o lado da asa mais baixa
+    qTmp.setFromAxisAngle(EIXO_Y, direita.y * 0.85 * autoridade * dt);
+    q.premultiply(qTmp);
+
+    // sem comando, as asas voltam a ficar niveladas devagar
+    if (alvoRol === 0 && alvoArf === 0 && Math.abs(frente.y) < 0.9) {
+      const inclinacao = Math.atan2(direita.y, cimaAv.y);
+      qTmp.setFromAxisAngle(EIXO_Z, -inclinacao * 1.1 * (1 - Math.abs(frente.y)) * dt);
+      q.multiply(qTmp);
+    }
+    q.normalize();
+    frente.set(0, 0, -1).applyQuaternion(q);
+
+    // motor, resistência do ar e gravidade: subir gasta velocidade, mergulhar ganha
+    const ar = clamp(1 - (aviao.pos.y - 2500) / 2000, 0, 1);  // ar rarefeito acima de 2.500 m
+    const empuxo = aviao.motor * 10 * ar;
+    const arrasto = 0.001 * aviao.vel * aviao.vel;
+    aviao.vel = clamp(aviao.vel + (empuxo - arrasto - 9.8 * frente.y) * dt, 0, 150);
+
+    // estol: devagar demais, o nariz cai e o avião afunda
+    aviao.estol = aviao.vel < VEL_ESTOL;
+    if (aviao.estol) {
+      const f = (VEL_ESTOL - aviao.vel) / VEL_ESTOL;
+      eixoTmp.crossVectors(frente, MUNDO_BAIXO);
+      const len = eixoTmp.length();
+      if (len > 0.001) {
+        qTmp.setFromAxisAngle(eixoTmp.divideScalar(len), (0.6 + f * 1.6) * dt);
+        q.premultiply(qTmp);
+      }
+      aviao.pos.y -= f * 14 * dt;
+    }
+
+    aviao.pos.addScaledVector(frente, aviao.vel * dt);
+  }
+
+  // ---------- câmera ----------
+  const camQuat = new THREE.Quaternion();
+  const OFFSET_ATRAS = new THREE.Vector3(0, 3.2, 14);
+  const OFFSET_CABINE = new THREE.Vector3(0, 0.95, -0.9);
+  const inclinaCam = new THREE.Quaternion().setFromAxisAngle(EIXO_X, -0.09);
+  const offTmp = new THREE.Vector3();
+
+  function atualizarCamera(dt) {
+    if (modoCamera === 'cabine') {
+      camera.position.copy(OFFSET_CABINE).applyQuaternion(aviao.quat).add(aviao.pos);
+      camera.quaternion.copy(aviao.quat);
+    } else {
+      camQuat.slerp(aviao.quat, 1 - Math.exp(-dt * 4.5));
+      offTmp.copy(OFFSET_ATRAS).applyQuaternion(camQuat);
+      camera.position.copy(aviao.pos).add(offTmp);
+      camera.quaternion.copy(camQuat).multiply(inclinaCam);
+    }
+    camera.position.y = Math.max(camera.position.y, 1.5);
+    aviaoModelo.visible = modoCamera !== 'cabine';
+
+    // o campo de visão abre um pouco com a velocidade
+    const fovAlvo = reduzirMovimento ? 62 : clamp(58 + aviao.vel * 0.09, 58, 72);
+    if (Math.abs(camera.fov - fovAlvo) > 0.05) {
+      camera.fov = aproximar(camera.fov, fovAlvo, 2, dt);
+      camera.updateProjectionMatrix();
+    }
+  }
+
+  // ---------- instrumentos ----------
+  const elVel = $('vel');
+  const elAlt = $('alt');
+  const elRumo = $('rumo');
+  const elCardeal = $('cardeal');
+  const elMotor = $('motor');
+  const elMotorNivel = $('motor-nivel');
+  const CARDEAIS = ['N', 'NE', 'L', 'SE', 'S', 'SO', 'O', 'NO'];
+  const cache = {};
+  const escrever = (el, chave, valor) => {
+    if (cache[chave] !== valor) { cache[chave] = valor; el.textContent = valor; }
+  };
+
+  function atualizarInstrumentos() {
+    escrever(elVel, 'vel', String(Math.round(aviao.vel * 3.6)));
+    escrever(elAlt, 'alt', String(Math.max(0, Math.round(aviao.pos.y))));
+    frente.set(0, 0, -1).applyQuaternion(aviao.quat);
+    const rumo = (Math.round(THREE.MathUtils.radToDeg(Math.atan2(frente.x, -frente.z))) + 360) % 360;
+    escrever(elRumo, 'rumo', String(rumo).padStart(3, '0') + '°');
+    escrever(elCardeal, 'cardeal', CARDEAIS[Math.round(rumo / 45) % 8]);
+    const m = Math.round(aviao.motor * 100);
+    escrever(elMotor, 'motor', m + '%');
+    if (cache.barra !== m) {
+      cache.barra = m;
+      elMotorNivel.style.transform = 'scaleX(' + (m / 100) + ')';
+    }
+    elAviso.hidden = !(aviao.estol && estado === 'voando');
+  }
+
+  // ---------- laço principal ----------
+  function redimensionar() {
+    const w = canvas.clientWidth || window.innerWidth;
+    const h = canvas.clientHeight || window.innerHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', redimensionar);
+
+  let ultimo = 0;
+  function quadro(agora) {
+    requestAnimationFrame(quadro);
+    const dt = Math.min(0.05, Math.max(0, (agora - ultimo) / 1000));
+    ultimo = agora;
+
+    if (estado === 'inicio') simular(dt, false);          // piloto automático atrás da tela de início
+    else if (estado === 'voando') simular(dt, true);
+    else if (estado === 'batido') {
+      tempoBatida -= dt;
+      if (tempoBatida <= 0) recomecar();
+    }
+
+    const bateuArvore = atualizarArvores(aviao.pos.x, aviao.pos.y, aviao.pos.z);
+    if (estado === 'voando' && (aviao.pos.y < 1.4 || bateuArvore)) baterAviao();
+
+    atualizarNuvens(estado === 'pausado' ? 0 : dt, aviao.pos.x, aviao.pos.z);
+    chao.position.set(aviao.pos.x, 0, aviao.pos.z);
+
+    const opacidade = clamp(0.55 * (1 - aviao.pos.y / 140), 0, 0.55);
+    sombra.visible = opacidade > 0.01;
+    sombra.material.opacity = opacidade;
+    sombra.position.set(aviao.pos.x, 0.15, aviao.pos.z);
+
+    const girando = estado === 'voando' || estado === 'inicio';
+    if (girando) helice.rotation.z += (20 + aviao.motor * 55) * dt;
+    disco.material.opacity = girando ? 0.08 + aviao.motor * 0.14 : 0;
+
+    aviaoModelo.position.copy(aviao.pos);
+    aviaoModelo.quaternion.copy(aviao.quat);
+    atualizarCamera(dt);
+    ceu.position.copy(camera.position);
+    atualizarInstrumentos();
+
+    if (tempoMsg > 0) {
+      tempoMsg -= dt;
+      if (tempoMsg <= 0) elMsg.hidden = true;
+    }
+
+    renderer.render(scene, camera);
+  }
+
+  // Quando a página é atualizada com o jogo aberto, o voo continua de onde parou.
+  window.claude?.hot?.snapshot?.(() => ({
+    pos: aviao.pos.toArray(),
+    quat: aviao.quat.toArray(),
+    vel: aviao.vel,
+    motor: aviao.motor,
+    modoCamera,
+    inverter,
+    voando: estado !== 'inicio',
+  }));
+
+  function comecar(dados) {
+    dados = dados || {};
+    try {
+      if (Array.isArray(dados.pos) && dados.pos.length === 3 && dados.pos[1] > 5) aviao.pos.fromArray(dados.pos);
+      if (Array.isArray(dados.quat) && dados.quat.length === 4) aviao.quat.fromArray(dados.quat).normalize();
+      if (typeof dados.vel === 'number') aviao.vel = clamp(dados.vel, 0, 150);
+      if (typeof dados.motor === 'number') aviao.motor = clamp(dados.motor, 0, 1);
+      if (dados.modoCamera === 'cabine') modoCamera = 'cabine';
+      if (dados.inverter === true) inverter = true;
+      if (dados.voando) {
+        $('inicio').hidden = true;
+        elHud.hidden = false;
+        estado = 'voando';
+        pausar();
+      }
+    } catch (e) {
+      // estado salvo inválido: começa do zero
+    }
+    camQuat.copy(aviao.quat);
+    redimensionar();
+    ultimo = performance.now();
+    requestAnimationFrame(quadro);
+  }
+
+  window.claude?.hot?.ready ? window.claude.hot.ready(comecar) : comecar(window.claude?.hot?.data ?? {});
+})();
+</script>
+</body>
+</html>
