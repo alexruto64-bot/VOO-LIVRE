@@ -1355,7 +1355,7 @@ h1 {
     m.visible = false;
     m.frustumCulled = false;
     const b = new THREE.Sprite(matBrilho);
-    b.scale.set(3.2, 3.2, 1);
+    b.scale.set(4.5, 4.5, 1);
     b.visible = false;
     scene.add(m, b);
     tiros.push({ malha: m, brilho: b, pos: new THREE.Vector3(), ant: new THREE.Vector3(), vel: new THREE.Vector3(), vida: 0, meu: true });
@@ -1709,9 +1709,13 @@ h1 {
     if (apertada('KeyZ') && armas.cadencia <= 0) {
       armas.cadencia = 0.075;
       armas.lado = -armas.lado;
+      // canhões nas raízes das asas, um de cada lado, convergindo na mira
       tmpA.set(1, 0, 0).applyQuaternion(aviao.quat);
-      tmpB.copy(aviao.pos).addScaledVector(frenteJog, cacaAtual ? cacaAtual.config.comprimento * 0.45 : 6).addScaledVector(tmpA, armas.lado * 0.8);
-      atirar(tmpB, frenteJog, aviao.vel, true, 4);
+      tmpC.set(0, 1, 0).applyQuaternion(aviao.quat);
+      const L = cacaAtual ? cacaAtual.config.comprimento : 15;
+      tmpB.copy(aviao.pos).addScaledVector(frenteJog, L * 0.1).addScaledVector(tmpA, armas.lado * L * 0.16).addScaledVector(tmpC, -0.4);
+      tmpD.copy(aviao.pos).addScaledVector(frenteJog, 900).sub(tmpB).normalize();   // aponta para 900 m à frente
+      atirar(tmpB, tmpD, aviao.vel, true, 3);
       flash.position.copy(tmpB);
       flash.visible = true;
       tempoFlash = 0.04;
@@ -1897,7 +1901,7 @@ h1 {
     requestAnimationFrame(quadro);
   }
 
-  window.__voo = { get estado() { return estado; }, get modo() { return modo; }, tirosAtivos: () => tiros.filter((t) => t.vida > 0).length, inimigos: () => inimigos.length, misseis: () => misseis.length, get vel() { return aviao.vel; } };
+  window.__voo = { get estado() { return estado; }, get modo() { return modo; }, tirosAtivos: () => tiros.filter((t) => t.vida > 0).length, tirosTela: () => tiros.filter((t) => t.vida > 0).map((t) => Object.assign(naTela(t.pos), { vis: t.malha.visible, bvis: t.brilho.visible, d: Math.round(t.pos.distanceTo(camera.position)) })), inimigos: () => inimigos.length, misseis: () => misseis.length, get vel() { return aviao.vel; } };
 
   window.claude?.hot?.ready ? window.claude.hot.ready(comecar) : comecar(window.claude?.hot?.data ?? {});
 })();
