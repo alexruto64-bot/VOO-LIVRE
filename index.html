@@ -1347,13 +1347,18 @@ h1 {
   const geoTiro = new THREE.BoxGeometry(1.1, 1.1, 24);
   const matTiro = new THREE.MeshBasicMaterial({ color: 0xfff0a0, transparent: true, opacity: 0.95, blending: THREE.AdditiveBlending, depthWrite: false });
   const matTiroInimigo = new THREE.MeshBasicMaterial({ color: 0xff8060, transparent: true, opacity: 0.95, blending: THREE.AdditiveBlending, depthWrite: false });
+  const matBrilho = new THREE.SpriteMaterial({ map: texFlash, color: 0xfff0a0, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false });
+  const matBrilhoInimigo = new THREE.SpriteMaterial({ map: texFlash, color: 0xff8060, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false });
   const tiros = [];
   for (let i = 0; i < 240; i++) {
     const m = new THREE.Mesh(geoTiro, matTiro);
     m.visible = false;
     m.frustumCulled = false;
-    scene.add(m);
-    tiros.push({ malha: m, pos: new THREE.Vector3(), ant: new THREE.Vector3(), vel: new THREE.Vector3(), vida: 0, meu: true });
+    const b = new THREE.Sprite(matBrilho);
+    b.scale.set(3.2, 3.2, 1);
+    b.visible = false;
+    scene.add(m, b);
+    tiros.push({ malha: m, brilho: b, pos: new THREE.Vector3(), ant: new THREE.Vector3(), vel: new THREE.Vector3(), vida: 0, meu: true });
   }
   function atirar(pos, dir, velBase, meu, espalhar) {
     const t = tiros.find((x) => x.vida <= 0);
@@ -1367,7 +1372,10 @@ h1 {
     t.vida = 2.2;
     t.meu = meu;
     t.malha.material = meu ? matTiro : matTiroInimigo;
+    t.brilho.material = meu ? matBrilho : matBrilhoInimigo;
     t.malha.visible = true;
+    t.brilho.visible = true;
+    t.brilho.position.copy(pos);
     mTmp.lookAt(tmpA.set(0, 0, 0), t.vel, EIXO_Y);
     t.malha.quaternion.setFromRotationMatrix(mTmp);
   }
@@ -1631,6 +1639,7 @@ h1 {
       t.pos.addScaledVector(t.vel, dt);
       t.vida -= dt;
       t.malha.position.copy(t.pos);
+      t.brilho.position.copy(t.pos);
       let bateu = false;
       if (t.meu) {
         for (const ini of inimigos) {
@@ -1640,7 +1649,7 @@ h1 {
         dano(4, 'tiro');
         bateu = true;
       }
-      if (bateu || t.vida <= 0 || t.pos.y < 0) { t.vida = 0; t.malha.visible = false; }
+      if (bateu || t.vida <= 0 || t.pos.y < 0) { t.vida = 0; t.malha.visible = false; t.brilho.visible = false; }
     }
   }
 
@@ -1655,7 +1664,7 @@ h1 {
     for (const ini of inimigos.slice()) removerInimigo(ini);
     for (const m of misseis) scene.remove(m.malha);
     misseis.length = 0;
-    for (const t of tiros) { t.vida = 0; t.malha.visible = false; }
+    for (const t of tiros) { t.vida = 0; t.malha.visible = false; t.brilho.visible = false; }
     for (const e of explosoes) e.malha.visible = false;
     alvoTravado = candidato = null;
     tempoTrava = 0;
