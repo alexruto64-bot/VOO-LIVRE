@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hangar</title>
+<meta name="description" content="O caça do Voo Livre de perto: gire, aproxime e mexa nas asas e no motor.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2714%27 fill=%27%2374e0ff%27/%3E%3Cpath d=%27M32 8c2 0 3 3 3 7v10l19 10v5l-19-5v11l6 5v4l-9-3-9 3v-4l6-5V35L10 40v-5l19-10V15c0-4 1-7 3-7z%27 fill=%27%23c8352b%27/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=B612:wght@400;700&family=B612+Mono:wght@400;700&display=swap">
+<style>
+/* Layout: estúdio escuro em tela cheia; painel de comandos à esquerda, ficha técnica à direita.
+   Visual único (escuro) nos dois temas: é um hangar. */
+:root {
+  --fundo: #171a1f;
+  --painel: rgba(10, 16, 24, 0.78);
+  --painel-borda: rgba(168, 208, 238, 0.22);
+  --texto: #eef5fb;
+  --texto-suave: #9fb6c8;
+  --ciano: #74e0ff;
+  --ambar: #ffb547;
+  --tinta: #05192a;
+  --trilho: rgba(238, 245, 251, 0.14);
+  --fonte-rotulo: "B612", "Segoe UI", system-ui, sans-serif;
+  --fonte-numero: "B612 Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  color-scheme: dark;
+}
+[hidden] { display: none !important; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--fundo); color: var(--texto); font-family: var(--fonte-rotulo); overflow: hidden; }
+#cena { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
+#cena.arrastando { cursor: grabbing; }
+.painel {
+  background: var(--painel);
+  border: 1px solid var(--painel-borda);
+  border-radius: 8px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.comandos {
+  position: fixed; z-index: 2;
+  top: calc(16px + env(safe-area-inset-top, 0px));
+  left: max(16px, env(safe-area-inset-left, 0px));
+  width: min(300px, calc(100vw - 32px));
+  max-height: calc(100vh - 32px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  overflow-y: auto;
+  padding: 14px 16px 16px;
+  display: grid; gap: 12px;
+}
+.olho { margin: 0; font: 700 11px/1 var(--fonte-numero); letter-spacing: 0.18em; text-transform: uppercase; color: var(--ciano); }
+h1 { margin: 0; font: 700 30px/1 var(--fonte-rotulo); letter-spacing: -0.01em; }
+.versao { margin: 0; font: 400 12px/1.4 var(--fonte-rotulo); color: var(--texto-suave); }
+.versao b { color: var(--ambar); font-family: var(--fonte-numero); }
+.controle { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 2px 10px; }
+.controle label { font: 700 11px/1 var(--fonte-rotulo); letter-spacing: 0.12em; text-transform: uppercase; color: var(--texto-suave); }
+.controle output { font: 700 13px/1 var(--fonte-numero); font-variant-numeric: tabular-nums; text-align: right; }
+.controle input[type="range"] { grid-column: 1 / -1; width: 100%; accent-color: var(--ciano); margin: 2px 0 0; }
+.linha { display: flex; flex-wrap: wrap; gap: 8px; }
+.botao {
+  padding: 8px 12px; border: 1px solid var(--painel-borda); border-radius: 6px;
+  background: var(--trilho); color: var(--texto); font: 700 12px/1 var(--fonte-rotulo); letter-spacing: 0.08em; cursor: pointer;
+}
+.botao:hover { border-color: var(--ciano); }
+.botao:focus-visible, input:focus-visible { outline: 2px solid var(--ciano); outline-offset: 2px; }
+.botao.ativo { background: var(--ciano); color: var(--tinta); border-color: var(--ciano); }
+.marcar { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.marcar input { accent-color: var(--ciano); width: 16px; height: 16px; margin: 0; }
+.diario { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 12px; line-height: 1.35; color: var(--texto-suave); }
+.diario li { display: grid; grid-template-columns: 3ch 1fr; gap: 8px; }
+.diario b { color: var(--ambar); font-family: var(--fonte-numero); font-weight: 700; }
+.ficha {
+  position: fixed; z-index: 2;
+  right: max(16px, env(safe-area-inset-right, 0px));
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  width: min(260px, calc(100vw - 32px));
+  padding: 12px 16px 14px;
+  display: grid; gap: 8px;
+}
+.ficha h2 { margin: 0; font: 700 15px/1.2 var(--fonte-rotulo); }
+.ficha dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 12px; }
+.ficha dt { color: var(--texto-suave); }
+.ficha dd { margin: 0; font-family: var(--fonte-numero); font-variant-numeric: tabular-nums; }
+.dica { position: fixed; z-index: 2; left: 50%; transform: translateX(-50%); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); margin: 0; padding: 8px 14px; font-size: 13px; color: var(--texto-suave); }
+.erro { position: fixed; inset: 0; z-index: 5; display: grid; place-items: center; padding: 16px; background: rgba(5, 18, 31, 0.7); }
+.erro p { max-width: 360px; padding: 20px; font-size: 15px; line-height: 1.5; }
+@media (max-width: 760px) { .ficha, .dica { display: none; } }
+</style>
+</head>
+<body>
+<canvas id="cena" aria-label="Caça em exposição no hangar"></canvas>
+
+<section class="painel comandos" aria-label="Comandos do hangar">
+  <p class="olho">Hangar · Voo Livre</p>
+  <h1>Caça VL-101</h1>
+  <p class="versao">Versão <b id="versao">1</b> · a página se atualiza sozinha quando sai uma nova.</p>
+
+  <div class="controle">
+    <label for="motor">Motor</label><output id="motor-val">0%</output>
+    <input type="range" id="motor" min="0" max="100" value="0">
+  </div>
+  <div class="controle">
+    <label for="asas">Asas (enflechamento)</label><output id="asas-val">20°</output>
+    <input type="range" id="asas" min="20" max="68" value="20">
+  </div>
+  <div class="controle">
+    <label for="manche">Manche (profundor)</label><output id="manche-val">0</output>
+    <input type="range" id="manche" min="-100" max="100" value="0">
+  </div>
+  <div class="controle">
+    <label for="pedais">Pedais (leme)</label><output id="pedais-val">0</output>
+    <input type="range" id="pedais" min="-100" max="100" value="0">
+  </div>
+  <label class="marcar"><input type="checkbox" id="luzes" checked> Luzes de navegação</label>
+  <label class="marcar"><input type="checkbox" id="girar" checked> Girar sozinho</label>
+  <div class="linha" id="cameras">
+    <button class="botao" type="button" data-cam="3/4">3/4</button>
+    <button class="botao" type="button" data-cam="frente">Frente</button>
+    <button class="botao" type="button" data-cam="lado">Lado</button>
+    <button class="botao" type="button" data-cam="cima">Cima</button>
+    <button class="botao" type="button" data-cam="cauda">Cauda</button>
+    <button class="botao" type="button" data-cam="cabine">Cabine</button>
+  </div>
+
+  <p class="olho">Diário do hangar</p>
+  <ul class="diario" id="diario">
+    <li><b>v1</b><span>Fuselagem, corpo central, motores com entradas de ar e bocais, asas móveis, derivas duplas com adesivos, cabine para dois, luzes e pós-combustão.</span></li>
+  </ul>
+</section>
+
+<section class="painel ficha" aria-label="Ficha técnica">
+  <h2>Grumman F-14 Tomcat</h2>
+  <dl>
+    <dt>Comprimento</dt><dd>19,1 m</dd>
+    <dt>Envergadura</dt><dd>19,5 m abertas · 11,6 m fechadas</dd>
+    <dt>Altura</dt><dd>4,9 m</dd>
+    <dt>Motores</dt><dd>2 turbofans com pós-combustão</dd>
+    <dt>Velocidade</dt><dd>Mach 2,3</dd>
+    <dt>Tripulação</dt><dd>2 (piloto e operador de radar)</dd>
+    <dt>Asas</dt><dd>20° a 68° de enflechamento</dd>
+    <dt>Primeiro voo</dt><dd>21 de dezembro de 1970</dd>
+  </dl>
+</section>
+
+<p class="painel dica">Arraste para girar · role para aproximar</p>
+<div class="erro" id="erro" hidden><p class="painel" id="erro-msg"></p></div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"></script>
+<script src="caca.js"></script>
+<script>
+(() => {
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  function mostrarErro(t) { $('erro-msg').textContent = t; $('erro').hidden = false; }
+  if (!window.THREE) { mostrarErro('O motor 3D não carregou. Confira a internet e recarregue a página.'); return; }
+  if (!window.VooLivre || !window.VooLivre.criarCaca) { mostrarErro('O arquivo do caça (caca.js) não carregou.'); return; }
+
+  const canvas = $('cena');
+  let renderer;
+  try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' }); }
+  catch (e) { mostrarErro('Este navegador não conseguiu ligar o 3D (WebGL).'); return; }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x171a1f);
+  scene.fog = new THREE.Fog(0x171a1f, 60, 160);
+
+  // Reflexos: um ambiente simples (céu cinza-claro em cima, piso escuro) virado em mapa de ambiente.
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  const envScene = new THREE.Scene();
+  envScene.add(new THREE.Mesh(new THREE.SphereGeometry(40, 32, 16), new THREE.ShaderMaterial({
+    side: THREE.BackSide,
+    uniforms: {},
+    vertexShader: 'varying vec3 vP; void main(){ vP = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
+    fragmentShader: 'varying vec3 vP; void main(){ float y = normalize(vP).y; vec3 c = y > 0.0 ? mix(vec3(0.82,0.86,0.9), vec3(0.55,0.62,0.7), y) : mix(vec3(0.82,0.86,0.9), vec3(0.08,0.09,0.11), min(1.0,-y*2.5)); gl_FragColor = vec4(c,1.0); }',
+  })));
+  for (const [x, zz] of [[-10, -6], [8, 4], [0, 14]]) {
+    const luzTeto = new THREE.Mesh(new THREE.PlaneGeometry(8, 3), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+    luzTeto.position.set(x, 18, zz); luzTeto.rotation.x = Math.PI / 2; envScene.add(luzTeto);
+  }
+  scene.environment = pmrem.fromScene(envScene, 0.03).texture;
+
+  const camera = new THREE.PerspectiveCamera(42, 1, 0.2, 400);
+  const chave = new THREE.DirectionalLight(0xfff1dc, 1.55);
+  chave.position.set(-14, 22, 10); chave.castShadow = true;
+  chave.shadow.mapSize.set(2048, 2048);
+  Object.assign(chave.shadow.camera, { left: -16, right: 16, top: 16, bottom: -16, near: 1, far: 80 });
+  chave.shadow.bias = -0.0008;
+  scene.add(chave);
+  const preenchimento = new THREE.DirectionalLight(0xa9c4e0, 0.55);
+  preenchimento.position.set(16, 6, -12); scene.add(preenchimento);
+  scene.add(new THREE.HemisphereLight(0xdde6ee, 0x33373c, 0.3));
+
+  // Piso de concreto com juntas e faixas amarelas.
+  const texPiso = (() => {
+    const c = document.createElement('canvas'); c.width = c.height = 1024;
+    const g = c.getContext('2d');
+    g.fillStyle = '#34373c'; g.fillRect(0, 0, 1024, 1024);
+    for (let i = 0; i < 24000; i++) { g.fillStyle = Math.random() < 0.5 ? 'rgba(0,0,0,0.12)' : 'rgba(255,255,255,0.05)'; g.fillRect(Math.random() * 1024, Math.random() * 1024, 2, 2); }
+    g.strokeStyle = 'rgba(0,0,0,0.5)'; g.lineWidth = 3;
+    for (let k = 0; k <= 1024; k += 256) { g.beginPath(); g.moveTo(k, 0); g.lineTo(k, 1024); g.moveTo(0, k); g.lineTo(1024, k); g.stroke(); }
+    g.fillStyle = 'rgba(255,181,71,0.75)'; g.fillRect(500, 0, 24, 1024);
+    const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(10, 10); t.anisotropy = 8;
+    return t;
+  })();
+  const piso = new THREE.Mesh(new THREE.PlaneGeometry(240, 240), new THREE.MeshStandardMaterial({ map: texPiso, roughness: 0.9, metalness: 0.05 }));
+  piso.rotation.x = -Math.PI / 2; piso.position.y = -3.4; piso.receiveShadow = true;
+  scene.add(piso);
+
+  let caca;
+  try { caca = window.VooLivre.criarCaca(); }
+  catch (e) { mostrarErro('Erro ao montar o caça: ' + e.message); console.error(e); return; }
+  scene.add(caca.grupo);
+
+  // Câmera orbital: arrastar gira, rolar aproxima, girar sozinho quando parado.
+  const alvo = new THREE.Vector3(0, 0.3, 0);
+  const cam = { theta: 0.75, phi: 1.2, raio: 36 };
+  const meta = { theta: 0.75, phi: 1.2, raio: 36 };
+  let arrastando = false, ultimoX = 0, ultimoY = 0, pinca = 0, paradoDesde = 0;
+  const presets = {
+    '3/4': { theta: 0.75, phi: 1.2, raio: 36 },
+    frente: { theta: -Math.PI / 2, phi: 1.45, raio: 30 },
+    lado: { theta: 0, phi: 1.5, raio: 34 },
+    cima: { theta: 0.3, phi: 0.2, raio: 38 },
+    cauda: { theta: Math.PI / 2, phi: 1.35, raio: 30 },
+    cabine: { theta: 0.9, phi: 1.05, raio: 9 },
+  };
+  function irPara(nome) { Object.assign(meta, presets[nome]); paradoDesde = performance.now(); if (nome === 'cabine') alvo.set(0, 0.9, -4.3); else alvo.set(0, 0.3, 0); }
+  $('cameras').addEventListener('click', (e) => { const b = e.target.closest('[data-cam]'); if (b) irPara(b.dataset.cam); });
+  canvas.addEventListener('pointerdown', (e) => { arrastando = true; ultimoX = e.clientX; ultimoY = e.clientY; canvas.classList.add('arrastando'); canvas.setPointerCapture(e.pointerId); });
+  canvas.addEventListener('pointermove', (e) => {
+    if (!arrastando) return;
+    meta.theta -= (e.clientX - ultimoX) * 0.006;
+    meta.phi = clamp(meta.phi - (e.clientY - ultimoY) * 0.006, 0.12, 1.55);
+    ultimoX = e.clientX; ultimoY = e.clientY; paradoDesde = performance.now();
+  });
+  const soltar = () => { arrastando = false; canvas.classList.remove('arrastando'); };
+  canvas.addEventListener('pointerup', soltar); canvas.addEventListener('pointercancel', soltar);
+  canvas.addEventListener('wheel', (e) => { e.preventDefault(); meta.raio = clamp(meta.raio * (1 + e.deltaY * 0.0012), 6, 90); paradoDesde = performance.now(); }, { passive: false });
+  canvas.addEventListener('touchmove', (e) => {
+    if (e.touches.length === 2) {
+      const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+      if (pinca) meta.raio = clamp(meta.raio * (pinca / d), 6, 90);
+      pinca = d; paradoDesde = performance.now();
+    }
+  }, { passive: true });
+  canvas.addEventListener('touchend', () => { pinca = 0; });
+
+  // Controles
+  const motor = $('motor'), asas = $('asas'), manche = $('manche'), pedais = $('pedais'), luzes = $('luzes'), girar = $('girar');
+  function atualizarRotulos() {
+    $('motor-val').textContent = motor.value + '%' + (motor.value >= 82 ? ' · PC' : '');
+    $('asas-val').textContent = asas.value + '°';
+    $('manche-val').textContent = manche.value;
+    $('pedais-val').textContent = pedais.value;
+  }
+  for (const el of [motor, asas, manche, pedais]) el.addEventListener('input', atualizarRotulos);
+  atualizarRotulos();
+
+  function redimensionar() {
+    const w = canvas.clientWidth || window.innerWidth, h = canvas.clientHeight || window.innerHeight;
+    renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', redimensionar);
+  redimensionar();
+
+  let ultimo = performance.now();
+  function quadro(agora) {
+    requestAnimationFrame(quadro);
+    const dt = Math.min(0.05, (agora - ultimo) / 1000); ultimo = agora;
+    if (girar.checked && !arrastando && agora - paradoDesde > 4000) meta.theta += dt * 0.12;
+    const k = 1 - Math.exp(-dt * 6);
+    cam.theta += (meta.theta - cam.theta) * k; cam.phi += (meta.phi - cam.phi) * k; cam.raio += (meta.raio - cam.raio) * k;
+    camera.position.set(
+      alvo.x + cam.raio * Math.sin(cam.phi) * Math.cos(cam.theta),
+      alvo.y + cam.raio * Math.cos(cam.phi),
+      alvo.z + cam.raio * Math.sin(cam.phi) * Math.sin(cam.theta));
+    camera.lookAt(alvo);
+    caca.atualizar(dt, {
+      motor: motor.value / 100, enflechamento: +asas.value,
+      arfagem: manche.value / 100, guinada: pedais.value / 100, luzes: luzes.checked,
+    });
+    renderer.render(scene, camera);
+  }
+  requestAnimationFrame(quadro);
+  window.__hangar = { scene, camera, caca, cam: meta, alvo, irPara };
+})();
+</script>
+</body>
+</html>
