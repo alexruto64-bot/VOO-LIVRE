@@ -27,10 +27,10 @@ Os arquivos ficam em `modelos/` (formato glTF binário, `.glb`) e são carregado
 
 ## Armas
 
-- **Metralhadora** (Espaço): tiros infinitos.
-- **Míssil guiado** (F): 4 por vez. Precisa de alvo travado: mantenha a mira num inimigo por quase 1 segundo, até a
+- **Metralhadora** (Z): tiros infinitos.
+- **Míssil guiado** (Espaço): 4 por vez. Precisa de alvo travado: mantenha a mira num inimigo por quase 1 segundo, até a
   caixa ficar azul. Um míssil novo volta a cada 20 s.
-- **Foguete** (G): 12 por vez, voa reto. Um foguete novo volta a cada 6 s.
+- **Foguete** (X): 12 por vez, voa reto. Um foguete novo volta a cada 6 s.
 
 Na tela: a mira azul mostra para onde o nariz aponta; as caixas vermelhas marcam os inimigos com a distância; a seta
 na borda aponta para o inimigo mais perto quando ele está fora da tela.
@@ -43,9 +43,9 @@ na borda aponta para o inimigo mais perto quando ele está fora da tela.
 | ← →       | Inclinar as asas. Para curvar, incline e puxe |
 | A D       | Leme: vira o nariz de lado                  |
 | W S       | Mais motor / menos motor                    |
-| Espaço    | Metralhadora                                |
-| F         | Míssil guiado                               |
-| G         | Foguete                                     |
+| Z         | Metralhadora                                |
+| Espaço    | Míssil guiado                               |
+| X         | Foguete                                     |
 | C         | Trocar câmera (atrás do avião ou cabine)    |
 | I         | Inverter ↑ ↓                                |
 | P ou Esc  | Pausar (na pausa dá para trocar de caça)    |

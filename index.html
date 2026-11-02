@@ -305,8 +305,8 @@ h1 {
     <span class="rot">NÍVEL</span><span class="val" id="nivel">1</span><span class="uni"></span>
     <span class="rot">PONTOS</span><span class="val" id="pontos">0</span><span class="uni"></span>
     <span class="rot">CASCO</span><span class="barra" aria-hidden="true"><span class="nivel vida" id="vida-nivel"></span></span><span class="uni" id="vida">100%</span>
-    <span class="rot">GUIADOS</span><span class="val" id="guiados">4/4</span><span class="uni">F</span>
-    <span class="rot">FOGUETES</span><span class="val" id="foguetes">12/12</span><span class="uni">G</span>
+    <span class="rot">GUIADOS</span><span class="val" id="guiados">4/4</span><span class="uni">Espaço</span>
+    <span class="rot">FOGUETES</span><span class="val" id="foguetes">12/12</span><span class="uni">X</span>
     <span class="rot">INIMIGOS</span><span class="val" id="restam">0</span><span class="uni">no ar</span>
   </section>
   <div class="mira" id="mira" hidden aria-hidden="true"></div>
@@ -324,9 +324,9 @@ h1 {
       <dt><kbd>←</kbd><kbd>→</kbd></dt><dd>Inclinar as asas. Para curvar, incline e puxe</dd>
       <dt><kbd>A</kbd><kbd>D</kbd></dt><dd>Leme: vira o nariz de lado</dd>
       <dt><kbd>W</kbd><kbd>S</kbd></dt><dd>Motor. Acima de 82%, pós-combustão</dd>
-      <dt><kbd>Espaço</kbd></dt><dd>Metralhadora (tiros infinitos)</dd>
-      <dt><kbd>F</kbd></dt><dd>Míssil guiado (precisa de alvo travado)</dd>
-      <dt><kbd>G</kbd></dt><dd>Foguete, sem guia</dd>
+      <dt><kbd>Z</kbd></dt><dd>Metralhadora (tiros infinitos)</dd>
+      <dt><kbd>Espaço</kbd></dt><dd>Míssil guiado (precisa de alvo travado)</dd>
+      <dt><kbd>X</kbd></dt><dd>Foguete, sem guia</dd>
       <dt><kbd>C</kbd></dt><dd>Trocar câmera</dd>
       <dt><kbd>I</kbd></dt><dd>Inverter ↑ ↓</dd>
       <dt><kbd>P</kbd></dt><dd>Pausar</dd>
@@ -356,9 +356,9 @@ h1 {
       <dt><kbd>←</kbd><kbd>→</kbd></dt><dd>Inclinar as asas. Para curvar, incline e puxe</dd>
       <dt><kbd>A</kbd><kbd>D</kbd></dt><dd>Leme: vira o nariz de lado</dd>
       <dt><kbd>W</kbd><kbd>S</kbd></dt><dd>Motor. Acima de 82%, pós-combustão</dd>
-      <dt><kbd>Espaço</kbd></dt><dd>Metralhadora (tiros infinitos)</dd>
-      <dt><kbd>F</kbd></dt><dd>Míssil guiado (precisa de alvo travado)</dd>
-      <dt><kbd>G</kbd></dt><dd>Foguete, sem guia</dd>
+      <dt><kbd>Z</kbd></dt><dd>Metralhadora (tiros infinitos)</dd>
+      <dt><kbd>Espaço</kbd></dt><dd>Míssil guiado (precisa de alvo travado)</dd>
+      <dt><kbd>X</kbd></dt><dd>Foguete, sem guia</dd>
       <dt><kbd>C</kbd></dt><dd>Trocar câmera</dd>
       <dt><kbd>I</kbd></dt><dd>Inverter ↑ ↓</dd>
       <dt><kbd>P</kbd></dt><dd>Pausar</dd>
@@ -1003,8 +1003,8 @@ h1 {
         break;
       case 'KeyR': recomecar(); break;
       case 'KeyH': elAjuda.hidden = !elAjuda.hidden; break;
-      case 'KeyF': dispararMissil('guiado'); break;
-      case 'KeyG': dispararMissil('foguete'); break;
+      case 'Space': dispararMissil('guiado'); break;
+      case 'KeyX': dispararMissil('foguete'); break;
     }
   });
   window.addEventListener('keyup', (e) => teclas.delete(e.code));
@@ -1032,9 +1032,10 @@ h1 {
       $('inicio').hidden = true;
       elHud.hidden = false;
       estado = 'voando';
-      if (modo === 'sobrevivencia') { iniciarSobrevivencia(); mensagem('Espaço atira, F lança míssil guiado, G lança foguete', 5); }
+      if (modo === 'sobrevivencia') { iniciarSobrevivencia(); mensagem('Z atira, Espaço lança míssil guiado, X lança foguete', 5); }
       else { limparCombate(); mensagem('Dica: incline as asas e puxe (↓) para curvar. Acima de 82% de motor, pós-combustão', 5); }
     };
+    somCtx();
     if (cacaAtual && cacaAtual.id === cacaEscolhido) { partir(); return; }
     $('decolar').disabled = true;
     (carregando || escolherCaca(cacaEscolhido)).then(() => { $('decolar').disabled = false; partir(); });
@@ -1297,10 +1298,55 @@ h1 {
     return tmpC.multiplyScalar(t).add(a).distanceTo(c);
   }
 
+  // --- sons: ruídos curtos gerados na hora (sem arquivos)
+  let audio = null;
+  function somCtx() {
+    if (audio === null) { try { audio = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { audio = false; } }
+    if (audio && audio.state === 'suspended') audio.resume();
+    return audio || null;
+  }
+  function ruido(dur, freq, q, ganho, tipo) {
+    const ctx = somCtx();
+    if (!ctx) return;
+    const n = Math.floor(ctx.sampleRate * dur);
+    const buf = ctx.createBuffer(1, n, ctx.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n) * (1 - i / n);
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    const f = ctx.createBiquadFilter();
+    f.type = tipo || 'bandpass';
+    f.frequency.value = freq;
+    f.Q.value = q;
+    const g = ctx.createGain();
+    g.gain.value = ganho;
+    src.connect(f).connect(g).connect(ctx.destination);
+    src.start();
+  }
+  const somTiro = () => ruido(0.07, 1600, 1.2, 0.35);
+  const somMissil = () => ruido(0.6, 700, 0.7, 0.5, 'lowpass');
+  const somExplosao = (tam) => ruido(0.5 + tam * 0.3, 160, 0.6, 0.7, 'lowpass');
+  const somAcerto = () => ruido(0.1, 2600, 2.5, 0.3);
+
+  // --- clarão na boca do canhão
+  const texFlash = (() => {
+    const c = document.createElement('canvas'); c.width = c.height = 64;
+    const g = c.getContext('2d');
+    const gr = g.createRadialGradient(32, 32, 2, 32, 32, 32);
+    gr.addColorStop(0, 'rgba(255,255,220,1)'); gr.addColorStop(0.3, 'rgba(255,200,90,0.9)'); gr.addColorStop(1, 'rgba(255,120,30,0)');
+    g.fillStyle = gr; g.fillRect(0, 0, 64, 64);
+    return new THREE.CanvasTexture(c);
+  })();
+  const flash = new THREE.Sprite(new THREE.SpriteMaterial({ map: texFlash, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
+  flash.scale.set(2.2, 2.2, 1);
+  flash.visible = false;
+  scene.add(flash);
+  let tempoFlash = 0;
+
   // --- tiros: um estoque de malhas reaproveitadas
-  const geoTiro = new THREE.BoxGeometry(0.2, 0.2, 6);
-  const matTiro = new THREE.MeshBasicMaterial({ color: 0xffd36a });
-  const matTiroInimigo = new THREE.MeshBasicMaterial({ color: 0xff6a4a });
+  const geoTiro = new THREE.BoxGeometry(0.35, 0.35, 16);
+  const matTiro = new THREE.MeshBasicMaterial({ color: 0xffe68a });
+  const matTiroInimigo = new THREE.MeshBasicMaterial({ color: 0xff7a5a });
   const tiros = [];
   for (let i = 0; i < 240; i++) {
     const m = new THREE.Mesh(geoTiro, matTiro);
@@ -1345,6 +1391,7 @@ h1 {
     e.malha.material.color.set(fumaca ? 0x9a9a9a : 0xff8a2a);
     e.malha.material.blending = fumaca ? THREE.NormalBlending : THREE.AdditiveBlending;
     e.malha.visible = true;
+    if (!fumaca && tamanho >= 0.5) somExplosao(tamanho);
   }
   function atualizarExplosoes(dt) {
     for (const e of explosoes) {
@@ -1411,6 +1458,7 @@ h1 {
     m.malha.quaternion.copy(m.quat);
     scene.add(m.malha);
     misseis.push(m);
+    somMissil();
   }
   function atualizarMisseis(dt) {
     for (let i = misseis.length - 1; i >= 0; i--) {
@@ -1466,11 +1514,15 @@ h1 {
       grupo.add(ch);
     }
     scene.add(grupo);
-    const ang = Math.random() * Math.PI * 2;
-    const dist = 3200 + Math.random() * 1800;
+    // chega pela frente (até 60° para cada lado), a 2 ou 3 km
+    const dist = 2000 + Math.random() * 1200;
+    tmpA.set(0, 0, -1).applyQuaternion(aviao.quat);
+    tmpA.y = 0;
+    if (tmpA.lengthSq() < 0.01) tmpA.set(0, 0, -1);
+    tmpA.normalize().applyAxisAngle(EIXO_Y, (Math.random() - 0.5) * 2.1);
     const ini = {
       id, grupo, config: base.config, vivo: true, caindo: 0,
-      pos: new THREE.Vector3(aviao.pos.x + Math.cos(ang) * dist, clamp(aviao.pos.y + (Math.random() - 0.5) * 800, 300, 8000), aviao.pos.z + Math.sin(ang) * dist),
+      pos: new THREE.Vector3(aviao.pos.x + tmpA.x * dist, clamp(aviao.pos.y + (Math.random() - 0.5) * 500, 300, 8000), aviao.pos.z + tmpA.z * dist),
       quat: new THREE.Quaternion(),
       vel: 170 + nivel * 18 + Math.random() * 30,
       vida: 90 + nivel * 25,
@@ -1496,7 +1548,7 @@ h1 {
   function acertar(ini, dano, arma) {
     if (!ini.vivo) return;
     ini.vida -= dano;
-    if (ini.vida > 0) { explodir(ini.pos, 0.35); return; }
+    if (ini.vida > 0) { explodir(ini.pos, 0.35); somAcerto(); return; }
     ini.vivo = false;
     ini.caindo = 2.6;
     const pontos = (arma === 'guiado' ? 200 : arma === 'foguete' ? 150 : 100) * jogo.nivel;
@@ -1597,7 +1649,7 @@ h1 {
     jogo.totalNivel = Math.min(2 + jogo.nivel, 8);
     jogo.fila = jogo.totalNivel;
     jogo.tempoSpawn = 0.5;
-    mensagem('Nível ' + jogo.nivel + ': ' + jogo.totalNivel + ' caças inimigos chegando', 4);
+    mensagem('Nível ' + jogo.nivel + ': ' + jogo.totalNivel + ' caças inimigos chegando pela frente', 4);
   }
   function limparCombate() {
     for (const ini of inimigos.slice()) removerInimigo(ini);
@@ -1643,12 +1695,16 @@ h1 {
     // metralhadora: segurar espaço
     frenteJog.set(0, 0, -1).applyQuaternion(aviao.quat);
     armas.cadencia -= dt;
-    if (apertada('Space') && armas.cadencia <= 0) {
+    if (apertada('KeyZ') && armas.cadencia <= 0) {
       armas.cadencia = 0.075;
       armas.lado = -armas.lado;
       tmpA.set(1, 0, 0).applyQuaternion(aviao.quat);
       tmpB.copy(aviao.pos).addScaledVector(frenteJog, cacaAtual ? cacaAtual.config.comprimento * 0.45 : 6).addScaledVector(tmpA, armas.lado * 0.8);
       atirar(tmpB, frenteJog, aviao.vel, true, 4);
+      flash.position.copy(tmpB);
+      flash.visible = true;
+      tempoFlash = 0.04;
+      somTiro();
     }
 
     // trava: o inimigo mais perto da mira, dentro de 25° e 5 km
@@ -1674,6 +1730,7 @@ h1 {
   }
   function desenharHUDCombate() {
     const voando = estado === 'voando';
+    if (flash.visible) { tempoFlash -= 1 / 60; if (tempoFlash <= 0) flash.visible = false; }
     camera.updateMatrixWorld();
     frenteJog.set(0, 0, -1).applyQuaternion(aviao.quat);
     const m = naTela(tmpA.copy(aviao.pos).addScaledVector(frenteJog, 1500));
