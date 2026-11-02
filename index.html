@@ -1344,9 +1344,9 @@ h1 {
   let tempoFlash = 0;
 
   // --- tiros: um estoque de malhas reaproveitadas
-  const geoTiro = new THREE.BoxGeometry(0.35, 0.35, 16);
-  const matTiro = new THREE.MeshBasicMaterial({ color: 0xffe68a });
-  const matTiroInimigo = new THREE.MeshBasicMaterial({ color: 0xff7a5a });
+  const geoTiro = new THREE.BoxGeometry(1.1, 1.1, 24);
+  const matTiro = new THREE.MeshBasicMaterial({ color: 0xfff0a0, transparent: true, opacity: 0.95, blending: THREE.AdditiveBlending, depthWrite: false });
+  const matTiroInimigo = new THREE.MeshBasicMaterial({ color: 0xff8060, transparent: true, opacity: 0.95, blending: THREE.AdditiveBlending, depthWrite: false });
   const tiros = [];
   for (let i = 0; i < 240; i++) {
     const m = new THREE.Mesh(geoTiro, matTiro);
@@ -1887,6 +1887,8 @@ h1 {
     ultimo = performance.now();
     requestAnimationFrame(quadro);
   }
+
+  window.__voo = { get estado() { return estado; }, get modo() { return modo; }, tirosAtivos: () => tiros.filter((t) => t.vida > 0).length, inimigos: () => inimigos.length, misseis: () => misseis.length, get vel() { return aviao.vel; } };
 
   window.claude?.hot?.ready ? window.claude.hot.ready(comecar) : comecar(window.claude?.hot?.data ?? {});
 })();
