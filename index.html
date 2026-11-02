@@ -341,8 +341,8 @@ h1 {
     <h1>Voo Livre</h1>
     <p class="sub">Escolha o modo e o caça.</p>
     <div class="modos" id="modos" role="group" aria-label="Modo de jogo">
-      <button class="modo" type="button" data-modo="livre" aria-pressed="true"><span>Voo livre</span><small>Só você, o caça e o céu.</small></button>
-      <button class="modo" type="button" data-modo="sobrevivencia" aria-pressed="false"><span>Sobrevivência</span><small>Ondas de caças inimigos. Cada nível, mais deles e mais rápidos.</small></button>
+      <button class="modo" type="button" data-modo="livre" aria-pressed="false"><span>Voo livre</span><small>Só você, o caça e o céu.</small></button>
+      <button class="modo" type="button" data-modo="sobrevivencia" aria-pressed="true"><span>Sobrevivência</span><small>Ondas de caças inimigos. Cada nível, mais deles e mais rápidos.</small></button>
     </div>
     <div class="cacas" id="cacas" role="group" aria-label="Escolha o caça">
       <button class="caca" type="button" data-caca="f16" aria-pressed="true"><img src="modelos/f16.jpg" alt=""><span>F-16D Fighting Falcon</span><small>15 m · 1 motor</small></button>
@@ -365,7 +365,7 @@ h1 {
       <dt><kbd>R</kbd></dt><dd>Recomeçar</dd>
     </dl>
     <button class="principal" id="decolar" type="button">Decolar</button>
-    <p class="nota">Precisa de teclado. Se as teclas pararem de responder, clique no jogo.</p>
+    <p class="nota">Precisa de teclado. Se as teclas pararem de responder, clique no jogo. <b id="versao-jogo">Versão 4</b></p>
     <p class="creditos">Modelos 3D do Sketchfab, licença CC BY 4.0: <a href="https://sketchfab.com/3d-models/general-dynamics-f-16d-block-60-ea8edb08d79e4eafa9c794c581f88cf3" target="_blank" rel="noopener">F-16D Block 60</a> por Muhamad Mirza Arrafi · <a href="https://sketchfab.com/3d-models/f-14-tomcat-top-gun-gear-up-downloadable-9d2d0c87539046aa8c2198fcc47cdcf8" target="_blank" rel="noopener">F-14 Tomcat</a> por dwsd · <a href="https://sketchfab.com/3d-models/boeing-fa-18ef-super-hornet-f71e9fea01e24fea9b1b380161d21d38" target="_blank" rel="noopener">F/A-18E/F Super Hornet</a> por andertan.</p>
   </div>
 </div>
@@ -1033,7 +1033,7 @@ h1 {
       elHud.hidden = false;
       estado = 'voando';
       if (modo === 'sobrevivencia') { iniciarSobrevivencia(); mensagem('Z atira, Espaço lança míssil guiado, X lança foguete', 5); }
-      else { limparCombate(); mensagem('Dica: incline as asas e puxe (↓) para curvar. Acima de 82% de motor, pós-combustão', 5); }
+      else { limparCombate(); mensagem('Voo livre, sem inimigos (Z atira, X foguete). Para combater, escolha Sobrevivência na tela inicial', 6); }
     };
     somCtx();
     if (cacaAtual && cacaAtual.id === cacaEscolhido) { partir(); return; }
@@ -1246,7 +1246,7 @@ h1 {
   }
 
   // ---------- combate: modo sobrevivência ----------
-  let modo = 'livre';                      // livre | sobrevivencia
+  let modo = 'sobrevivencia';              // livre | sobrevivencia
   const jogo = { nivel: 1, pontos: 0, integridade: 100, abatidosNivel: 0, totalNivel: 0, fila: 0, tempoSpawn: 0, tempoProximo: 0 };
   const inimigos = [];
   const misseis = [];
@@ -1677,15 +1677,17 @@ h1 {
     atualizarTiros(dt);
     atualizarMisseis(dt);
     for (const ini of inimigos.slice()) atualizarInimigo(ini, dt);
-    if (modo !== 'sobrevivencia' || estado !== 'voando') return;
+    if (estado !== 'voando') return;
 
-    // chegada dos inimigos do nível e passagem de nível
-    if (jogo.fila > 0) {
-      jogo.tempoSpawn -= dt;
-      if (jogo.tempoSpawn <= 0) { criarInimigo(jogo.nivel); jogo.fila--; jogo.tempoSpawn = 1.5; }
-    } else if (jogo.totalNivel > 0 && !inimigos.some((i) => i.vivo)) {
-      jogo.tempoProximo += dt;
-      if (jogo.tempoProximo > 3) { jogo.tempoProximo = 0; jogo.nivel++; novoNivel(); }
+    // chegada dos inimigos do nível e passagem de nível (só na sobrevivência)
+    if (modo === 'sobrevivencia') {
+      if (jogo.fila > 0) {
+        jogo.tempoSpawn -= dt;
+        if (jogo.tempoSpawn <= 0) { criarInimigo(jogo.nivel); jogo.fila--; jogo.tempoSpawn = 1.5; }
+      } else if (jogo.totalNivel > 0 && !inimigos.some((i) => i.vivo)) {
+        jogo.tempoProximo += dt;
+        if (jogo.tempoProximo > 3) { jogo.tempoProximo = 0; jogo.nivel++; novoNivel(); }
+      }
     }
 
     // recarga das armas
@@ -1739,7 +1741,7 @@ h1 {
 
     let k = 0, maisPerto = null, menorDist = Infinity;
     for (const ini of inimigos) {
-      if (!ini.vivo || !voando || modo !== 'sobrevivencia') continue;
+      if (!ini.vivo || !voando) continue;
       const d = ini.pos.distanceTo(aviao.pos);
       if (d < menorDist) { menorDist = d; maisPerto = ini; }
       const s = naTela(ini.pos);
