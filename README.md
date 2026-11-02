@@ -18,14 +18,34 @@ Na tela de início você escolhe qual caça pilotar. São modelos 3D de artistas
 Os arquivos ficam em `modelos/` (formato glTF binário, `.glb`) e são carregados só quando o caça é escolhido. Acima de
 82% de motor a pós-combustão acende.
 
+## Modos
+
+- **Voo livre:** só você, o caça e o céu.
+- **Sobrevivência:** ondas de caças inimigos. Cada nível traz mais caças (até 8), mais rápidos, que curvam mais
+  apertado e atiram melhor. Derrube todos para passar de nível. O casco aguenta uns 25 tiros; chegando a zero, ou
+  batendo no chão, o voo acaba e a pontuação fica na tela.
+
+## Armas
+
+- **Metralhadora** (Espaço): tiros infinitos.
+- **Míssil guiado** (F): 4 por vez. Precisa de alvo travado: mantenha a mira num inimigo por quase 1 segundo, até a
+  caixa ficar azul. Um míssil novo volta a cada 20 s.
+- **Foguete** (G): 12 por vez, voa reto. Um foguete novo volta a cada 6 s.
+
+Na tela: a mira azul mostra para onde o nariz aponta; as caixas vermelhas marcam os inimigos com a distância; a seta
+na borda aponta para o inimigo mais perto quando ele está fora da tela.
+
 ## Comandos
 
 | Tecla     | O que faz                                   |
 | --------- | ------------------------------------------- |
-| ↑ ↓       | Nariz para cima / para baixo                |
-| ← →       | Inclinar as asas (o avião faz a curva)      |
+| ↓ ↑       | Puxar / empurrar o manche (nariz sobe / desce) |
+| ← →       | Inclinar as asas. Para curvar, incline e puxe |
 | A D       | Leme: vira o nariz de lado                  |
 | W S       | Mais motor / menos motor                    |
+| Espaço    | Metralhadora                                |
+| F         | Míssil guiado                               |
+| G         | Foguete                                     |
 | C         | Trocar câmera (atrás do avião ou cabine)    |
 | I         | Inverter ↑ ↓                                |
 | P ou Esc  | Pausar (na pausa dá para trocar de caça)    |
@@ -34,13 +54,15 @@ Os arquivos ficam em `modelos/` (formato glTF binário, `.glb`) e são carregado
 
 ## Como o voo funciona
 
-- **Velocidade:** o motor empurra e o ar segura. Subir gasta velocidade, mergulhar ganha.
-- **Curva:** com as asas inclinadas o avião vira sozinho para o lado da asa mais baixa. Soltando as setas, as asas
-  voltam a nivelar devagar.
-- **Estol:** abaixo de 86 km/h as asas perdem sustentação. O nariz cai e aparece o aviso ESTOL até o avião ganhar
+- **Velocidade:** o motor empurra e o ar segura. Só no motor o caça chega a uns 1.100 km/h; com pós-combustão
+  (acima de 82%) passa de 1.900 km/h. Subir gasta velocidade, mergulhar ganha.
+- **Curva:** como num caça de verdade, inclinar as asas sozinho não vira. Incline (← →) e puxe o manche (↓): quanto
+  mais inclinado, mais a puxada vira o nariz. Inclinado sem puxar, o nariz vai caindo. A puxada é limitada a uns 9 g,
+  então em alta velocidade a curva é mais larga.
+- **Estol:** abaixo de 216 km/h as asas perdem sustentação. O nariz cai e aparece o aviso ESTOL até o caça ganhar
   velocidade de novo.
-- **Teto:** acima de 2.500 m o ar fica rarefeito e o motor perde força.
-- **Batida:** encostar no chão ou numa árvore recomeça o voo a 320 m.
+- **Teto:** acima de 12.000 m o ar fica rarefeito e o motor perde força.
+- **Batida:** no voo livre, encostar no chão ou numa árvore recomeça o voo. Na sobrevivência, acaba o voo.
 
 O mundo não tem fim: o chão é uma textura de 1,6 km que se repete, e as árvores e as nuvens são reposicionadas em volta
 do avião enquanto ele voa.

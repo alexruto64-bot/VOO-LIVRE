@@ -234,6 +234,25 @@ h1 {
 .principal:hover { filter: brightness(1.08); }
 .principal:focus-visible { outline: 3px solid var(--texto); outline-offset: 3px; }
 
+.combate { left: auto; right: max(16px, env(safe-area-inset-right, 0px)); }
+.nivel.vida { background: #7cff8a; }
+.nivel.vida.baixa { background: #ff6a4a; }
+.mira { position: fixed; z-index: 2; width: 36px; height: 36px; margin: -18px 0 0 -18px; border: 2px solid rgba(116, 224, 255, 0.9); border-radius: 50%; pointer-events: none; }
+.mira::before, .mira::after { content: ""; position: absolute; background: rgba(116, 224, 255, 0.9); }
+.mira::before { left: 50%; top: -10px; width: 2px; height: 10px; margin-left: -1px; box-shadow: 0 42px 0 rgba(116, 224, 255, 0.9); }
+.mira::after { top: 50%; left: -10px; height: 2px; width: 10px; margin-top: -1px; box-shadow: 42px 0 0 rgba(116, 224, 255, 0.9); }
+.alvo { position: fixed; z-index: 2; width: 46px; height: 46px; margin: -23px 0 0 -23px; border: 2px solid rgba(255, 90, 70, 0.95); pointer-events: none; font: 700 11px/1 var(--fonte-numero); color: #ff8a76; }
+.alvo span { position: absolute; left: 50%; top: 100%; transform: translateX(-50%); margin-top: 5px; white-space: nowrap; text-shadow: 0 0 4px #000, 0 0 2px #000; }
+.alvo.travando { border-color: var(--ambar); color: var(--ambar); }
+.alvo.travado { border-color: var(--ciano); color: var(--ciano); border-radius: 50%; }
+.seta-alvo { position: fixed; z-index: 2; font-size: 30px; line-height: 1; color: #ff8a76; pointer-events: none; text-shadow: 0 0 6px #000; }
+.dano { position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0; background: radial-gradient(ellipse at center, rgba(255, 40, 30, 0) 45%, rgba(255, 40, 30, 0.85) 100%); }
+.modos { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.modo { display: grid; gap: 3px; padding: 10px 12px; border: 2px solid var(--painel-borda); border-radius: 8px; background: var(--tecla); color: var(--texto); font: 700 13px/1.2 var(--fonte-rotulo); text-align: left; cursor: pointer; }
+.modo small { font-weight: 400; font-size: 11px; line-height: 1.35; color: var(--texto-suave); }
+.modo[aria-pressed="true"] { border-color: var(--ciano); background: rgba(116, 224, 255, 0.12); }
+.modo:hover { border-color: var(--texto-suave); }
+.modo:focus-visible { outline: 3px solid var(--texto); outline-offset: 2px; }
 .cacas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0; }
 .caca {
   display: grid; gap: 4px; padding: 6px;
@@ -281,16 +300,33 @@ h1 {
     <span class="rot">MOTOR</span><span class="barra" aria-hidden="true"><span class="nivel" id="motor-nivel"></span></span><span class="uni" id="motor">45%</span>
   </section>
 
+  <section class="painel instrumentos combate" id="combate" aria-label="Combate" hidden>
+    <p class="prefixo">SOBREVIVÊNCIA</p>
+    <span class="rot">NÍVEL</span><span class="val" id="nivel">1</span><span class="uni"></span>
+    <span class="rot">PONTOS</span><span class="val" id="pontos">0</span><span class="uni"></span>
+    <span class="rot">CASCO</span><span class="barra" aria-hidden="true"><span class="nivel vida" id="vida-nivel"></span></span><span class="uni" id="vida">100%</span>
+    <span class="rot">GUIADOS</span><span class="val" id="guiados">4/4</span><span class="uni">F</span>
+    <span class="rot">FOGUETES</span><span class="val" id="foguetes">12/12</span><span class="uni">G</span>
+    <span class="rot">INIMIGOS</span><span class="val" id="restam">0</span><span class="uni">no ar</span>
+  </section>
+  <div class="mira" id="mira" hidden aria-hidden="true"></div>
+  <div id="alvos" aria-hidden="true"></div>
+  <div class="seta-alvo" id="seta-alvo" hidden aria-hidden="true">➤</div>
+  <div class="dano" id="dano" aria-hidden="true"></div>
+
   <p class="aviso" id="aviso" hidden>ESTOL · baixe o nariz e acelere</p>
   <p class="mensagem" id="mensagem" hidden></p>
 
   <section class="painel ajuda" id="ajuda" aria-label="Comandos">
     <p class="ajuda-titulo">Comandos <span>H esconde</span></p>
     <dl class="comandos">
-      <dt><kbd>↑</kbd><kbd>↓</kbd></dt><dd>Nariz para cima / para baixo</dd>
-      <dt><kbd>←</kbd><kbd>→</kbd></dt><dd>Inclinar as asas e fazer curva</dd>
+      <dt><kbd>↓</kbd><kbd>↑</kbd></dt><dd>Puxar / empurrar o manche (nariz sobe / desce)</dd>
+      <dt><kbd>←</kbd><kbd>→</kbd></dt><dd>Inclinar as asas. Para curvar, incline e puxe</dd>
       <dt><kbd>A</kbd><kbd>D</kbd></dt><dd>Leme: vira o nariz de lado</dd>
-      <dt><kbd>W</kbd><kbd>S</kbd></dt><dd>Mais motor / menos motor</dd>
+      <dt><kbd>W</kbd><kbd>S</kbd></dt><dd>Motor. Acima de 82%, pós-combustão</dd>
+      <dt><kbd>Espaço</kbd></dt><dd>Metralhadora (tiros infinitos)</dd>
+      <dt><kbd>F</kbd></dt><dd>Míssil guiado (precisa de alvo travado)</dd>
+      <dt><kbd>G</kbd></dt><dd>Foguete, sem guia</dd>
       <dt><kbd>C</kbd></dt><dd>Trocar câmera</dd>
       <dt><kbd>I</kbd></dt><dd>Inverter ↑ ↓</dd>
       <dt><kbd>P</kbd></dt><dd>Pausar</dd>
@@ -303,7 +339,11 @@ h1 {
   <div class="painel cartao">
     <p class="olho">Lista de verificação</p>
     <h1>Voo Livre</h1>
-    <p class="sub">Escolha o caça e voe para onde quiser.</p>
+    <p class="sub">Escolha o modo e o caça.</p>
+    <div class="modos" id="modos" role="group" aria-label="Modo de jogo">
+      <button class="modo" type="button" data-modo="livre" aria-pressed="true"><span>Voo livre</span><small>Só você, o caça e o céu.</small></button>
+      <button class="modo" type="button" data-modo="sobrevivencia" aria-pressed="false"><span>Sobrevivência</span><small>Ondas de caças inimigos. Cada nível, mais deles e mais rápidos.</small></button>
+    </div>
     <div class="cacas" id="cacas" role="group" aria-label="Escolha o caça">
       <button class="caca" type="button" data-caca="f16" aria-pressed="true"><img src="modelos/f16.jpg" alt=""><span>F-16D Fighting Falcon</span><small>15 m · 1 motor</small></button>
       <button class="caca" type="button" data-caca="f14" aria-pressed="false"><img src="modelos/f14.jpg" alt=""><span>F-14 Tomcat</span><small>19 m · 2 motores</small></button>
@@ -312,10 +352,13 @@ h1 {
     <div class="carga" aria-hidden="true"><span id="carga-barra"></span></div>
     <p class="nota" id="carga-texto" aria-live="polite">Carregando o F-16D…</p>
     <dl class="comandos">
-      <dt><kbd>↑</kbd><kbd>↓</kbd></dt><dd>Nariz para cima / para baixo</dd>
-      <dt><kbd>←</kbd><kbd>→</kbd></dt><dd>Inclinar as asas e fazer curva</dd>
+      <dt><kbd>↓</kbd><kbd>↑</kbd></dt><dd>Puxar / empurrar o manche (nariz sobe / desce)</dd>
+      <dt><kbd>←</kbd><kbd>→</kbd></dt><dd>Inclinar as asas. Para curvar, incline e puxe</dd>
       <dt><kbd>A</kbd><kbd>D</kbd></dt><dd>Leme: vira o nariz de lado</dd>
-      <dt><kbd>W</kbd><kbd>S</kbd></dt><dd>Mais motor / menos motor</dd>
+      <dt><kbd>W</kbd><kbd>S</kbd></dt><dd>Motor. Acima de 82%, pós-combustão</dd>
+      <dt><kbd>Espaço</kbd></dt><dd>Metralhadora (tiros infinitos)</dd>
+      <dt><kbd>F</kbd></dt><dd>Míssil guiado (precisa de alvo travado)</dd>
+      <dt><kbd>G</kbd></dt><dd>Foguete, sem guia</dd>
       <dt><kbd>C</kbd></dt><dd>Trocar câmera</dd>
       <dt><kbd>I</kbd></dt><dd>Inverter ↑ ↓</dd>
       <dt><kbd>P</kbd></dt><dd>Pausar</dd>
@@ -336,6 +379,19 @@ h1 {
       <button class="secundario" id="trocar" type="button">Trocar caça</button>
     </div>
     <p class="nota">Ou aperte P.</p>
+  </div>
+</div>
+
+<div class="tela centro" id="fim" hidden>
+  <div class="painel cartao">
+    <p class="olho">Abatido</p>
+    <h1>Fim de voo</h1>
+    <p class="sub" id="fim-texto"></p>
+    <div class="botoes">
+      <button class="principal" id="denovo" type="button">Tentar de novo</button>
+      <button class="secundario" id="fim-trocar" type="button">Trocar caça</button>
+    </div>
+    <p class="nota">Ou aperte R.</p>
   </div>
 </div>
 
@@ -825,7 +881,7 @@ h1 {
       grupo.add(chama);
       plumas.push(chama);
     }
-    return { id, config: cfg, grupo, plumas, envergadura: tam.x * esc };
+    return { id, config: cfg, grupo, modelo, plumas, envergadura: tam.x * esc };
   }
 
   function carregarCaca(id) {
@@ -907,8 +963,8 @@ h1 {
   })();
 
   // ---------- estado do voo ----------
-  const INICIO = { x: 0, y: 320, z: 0, vel: 58, motor: 0.45 };
-  const VEL_ESTOL = 24;             // m/s (86 km/h): abaixo disso as asas perdem sustentação
+  const INICIO = { x: 0, y: 1500, z: 0, vel: 200, motor: 0.6 };
+  const VEL_ESTOL = 60;             // m/s (216 km/h): abaixo disso as asas perdem sustentação
   const aviao = {
     pos: new THREE.Vector3(INICIO.x, INICIO.y, INICIO.z),
     quat: new THREE.Quaternion(),
@@ -939,7 +995,7 @@ h1 {
       case 'KeyC': trocarCamera(); break;
       case 'KeyI':
         inverter = !inverter;
-        mensagem(inverter ? 'Invertido: ↑ desce o nariz, ↓ sobe' : 'Normal: ↑ sobe o nariz, ↓ desce');
+        mensagem(inverter ? 'Invertido: ↑ puxa o manche (nariz sobe)' : 'Normal: ↓ puxa o manche (nariz sobe)');
         break;
       case 'KeyP':
       case 'Escape':
@@ -947,6 +1003,8 @@ h1 {
         break;
       case 'KeyR': recomecar(); break;
       case 'KeyH': elAjuda.hidden = !elAjuda.hidden; break;
+      case 'KeyF': dispararMissil('guiado'); break;
+      case 'KeyG': dispararMissil('foguete'); break;
     }
   });
   window.addEventListener('keyup', (e) => teclas.delete(e.code));
@@ -974,16 +1032,19 @@ h1 {
       $('inicio').hidden = true;
       elHud.hidden = false;
       estado = 'voando';
-      mensagem('Dica: ← → fazem curva, W acelera e acima de 82% liga a pós-combustão', 5);
+      if (modo === 'sobrevivencia') { iniciarSobrevivencia(); mensagem('Espaço atira, F lança míssil guiado, G lança foguete', 5); }
+      else { limparCombate(); mensagem('Dica: incline as asas e puxe (↓) para curvar. Acima de 82% de motor, pós-combustão', 5); }
     };
     if (cacaAtual && cacaAtual.id === cacaEscolhido) { partir(); return; }
     $('decolar').disabled = true;
     (carregando || escolherCaca(cacaEscolhido)).then(() => { $('decolar').disabled = false; partir(); });
   }
   function trocarCaca() {
-    if (estado !== 'pausado') return;
+    if (estado !== 'pausado' && estado !== 'fim') return;
     estado = 'inicio';
+    limparCombate();
     elPausa.hidden = true;
+    $('fim').hidden = true;
     elHud.hidden = true;
     $('inicio').hidden = false;
     aviao.pos.set(INICIO.x, INICIO.y, INICIO.z);
@@ -1006,6 +1067,7 @@ h1 {
     elPausa.hidden = true;
   }
   function baterAviao() {
+    if (modo === 'sobrevivencia') { dano(100, 'chao'); return; }
     estado = 'batido';
     tempoBatida = 2.2;
     aviao.estol = false;
@@ -1013,6 +1075,7 @@ h1 {
   }
   function recomecar() {
     if (estado === 'inicio') return;
+    if (modo === 'sobrevivencia' && (estado === 'fim' || jogo.integridade <= 0)) { iniciarSobrevivencia(); $('fim').hidden = true; }
     aviao.pos.set(INICIO.x, INICIO.y, INICIO.z);
     aviao.quat.identity();
     aviao.vel = INICIO.vel;
@@ -1032,6 +1095,14 @@ h1 {
   $('decolar').addEventListener('click', iniciar);
   $('continuar').addEventListener('click', continuar);
   $('trocar').addEventListener('click', trocarCaca);
+  $('fim-trocar').addEventListener('click', trocarCaca);
+  $('denovo').addEventListener('click', recomecar);
+  $('modos').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-modo]');
+    if (!b) return;
+    modo = b.dataset.modo;
+    for (const x of document.querySelectorAll('.modo')) x.setAttribute('aria-pressed', String(x.dataset.modo === modo));
+  });
 
   // ---------- física de voo (simples, de fliperama) ----------
   const frente = new THREE.Vector3();
@@ -1045,7 +1116,8 @@ h1 {
     let alvoRol = 0;
     let alvoGui = 0;
     if (comPiloto) {
-      alvoArf = (apertada('ArrowUp') ? 1 : 0) - (apertada('ArrowDown') ? 1 : 0);
+      // seta para baixo puxa o manche (nariz sobe); seta para cima empurra (nariz desce)
+      alvoArf = (apertada('ArrowDown') ? 1 : 0) - (apertada('ArrowUp') ? 1 : 0);
       if (inverter) alvoArf = -alvoArf;
       alvoRol = (apertada('ArrowLeft') ? 1 : 0) - (apertada('ArrowRight') ? 1 : 0);
       alvoGui = (apertada('KeyA') ? 1 : 0) - (apertada('KeyD') ? 1 : 0);
@@ -1057,35 +1129,47 @@ h1 {
     ctrl.guinada = aproximar(ctrl.guinada, alvoGui, 6, dt);
 
     const q = aviao.quat;
-    const autoridade = clamp(aviao.vel / 55, 0.25, 1.25);   // devagar, os comandos ficam moles
+    const v = aviao.vel;
+    // Quanto o caça consegue girar: devagar, as asas sustentam pouco; rápido, o limite é o
+    // esforço (cerca de 9 g). A curva de verdade vem de inclinar as asas e puxar o manche.
+    const sustentacao = clamp((v - VEL_ESTOL * 0.6) / (VEL_ESTOL * 1.2), 0.15, 1);
+    const taxaArf = Math.min(0.9, (9.8 * 9) / Math.max(v, 60)) * sustentacao;
+    const taxaRol = 2.6 * clamp(v / 120, 0.3, 1);
+    const taxaGui = 0.35 * sustentacao;
 
     // giros em torno dos eixos do próprio avião
-    qTmp.setFromAxisAngle(EIXO_X, ctrl.arfagem * 1.15 * autoridade * dt); q.multiply(qTmp);
-    qTmp.setFromAxisAngle(EIXO_Z, ctrl.rolagem * 2.0 * autoridade * dt); q.multiply(qTmp);
-    qTmp.setFromAxisAngle(EIXO_Y, ctrl.guinada * 0.55 * autoridade * dt); q.multiply(qTmp);
+    qTmp.setFromAxisAngle(EIXO_X, ctrl.arfagem * taxaArf * dt); q.multiply(qTmp);
+    qTmp.setFromAxisAngle(EIXO_Z, ctrl.rolagem * taxaRol * dt); q.multiply(qTmp);
+    qTmp.setFromAxisAngle(EIXO_Y, ctrl.guinada * taxaGui * dt); q.multiply(qTmp);
 
     frente.set(0, 0, -1).applyQuaternion(q);
     cimaAv.set(0, 1, 0).applyQuaternion(q);
     direita.set(1, 0, 0).applyQuaternion(q);
 
-    // asas inclinadas fazem o avião curvar para o lado da asa mais baixa
-    qTmp.setFromAxisAngle(EIXO_Y, direita.y * 0.85 * autoridade * dt);
+    // inclinado e sem puxar, o nariz cai devagar: as asas deixam de segurar o peso
+    const inclinacao = Math.atan2(direita.y, cimaAv.y);
+    if (Math.abs(frente.y) < 0.95) {
+      qTmp.setFromAxisAngle(direita, -Math.abs(Math.sin(inclinacao)) * 0.18 * (1 - Math.abs(ctrl.arfagem)) * dt);
+      q.premultiply(qTmp);
+    }
+    // a cauda acompanha um pouco a curva
+    qTmp.setFromAxisAngle(EIXO_Y, direita.y * 0.12 * dt);
     q.premultiply(qTmp);
-
-    // sem comando, as asas voltam a ficar niveladas devagar
-    if (alvoRol === 0 && alvoArf === 0 && Math.abs(frente.y) < 0.9) {
-      const inclinacao = Math.atan2(direita.y, cimaAv.y);
-      qTmp.setFromAxisAngle(EIXO_Z, -inclinacao * 1.1 * (1 - Math.abs(frente.y)) * dt);
+    // sem comando de rolagem, as asas voltam devagar ao nível
+    if (alvoRol === 0 && Math.abs(frente.y) < 0.9) {
+      qTmp.setFromAxisAngle(EIXO_Z, -inclinacao * 0.5 * (1 - Math.abs(frente.y)) * dt);
       q.multiply(qTmp);
     }
     q.normalize();
     frente.set(0, 0, -1).applyQuaternion(q);
 
-    // motor, resistência do ar e gravidade: subir gasta velocidade, mergulhar ganha
-    const ar = clamp(1 - (aviao.pos.y - 2500) / 2000, 0, 1);  // ar rarefeito acima de 2.500 m
-    const empuxo = aviao.motor * 10 * ar;
-    const arrasto = 0.001 * aviao.vel * aviao.vel;
-    aviao.vel = clamp(aviao.vel + (empuxo - arrasto - 9.8 * frente.y) * dt, 0, 150);
+    // motor, resistência do ar e gravidade: subir gasta velocidade, mergulhar ganha.
+    // Com pós-combustão chega perto de 2.000 km/h; só no motor, uns 1.100 km/h.
+    const ar = clamp(1 - (aviao.pos.y - 12000) / 6000, 0.2, 1);   // ar rarefeito lá em cima
+    const pc = clamp((aviao.motor - 0.82) / 0.18, 0, 1);
+    const empuxo = (aviao.motor * 30 + pc * 50) * ar;
+    const arrasto = 0.00026 * v * v * (1 + 0.6 * Math.abs(ctrl.arfagem));   // puxar o manche freia
+    aviao.vel = clamp(v + (empuxo - arrasto - 9.8 * frente.y) * dt, 0, 600);
 
     // estol: devagar demais, o nariz cai e o avião afunda
     aviao.estol = aviao.vel < VEL_ESTOL;
@@ -1097,7 +1181,7 @@ h1 {
         qTmp.setFromAxisAngle(eixoTmp.divideScalar(len), (0.6 + f * 1.6) * dt);
         q.premultiply(qTmp);
       }
-      aviao.pos.y -= f * 14 * dt;
+      aviao.pos.y -= f * 20 * dt;
     }
 
     aviao.pos.addScaledVector(frente, aviao.vel * dt);
@@ -1124,7 +1208,7 @@ h1 {
     aviaoModelo.visible = modoCamera !== 'cabine';
 
     // o campo de visão abre um pouco com a velocidade
-    const fovAlvo = reduzirMovimento ? 62 : clamp(58 + aviao.vel * 0.09, 58, 72);
+    const fovAlvo = reduzirMovimento ? 62 : clamp(58 + aviao.vel * 0.03, 58, 74);
     if (Math.abs(camera.fov - fovAlvo) > 0.05) {
       camera.fov = aproximar(camera.fov, fovAlvo, 2, dt);
       camera.updateProjectionMatrix();
@@ -1160,6 +1244,489 @@ h1 {
     elAviso.hidden = !(aviao.estol && estado === 'voando');
   }
 
+  // ---------- combate: modo sobrevivência ----------
+  let modo = 'livre';                      // livre | sobrevivencia
+  const jogo = { nivel: 1, pontos: 0, integridade: 100, abatidosNivel: 0, totalNivel: 0, fila: 0, tempoSpawn: 0, tempoProximo: 0 };
+  const inimigos = [];
+  const misseis = [];
+  const RECARGA_GUIADO = 20;               // segundos para voltar um míssil guiado
+  const RECARGA_FOGUETE = 6;               // segundos para voltar um foguete
+  const armas = { guiados: 4, foguetes: 12, maxGuiados: 4, maxFoguetes: 12, recargaGuiado: 0, recargaFoguete: 0, cadencia: 0, lado: 1 };
+  let alvoTravado = null;                  // inimigo com trava completa
+  let candidato = null;                    // inimigo na mira, travando
+  let tempoTrava = 0;
+  let flashDano = 0;
+
+  const elCombate = $('combate');
+  const elNivel = $('nivel');
+  const elPontos = $('pontos');
+  const elVida = $('vida');
+  const elVidaNivel = $('vida-nivel');
+  const elGuiados = $('guiados');
+  const elFoguetes = $('foguetes');
+  const elRestam = $('restam');
+  const elMira = $('mira');
+  const elSeta = $('seta-alvo');
+  const elDano = $('dano');
+  const elAlvos = $('alvos');
+  const caixas = [];
+  for (let i = 0; i < 8; i++) {
+    const c = document.createElement('div');
+    c.className = 'alvo';
+    c.hidden = true;
+    c.innerHTML = '<span></span>';
+    elAlvos.appendChild(c);
+    caixas.push(c);
+  }
+
+  const tmpA = new THREE.Vector3();
+  const tmpB = new THREE.Vector3();
+  const tmpC = new THREE.Vector3();
+  const tmpD = new THREE.Vector3();
+  const mTmp = new THREE.Matrix4();
+  const qAlvo = new THREE.Quaternion();
+  const qVis = new THREE.Quaternion();
+  const frenteJog = new THREE.Vector3();
+
+  // Distância de um ponto a um segmento: evita que um tiro rápido "pule" o alvo entre dois quadros.
+  function distSegmento(a, b, c) {
+    tmpC.subVectors(b, a);
+    const l2 = tmpC.lengthSq();
+    if (l2 < 1e-6) return c.distanceTo(a);
+    const t = clamp(tmpD.subVectors(c, a).dot(tmpC) / l2, 0, 1);
+    return tmpC.multiplyScalar(t).add(a).distanceTo(c);
+  }
+
+  // --- tiros: um estoque de malhas reaproveitadas
+  const geoTiro = new THREE.BoxGeometry(0.2, 0.2, 6);
+  const matTiro = new THREE.MeshBasicMaterial({ color: 0xffd36a });
+  const matTiroInimigo = new THREE.MeshBasicMaterial({ color: 0xff6a4a });
+  const tiros = [];
+  for (let i = 0; i < 240; i++) {
+    const m = new THREE.Mesh(geoTiro, matTiro);
+    m.visible = false;
+    m.frustumCulled = false;
+    scene.add(m);
+    tiros.push({ malha: m, pos: new THREE.Vector3(), ant: new THREE.Vector3(), vel: new THREE.Vector3(), vida: 0, meu: true });
+  }
+  function atirar(pos, dir, velBase, meu, espalhar) {
+    const t = tiros.find((x) => x.vida <= 0);
+    if (!t) return;
+    t.pos.copy(pos);
+    t.ant.copy(pos);
+    t.vel.copy(dir).multiplyScalar(velBase + 950);
+    t.vel.x += (Math.random() - 0.5) * espalhar;
+    t.vel.y += (Math.random() - 0.5) * espalhar;
+    t.vel.z += (Math.random() - 0.5) * espalhar;
+    t.vida = 2.2;
+    t.meu = meu;
+    t.malha.material = meu ? matTiro : matTiroInimigo;
+    t.malha.visible = true;
+    mTmp.lookAt(tmpA.set(0, 0, 0), t.vel, EIXO_Y);
+    t.malha.quaternion.setFromRotationMatrix(mTmp);
+  }
+
+  // --- explosões: esferas que crescem e somem
+  const geoExplosao = new THREE.SphereGeometry(1, 14, 10);
+  const explosoes = [];
+  for (let i = 0; i < 64; i++) {
+    const m = new THREE.Mesh(geoExplosao, new THREE.MeshBasicMaterial({ color: 0xff8a2a, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending }));
+    m.visible = false;
+    scene.add(m);
+    explosoes.push({ malha: m, t: 0, dur: 1, tam: 1 });
+  }
+  function explodir(pos, tamanho, fumaca) {
+    const e = explosoes.find((x) => !x.malha.visible) || explosoes[0];
+    e.malha.position.copy(pos);
+    e.t = 0;
+    e.dur = fumaca ? 1.1 : 0.5 + tamanho * 0.3;
+    e.fumaca = !!fumaca;
+    e.tam = tamanho;
+    e.malha.material.color.set(fumaca ? 0x9a9a9a : 0xff8a2a);
+    e.malha.material.blending = fumaca ? THREE.NormalBlending : THREE.AdditiveBlending;
+    e.malha.visible = true;
+  }
+  function atualizarExplosoes(dt) {
+    for (const e of explosoes) {
+      if (!e.malha.visible) continue;
+      e.t += dt;
+      const f = e.t / e.dur;
+      if (f >= 1) { e.malha.visible = false; continue; }
+      e.malha.scale.setScalar(2 + f * 26 * e.tam);
+      e.malha.material.opacity = (1 - f) * (e.fumaca ? 0.3 : 0.85);
+    }
+  }
+
+  // --- mísseis
+  const geoCorpoMissil = new THREE.CylinderGeometry(0.13, 0.13, 3, 10);
+  geoCorpoMissil.rotateX(Math.PI / 2);
+  const geoPontaMissil = new THREE.ConeGeometry(0.13, 0.55, 10);
+  geoPontaMissil.rotateX(-Math.PI / 2);
+  geoPontaMissil.translate(0, 0, -1.75);
+  const geoAleta = new THREE.BoxGeometry(0.55, 0.03, 0.5);
+  const matMissil = new THREE.MeshStandardMaterial({ color: 0xd8dde2, metalness: 0.3, roughness: 0.5 });
+  const matMissilGuiado = new THREE.MeshStandardMaterial({ color: 0xb9c6d2, metalness: 0.3, roughness: 0.5 });
+  const matChamaMissil = new THREE.MeshBasicMaterial({ map: texChama, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, opacity: 0.8 });
+  function criarMissil(guiado) {
+    const g = new THREE.Group();
+    const mat = guiado ? matMissilGuiado : matMissil;
+    g.add(new THREE.Mesh(geoCorpoMissil, mat));
+    g.add(new THREE.Mesh(geoPontaMissil, mat));
+    for (let i = 0; i < 4; i++) {
+      const a = new THREE.Mesh(geoAleta, mat);
+      a.position.z = 1.2;
+      a.rotation.z = (i * Math.PI) / 2;
+      g.add(a);
+    }
+    const chama = new THREE.Mesh(geoChama, matChamaMissil);
+    chama.position.z = 1.5;
+    chama.scale.set(0.22, 0.22, 3.5);
+    g.add(chama);
+    g.frustumCulled = false;
+    return { malha: g, pos: new THREE.Vector3(), ant: new THREE.Vector3(), quat: new THREE.Quaternion(), vel: 0, vida: 0, alvo: null, guiado, chama, fumaca: 0 };
+  }
+  function dispararMissil(tipo) {
+    if (estado !== 'voando') return;
+    const guiado = tipo === 'guiado';
+    if (guiado) {
+      if (armas.guiados <= 0) { mensagem('Sem mísseis guiados. Um volta a cada ' + RECARGA_GUIADO + ' s.'); return; }
+      if (!alvoTravado) { mensagem('Sem alvo travado: segure a mira num inimigo até a caixa ficar azul'); return; }
+      armas.guiados--;
+    } else {
+      if (armas.foguetes <= 0) { mensagem('Sem foguetes. Um volta a cada ' + RECARGA_FOGUETE + ' s.'); return; }
+      armas.foguetes--;
+    }
+    const m = criarMissil(guiado);
+    frenteJog.set(0, 0, -1).applyQuaternion(aviao.quat);
+    tmpA.set(1, 0, 0).applyQuaternion(aviao.quat);
+    tmpB.set(0, 1, 0).applyQuaternion(aviao.quat);
+    armas.lado = -armas.lado;
+    m.pos.copy(aviao.pos).addScaledVector(tmpA, armas.lado * 2.2).addScaledVector(tmpB, -1.3).addScaledVector(frenteJog, 1);
+    m.ant.copy(m.pos);
+    m.quat.copy(aviao.quat);
+    m.vel = aviao.vel + 20;
+    m.vida = guiado ? 14 : 7;
+    m.alvo = guiado ? alvoTravado : null;
+    m.malha.position.copy(m.pos);
+    m.malha.quaternion.copy(m.quat);
+    scene.add(m.malha);
+    misseis.push(m);
+  }
+  function atualizarMisseis(dt) {
+    for (let i = misseis.length - 1; i >= 0; i--) {
+      const m = misseis[i];
+      m.vel = Math.min(m.vel + 220 * dt, m.guiado ? 820 : 680);
+      if (m.guiado && m.alvo && m.alvo.vivo) {
+        // mira um pouco à frente do alvo
+        tmpA.set(0, 0, -1).applyQuaternion(m.alvo.quat).multiplyScalar(m.alvo.vel * 0.4).add(m.alvo.pos);
+        mTmp.lookAt(m.pos, tmpA, EIXO_Y);
+        qAlvo.setFromRotationMatrix(mTmp);
+        m.quat.rotateTowards(qAlvo, 2.4 * dt);
+      }
+      tmpB.set(0, 0, -1).applyQuaternion(m.quat);
+      m.ant.copy(m.pos);
+      m.pos.addScaledVector(tmpB, m.vel * dt);
+      m.vida -= dt;
+      m.malha.position.copy(m.pos);
+      m.malha.quaternion.copy(m.quat);
+      m.chama.scale.z = 3 + Math.random() * 1.5;
+      m.fumaca -= dt;
+      if (m.fumaca <= 0) { explodir(m.ant, 0.1, true); m.fumaca = 0.09; }
+      let acabou = false;
+      for (const ini of inimigos) {
+        if (!ini.vivo) continue;
+        if (distSegmento(m.ant, m.pos, ini.pos) < ini.raio + (m.guiado ? 12 : 6)) {
+          acertar(ini, m.guiado ? 130 : 75, m.guiado ? 'guiado' : 'foguete');
+          acabou = true;
+          break;
+        }
+      }
+      if (acabou || m.vida <= 0 || m.pos.y < 0) {
+        explodir(m.pos, acabou ? 1.3 : 0.6);
+        scene.remove(m.malha);
+        misseis.splice(i, 1);
+      }
+    }
+  }
+
+  // --- inimigos
+  const matChamaInimigo = new THREE.MeshBasicMaterial({ map: texChama, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, opacity: 0.5 });
+  function criarInimigo(nivel) {
+    const ids = Object.keys(cacaCache);
+    if (!ids.length) return;
+    const id = ids[Math.floor(Math.random() * ids.length)];
+    const base = cacaCache[id];
+    const grupo = new THREE.Group();
+    grupo.add(base.modelo.clone());
+    for (const [x, y, zz] of base.config.bocais) {
+      const ch = new THREE.Mesh(geoChama, matChamaInimigo);
+      ch.position.set(x, y, zz);
+      ch.scale.set(base.config.raioBocal, base.config.raioBocal, 4);
+      ch.frustumCulled = false;
+      grupo.add(ch);
+    }
+    scene.add(grupo);
+    const ang = Math.random() * Math.PI * 2;
+    const dist = 3200 + Math.random() * 1800;
+    const ini = {
+      id, grupo, config: base.config, vivo: true, caindo: 0,
+      pos: new THREE.Vector3(aviao.pos.x + Math.cos(ang) * dist, clamp(aviao.pos.y + (Math.random() - 0.5) * 800, 300, 8000), aviao.pos.z + Math.sin(ang) * dist),
+      quat: new THREE.Quaternion(),
+      vel: 170 + nivel * 18 + Math.random() * 30,
+      vida: 90 + nivel * 25,
+      giro: 0.3 + nivel * 0.045,            // rad/s: quanto mais alto o nível, mais apertada a curva
+      precisao: Math.max(1.5, 7 - nivel * 0.5), // espalhamento dos tiros (m/s)
+      tempoTiro: 2 + Math.random() * 3,
+      rajada: 0, desvio: 0, inclinacao: 0,
+      raio: base.config.comprimento * 0.42,
+    };
+    mTmp.lookAt(ini.pos, aviao.pos, EIXO_Y);
+    ini.quat.setFromRotationMatrix(mTmp);
+    ini.grupo.position.copy(ini.pos);
+    ini.grupo.quaternion.copy(ini.quat);
+    inimigos.push(ini);
+  }
+  function removerInimigo(ini) {
+    scene.remove(ini.grupo);
+    const i = inimigos.indexOf(ini);
+    if (i >= 0) inimigos.splice(i, 1);
+    if (alvoTravado === ini) alvoTravado = null;
+    if (candidato === ini) { candidato = null; tempoTrava = 0; }
+  }
+  function acertar(ini, dano, arma) {
+    if (!ini.vivo) return;
+    ini.vida -= dano;
+    if (ini.vida > 0) { explodir(ini.pos, 0.35); return; }
+    ini.vivo = false;
+    ini.caindo = 2.6;
+    const pontos = (arma === 'guiado' ? 200 : arma === 'foguete' ? 150 : 100) * jogo.nivel;
+    jogo.pontos += pontos;
+    jogo.abatidosNivel++;
+    explodir(ini.pos, 2.2);
+    mensagem('Abatido! +' + pontos + ' pontos', 2);
+    if (alvoTravado === ini) alvoTravado = null;
+    if (candidato === ini) { candidato = null; tempoTrava = 0; }
+  }
+  function atualizarInimigo(ini, dt) {
+    if (!ini.vivo) {
+      // destroço: cai girando, soltando fumaça
+      ini.caindo -= dt;
+      ini.vel = Math.max(40, ini.vel - 60 * dt);
+      qAlvo.setFromAxisAngle(EIXO_Z, 2.2 * dt);
+      ini.quat.multiply(qAlvo);
+      tmpB.set(0, 0, -1).applyQuaternion(ini.quat);
+      ini.pos.addScaledVector(tmpB, ini.vel * dt);
+      ini.pos.y -= (2.6 - ini.caindo) * 45 * dt;
+      ini.grupo.position.copy(ini.pos);
+      ini.grupo.quaternion.copy(ini.quat);
+      if (Math.random() < 0.3) explodir(ini.pos, 0.5, true);
+      if (ini.caindo <= 0 || ini.pos.y < 3) { explodir(ini.pos, 1.5); removerInimigo(ini); }
+      return;
+    }
+    tmpA.subVectors(aviao.pos, ini.pos);
+    const dist = tmpA.length();
+    ini.desvio -= dt;
+    if (dist < 320 && ini.desvio <= 0) ini.desvio = 2.5;   // perto demais: passa reto um pouco
+    if (ini.desvio <= 0) {
+      tmpB.copy(aviao.pos);
+      tmpB.y = Math.max(tmpB.y, 220);                       // não mergulha atrás do jogador até o chão
+      mTmp.lookAt(ini.pos, tmpB, EIXO_Y);
+      qAlvo.setFromRotationMatrix(mTmp);
+      ini.quat.rotateTowards(qAlvo, ini.giro * dt);
+    }
+    tmpB.set(0, 0, -1).applyQuaternion(ini.quat);
+    ini.pos.addScaledVector(tmpB, ini.vel * dt);
+    if (ini.pos.y < 60) ini.pos.y = 60;
+    // inclina as asas na direção da curva (só visual)
+    tmpC.set(1, 0, 0).applyQuaternion(ini.quat);
+    const lateral = ini.desvio > 0 ? 0 : tmpC.dot(tmpA) / Math.max(dist, 1);
+    ini.inclinacao = aproximar(ini.inclinacao, clamp(-lateral * 1.6, -1.2, 1.2), 3, dt);
+    qVis.setFromAxisAngle(EIXO_Z, ini.inclinacao);
+    ini.grupo.position.copy(ini.pos);
+    ini.grupo.quaternion.copy(ini.quat).multiply(qVis);
+    // atira em rajadas quando está alinhado e perto
+    ini.tempoTiro -= dt;
+    const alinhado = tmpB.dot(tmpA.normalize()) > Math.cos(0.07);
+    if (ini.tempoTiro <= 0 && dist < 1500 && alinhado) {
+      atirar(ini.pos.clone().addScaledVector(tmpB, 9), tmpB, ini.vel, false, ini.precisao);
+      ini.rajada++;
+      ini.tempoTiro = 0.1;
+      if (ini.rajada >= 8) { ini.rajada = 0; ini.tempoTiro = Math.max(0.8, 2.6 - jogo.nivel * 0.15) + Math.random(); }
+    }
+    // trombada
+    if (dist < ini.raio + 7) { acertar(ini, 9999, 'tiro'); dano(60, 'trombada'); }
+  }
+
+  function dano(quanto, motivo) {
+    if (estado !== 'voando' || modo !== 'sobrevivencia') return;
+    jogo.integridade = Math.max(0, jogo.integridade - quanto);
+    flashDano = 1;
+    if (jogo.integridade <= 0) abatido(motivo === 'chao' ? 'Você bateu no chão.' : motivo === 'trombada' ? 'Trombada no ar.' : 'O casco não aguentou os tiros.');
+  }
+  function abatido(texto) {
+    estado = 'fim';
+    teclas.clear();
+    aviao.motor = 0;
+    $('fim-texto').textContent = texto + ' Nível ' + jogo.nivel + ' · ' + jogo.pontos.toLocaleString('pt-BR') + ' pontos.';
+    $('fim').hidden = false;
+    explodir(aviao.pos, 2.5);
+  }
+
+  function atualizarTiros(dt) {
+    for (const t of tiros) {
+      if (t.vida <= 0) continue;
+      t.ant.copy(t.pos);
+      t.pos.addScaledVector(t.vel, dt);
+      t.vida -= dt;
+      t.malha.position.copy(t.pos);
+      let bateu = false;
+      if (t.meu) {
+        for (const ini of inimigos) {
+          if (ini.vivo && distSegmento(t.ant, t.pos, ini.pos) < ini.raio) { acertar(ini, 9, 'tiro'); bateu = true; break; }
+        }
+      } else if (distSegmento(t.ant, t.pos, aviao.pos) < 7) {
+        dano(4, 'tiro');
+        bateu = true;
+      }
+      if (bateu || t.vida <= 0 || t.pos.y < 0) { t.vida = 0; t.malha.visible = false; }
+    }
+  }
+
+  function novoNivel() {
+    jogo.abatidosNivel = 0;
+    jogo.totalNivel = Math.min(2 + jogo.nivel, 8);
+    jogo.fila = jogo.totalNivel;
+    jogo.tempoSpawn = 0.5;
+    mensagem('Nível ' + jogo.nivel + ': ' + jogo.totalNivel + ' caças inimigos chegando', 4);
+  }
+  function limparCombate() {
+    for (const ini of inimigos.slice()) removerInimigo(ini);
+    for (const m of misseis) scene.remove(m.malha);
+    misseis.length = 0;
+    for (const t of tiros) { t.vida = 0; t.malha.visible = false; }
+    for (const e of explosoes) e.malha.visible = false;
+    alvoTravado = candidato = null;
+    tempoTrava = 0;
+  }
+  function iniciarSobrevivencia() {
+    limparCombate();
+    jogo.nivel = 1;
+    jogo.pontos = 0;
+    jogo.integridade = 100;
+    jogo.totalNivel = 0;
+    jogo.tempoProximo = 0;
+    Object.assign(armas, { guiados: 4, foguetes: 12, recargaGuiado: 0, recargaFoguete: 0 });
+    for (const id of Object.keys(CACAS)) carregarCaca(id).catch(() => null);   // mais modelos para os inimigos
+    novoNivel();
+  }
+
+  function atualizarCombate(dt) {
+    atualizarExplosoes(dt);
+    atualizarTiros(dt);
+    atualizarMisseis(dt);
+    for (const ini of inimigos.slice()) atualizarInimigo(ini, dt);
+    if (modo !== 'sobrevivencia' || estado !== 'voando') return;
+
+    // chegada dos inimigos do nível e passagem de nível
+    if (jogo.fila > 0) {
+      jogo.tempoSpawn -= dt;
+      if (jogo.tempoSpawn <= 0) { criarInimigo(jogo.nivel); jogo.fila--; jogo.tempoSpawn = 1.5; }
+    } else if (jogo.totalNivel > 0 && !inimigos.some((i) => i.vivo)) {
+      jogo.tempoProximo += dt;
+      if (jogo.tempoProximo > 3) { jogo.tempoProximo = 0; jogo.nivel++; novoNivel(); }
+    }
+
+    // recarga das armas
+    if (armas.guiados < armas.maxGuiados) { armas.recargaGuiado += dt; if (armas.recargaGuiado >= RECARGA_GUIADO) { armas.recargaGuiado = 0; armas.guiados++; } }
+    if (armas.foguetes < armas.maxFoguetes) { armas.recargaFoguete += dt; if (armas.recargaFoguete >= RECARGA_FOGUETE) { armas.recargaFoguete = 0; armas.foguetes++; } }
+
+    // metralhadora: segurar espaço
+    frenteJog.set(0, 0, -1).applyQuaternion(aviao.quat);
+    armas.cadencia -= dt;
+    if (apertada('Space') && armas.cadencia <= 0) {
+      armas.cadencia = 0.075;
+      armas.lado = -armas.lado;
+      tmpA.set(1, 0, 0).applyQuaternion(aviao.quat);
+      tmpB.copy(aviao.pos).addScaledVector(frenteJog, cacaAtual ? cacaAtual.config.comprimento * 0.45 : 6).addScaledVector(tmpA, armas.lado * 0.8);
+      atirar(tmpB, frenteJog, aviao.vel, true, 4);
+    }
+
+    // trava: o inimigo mais perto da mira, dentro de 25° e 5 km
+    let melhor = null, melhorAng = Math.cos(0.44);
+    for (const ini of inimigos) {
+      if (!ini.vivo) continue;
+      tmpA.subVectors(ini.pos, aviao.pos);
+      const d = tmpA.length();
+      if (d > 5000) continue;
+      const cos = frenteJog.dot(tmpA.divideScalar(d));
+      if (cos > melhorAng) { melhorAng = cos; melhor = ini; }
+    }
+    if (melhor !== candidato) { candidato = melhor; tempoTrava = 0; alvoTravado = null; }
+    else if (candidato) { tempoTrava += dt; if (tempoTrava >= 0.8) alvoTravado = candidato; }
+  }
+
+  // --- HUD de combate: mira, caixas nos alvos e seta para fora da tela
+  const tmpProj = new THREE.Vector3();
+  function naTela(p) {
+    tmpProj.copy(p).project(camera);
+    const atras = tmpProj.z > 1;
+    return { x: (tmpProj.x * 0.5 + 0.5) * window.innerWidth, y: (-tmpProj.y * 0.5 + 0.5) * window.innerHeight, atras, dentro: !atras && Math.abs(tmpProj.x) < 0.98 && Math.abs(tmpProj.y) < 0.98 };
+  }
+  function desenharHUDCombate() {
+    const voando = estado === 'voando';
+    camera.updateMatrixWorld();
+    frenteJog.set(0, 0, -1).applyQuaternion(aviao.quat);
+    const m = naTela(tmpA.copy(aviao.pos).addScaledVector(frenteJog, 1500));
+    elMira.hidden = !voando || m.atras;
+    if (!elMira.hidden) { elMira.style.left = m.x + 'px'; elMira.style.top = m.y + 'px'; }
+
+    let k = 0, maisPerto = null, menorDist = Infinity;
+    for (const ini of inimigos) {
+      if (!ini.vivo || !voando || modo !== 'sobrevivencia') continue;
+      const d = ini.pos.distanceTo(aviao.pos);
+      if (d < menorDist) { menorDist = d; maisPerto = ini; }
+      const s = naTela(ini.pos);
+      if (!s.dentro || k >= caixas.length) continue;
+      const c = caixas[k++];
+      c.hidden = false;
+      c.style.left = s.x + 'px';
+      c.style.top = s.y + 'px';
+      c.className = 'alvo' + (ini === alvoTravado ? ' travado' : ini === candidato ? ' travando' : '');
+      c.firstChild.textContent = (d >= 1000 ? (d / 1000).toFixed(1) + ' km' : Math.round(d) + ' m') + (ini === alvoTravado ? ' · TRAVADO' : ini === candidato ? ' · travando' : '');
+    }
+    for (; k < caixas.length; k++) caixas[k].hidden = true;
+
+    // seta na borda apontando para o inimigo mais perto quando ele está fora da tela
+    if (maisPerto) {
+      const s = naTela(maisPerto.pos);
+      if (!s.dentro) {
+        const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
+        let dx = s.x - cx, dy = s.y - cy;
+        if (s.atras) { dx = -dx; dy = -dy; }
+        const ang = Math.atan2(dy, dx);
+        const r = Math.min(cx, cy) * 0.62;
+        elSeta.hidden = false;
+        elSeta.style.left = (cx + Math.cos(ang) * r) + 'px';
+        elSeta.style.top = (cy + Math.sin(ang) * r) + 'px';
+        elSeta.style.transform = 'translate(-50%, -50%) rotate(' + ang + 'rad)';
+      } else elSeta.hidden = true;
+    } else elSeta.hidden = true;
+
+    // painel
+    elCombate.hidden = modo !== 'sobrevivencia' || elHud.hidden;
+    if (!elCombate.hidden) {
+      escrever(elNivel, 'nivel', String(jogo.nivel));
+      escrever(elPontos, 'pontos', jogo.pontos.toLocaleString('pt-BR'));
+      const vida = Math.round(jogo.integridade);
+      escrever(elVida, 'vida', vida + '%');
+      if (cache.vidaBarra !== vida) { cache.vidaBarra = vida; elVidaNivel.style.transform = 'scaleX(' + vida / 100 + ')'; elVidaNivel.classList.toggle('baixa', vida <= 35); }
+      escrever(elGuiados, 'guiados', armas.guiados + '/' + armas.maxGuiados);
+      escrever(elFoguetes, 'foguetes', armas.foguetes + '/' + armas.maxFoguetes);
+      escrever(elRestam, 'restam', String(inimigos.filter((i) => i.vivo).length + jogo.fila));
+    }
+    if (flashDano > 0) { flashDano = Math.max(0, flashDano - 0.04); elDano.style.opacity = flashDano * 0.55; }
+  }
+
   // ---------- laço principal ----------
   function redimensionar() {
     const w = canvas.clientWidth || window.innerWidth;
@@ -1181,10 +1748,14 @@ h1 {
     else if (estado === 'batido') {
       tempoBatida -= dt;
       if (tempoBatida <= 0) recomecar();
+    } else if (estado === 'fim') {
+      simular(dt, false);
+      if (aviao.pos.y < 2) aviao.pos.y = 2;
     }
 
     const bateuArvore = atualizarArvores(aviao.pos.x, aviao.pos.y, aviao.pos.z);
     if (estado === 'voando' && (aviao.pos.y < 1.4 || bateuArvore)) baterAviao();
+    if (estado !== 'pausado' && estado !== 'inicio') atualizarCombate(dt);
 
     atualizarNuvens(estado === 'pausado' ? 0 : dt, aviao.pos.x, aviao.pos.z);
     chao.position.set(aviao.pos.x, 0, aviao.pos.z);
@@ -1210,6 +1781,7 @@ h1 {
     atualizarCamera(dt);
     ceu.position.copy(camera.position);
     atualizarInstrumentos();
+    desenharHUDCombate();
 
     if (tempoMsg > 0) {
       tempoMsg -= dt;
@@ -1236,7 +1808,7 @@ h1 {
     try {
       if (Array.isArray(dados.pos) && dados.pos.length === 3 && dados.pos[1] > 5) aviao.pos.fromArray(dados.pos);
       if (Array.isArray(dados.quat) && dados.quat.length === 4) aviao.quat.fromArray(dados.quat).normalize();
-      if (typeof dados.vel === 'number') aviao.vel = clamp(dados.vel, 0, 150);
+      if (typeof dados.vel === 'number') aviao.vel = clamp(dados.vel, 0, 600);
       if (typeof dados.motor === 'number') aviao.motor = clamp(dados.motor, 0, 1);
       if (dados.modoCamera === 'cabine') modoCamera = 'cabine';
       if (dados.inverter === true) inverter = true;
