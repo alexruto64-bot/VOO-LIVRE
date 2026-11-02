@@ -234,6 +234,31 @@ h1 {
 .principal:hover { filter: brightness(1.08); }
 .principal:focus-visible { outline: 3px solid var(--texto); outline-offset: 3px; }
 
+.cacas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0; }
+.caca {
+  display: grid; gap: 4px; padding: 6px;
+  border: 2px solid var(--painel-borda); border-radius: 8px;
+  background: var(--tecla); color: var(--texto);
+  font: 700 12px/1.2 var(--fonte-rotulo); text-align: left; cursor: pointer;
+}
+.caca img { width: 100%; aspect-ratio: 1.6; object-fit: cover; border-radius: 4px; display: block; background: #8fb6d6; }
+.caca small { font-weight: 400; color: var(--texto-suave); }
+.caca[aria-pressed="true"] { border-color: var(--ciano); background: rgba(116, 224, 255, 0.12); }
+.caca:hover { border-color: var(--texto-suave); }
+.caca:focus-visible { outline: 3px solid var(--texto); outline-offset: 2px; }
+.carga { height: 6px; border-radius: 3px; background: var(--trilho); overflow: hidden; }
+.carga span { display: block; height: 100%; width: 0; background: var(--ciano); transition: width 0.2s; }
+.creditos { margin: 0; font-size: 11px; line-height: 1.45; color: var(--texto-suave); }
+.creditos a { color: var(--texto-suave); }
+.botoes { display: flex; gap: 10px; flex-wrap: wrap; }
+.secundario {
+  padding: 10px 18px; border: 2px solid var(--painel-borda); border-radius: 6px;
+  background: transparent; color: var(--texto);
+  font: 700 13px/1 var(--fonte-rotulo); letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer;
+}
+.secundario:hover { border-color: var(--ciano); }
+.secundario:focus-visible { outline: 3px solid var(--texto); outline-offset: 3px; }
+.principal:disabled { opacity: 0.6; cursor: wait; }
 @media (max-width: 640px) {
   .ajuda { display: none; }
   .cartao { margin-left: 0; }
@@ -249,7 +274,7 @@ h1 {
 
 <div id="hud" hidden>
   <section class="painel instrumentos" aria-label="Instrumentos de voo">
-    <p class="prefixo">PR-VOO</p>
+    <p class="prefixo" id="prefixo">F-16D</p>
     <span class="rot">VEL</span><span class="val" id="vel">0</span><span class="uni">km/h</span>
     <span class="rot">ALT</span><span class="val" id="alt">0</span><span class="uni">m</span>
     <span class="rot">RUMO</span><span class="val" id="rumo">000°</span><span class="uni" id="cardeal">N</span>
@@ -278,7 +303,14 @@ h1 {
   <div class="painel cartao">
     <p class="olho">Lista de verificação</p>
     <h1>Voo Livre</h1>
-    <p class="sub">Só você, o avião e o céu. Voe para onde quiser.</p>
+    <p class="sub">Escolha o caça e voe para onde quiser.</p>
+    <div class="cacas" id="cacas" role="group" aria-label="Escolha o caça">
+      <button class="caca" type="button" data-caca="f16" aria-pressed="true"><img src="modelos/f16.jpg" alt=""><span>F-16D Fighting Falcon</span><small>15 m · 1 motor</small></button>
+      <button class="caca" type="button" data-caca="f14" aria-pressed="false"><img src="modelos/f14.jpg" alt=""><span>F-14 Tomcat</span><small>19 m · 2 motores</small></button>
+      <button class="caca" type="button" data-caca="f18" aria-pressed="false"><img src="modelos/f18.jpg" alt=""><span>F/A-18F Super Hornet</span><small>18 m · 2 motores</small></button>
+    </div>
+    <div class="carga" aria-hidden="true"><span id="carga-barra"></span></div>
+    <p class="nota" id="carga-texto" aria-live="polite">Carregando o F-16D…</p>
     <dl class="comandos">
       <dt><kbd>↑</kbd><kbd>↓</kbd></dt><dd>Nariz para cima / para baixo</dd>
       <dt><kbd>←</kbd><kbd>→</kbd></dt><dd>Inclinar as asas e fazer curva</dd>
@@ -291,6 +323,7 @@ h1 {
     </dl>
     <button class="principal" id="decolar" type="button">Decolar</button>
     <p class="nota">Precisa de teclado. Se as teclas pararem de responder, clique no jogo.</p>
+    <p class="creditos">Modelos 3D do Sketchfab, licença CC BY 4.0: <a href="https://sketchfab.com/3d-models/general-dynamics-f-16d-block-60-ea8edb08d79e4eafa9c794c581f88cf3" target="_blank" rel="noopener">F-16D Block 60</a> por Muhamad Mirza Arrafi · <a href="https://sketchfab.com/3d-models/f-14-tomcat-top-gun-gear-up-downloadable-9d2d0c87539046aa8c2198fcc47cdcf8" target="_blank" rel="noopener">F-14 Tomcat</a> por dwsd · <a href="https://sketchfab.com/3d-models/boeing-fa-18ef-super-hornet-f71e9fea01e24fea9b1b380161d21d38" target="_blank" rel="noopener">F/A-18E/F Super Hornet</a> por andertan.</p>
   </div>
 </div>
 
@@ -298,7 +331,10 @@ h1 {
   <div class="painel cartao">
     <p class="olho">Pausado</p>
     <p class="sub">O avião espera você voltar.</p>
-    <button class="principal" id="continuar" type="button">Continuar</button>
+    <div class="botoes">
+      <button class="principal" id="continuar" type="button">Continuar</button>
+      <button class="secundario" id="trocar" type="button">Trocar caça</button>
+    </div>
     <p class="nota">Ou aperte P.</p>
   </div>
 </div>
@@ -310,7 +346,8 @@ h1 {
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/GLTFLoader.js"></script>
 <script>
 (() => {
   'use strict';
@@ -338,6 +375,7 @@ h1 {
     return;
   }
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.outputEncoding = THREE.sRGBEncoding;
 
   const reduzirMovimento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -370,7 +408,7 @@ h1 {
   const camera = new THREE.PerspectiveCamera(62, 1, 0.5, 20000);
 
   const SOL_DIR = new THREE.Vector3(-0.5, 0.62, -0.6).normalize();
-  const sol = new THREE.DirectionalLight(0xfff1dc, 0.95);
+  const sol = new THREE.DirectionalLight(0xfff1dc, 1.25);
   sol.position.copy(SOL_DIR);
   scene.add(sol);
   scene.add(new THREE.HemisphereLight(0xd6ecff, 0x8c8a80, 0.7));
@@ -413,6 +451,16 @@ h1 {
   ceu.renderOrder = -1;
   ceu.frustumCulled = false;
   scene.add(ceu);
+
+  // Reflexos nos caças: o céu e um chão verde viram o mapa de ambiente.
+  {
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    const cenaEnv = new THREE.Scene();
+    cenaEnv.add(new THREE.Mesh(new THREE.SphereGeometry(50, 32, 16), ceu.material));
+    cenaEnv.add(new THREE.Mesh(new THREE.SphereGeometry(49, 16, 8, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), new THREE.MeshBasicMaterial({ color: 0x6b8a4e, side: THREE.BackSide })));
+    scene.environment = pmrem.fromScene(cenaEnv, 0.04).texture;
+    pmrem.dispose();
+  }
 
   // ---------- chão: talhões, matas, lagos e estradas desenhados numa textura que se repete ----------
   const PERIODO = 1600;            // metros cobertos por uma repetição da textura
@@ -625,7 +673,7 @@ h1 {
   }
   const corArv = new THREE.Color();
   for (let i = 0; i < nArv; i++) {
-    corArv.setHSL(entre(0.24, 0.33), entre(0.35, 0.55), entre(0.2, 0.3));
+    corArv.setHSL(entre(0.24, 0.33), entre(0.35, 0.55), entre(0.11, 0.19));
     copas.setColorAt(i, corArv);
   }
 
@@ -715,87 +763,120 @@ h1 {
     puffs.instanceMatrix.needsUpdate = true;
   }
 
-  // ---------- o avião (a frente é o eixo -Z) ----------
-  let helice;
-  let disco;
-  function criarAviao() {
-    const g = new THREE.Group();
-    const phong = (cor, extra) => new THREE.MeshPhongMaterial(Object.assign({ color: cor, shininess: 50, specular: 0x2a2a2a }, extra));
-    const vermelho = phong(0xc8352b);
-    const branco = phong(0xf1efe9);
-    const escuro = phong(0x2a2e35, { shininess: 20 });
-    const vidro = phong(0x8fc8ee, { shininess: 120, specular: 0xffffff, transparent: true, opacity: 0.75 });
-    const peca = (geo, mat, x, y, z, pai) => {
-      const m = new THREE.Mesh(geo, mat);
-      m.position.set(x, y, z);
-      (pai || g).add(m);
-      return m;
-    };
-
-    // fuselagem: grossa na frente, fina na cauda
-    peca(new THREE.CylinderGeometry(0.62, 0.22, 6.4, 14), vermelho, 0, 0, 0.6).rotation.x = -Math.PI / 2;
-    peca(new THREE.CylinderGeometry(0.58, 0.62, 1.1, 14), branco, 0, 0, -3.15).rotation.x = -Math.PI / 2;
-    peca(new THREE.ConeGeometry(0.26, 0.55, 14), vermelho, 0, 0, -3.98).rotation.x = -Math.PI / 2;
-
-    // hélice e o borrão dela girando
-    helice = new THREE.Group();
-    helice.position.set(0, 0, -3.85);
-    g.add(helice);
-    peca(new THREE.BoxGeometry(0.16, 2.5, 0.05), escuro, 0, 0, 0, helice);
-    disco = new THREE.Mesh(
-      new THREE.CircleGeometry(1.25, 28),
-      new THREE.MeshBasicMaterial({ color: 0xdfe6ec, transparent: true, opacity: 0.12, depthWrite: false, side: THREE.DoubleSide })
-    );
-    disco.position.set(0, 0, -3.84);
-    g.add(disco);
-
-    // cabine
-    const cabine = peca(new THREE.SphereGeometry(0.5, 16, 10, 0, Math.PI * 2, 0, Math.PI / 2), vidro, 0, 0.42, -0.9);
-    cabine.scale.set(1, 0.85, 2.1);
-
-    // asas baixas com um pouco de diedro, pontas vermelhas e luzes de navegação
-    for (const lado of [-1, 1]) {
-      const raiz = new THREE.Group();
-      raiz.position.set(0, -0.32, -0.7);
-      raiz.rotation.z = lado * 0.055;
-      g.add(raiz);
-      peca(new THREE.BoxGeometry(4.3, 0.16, 1.55), branco, lado * 2.15, 0, 0, raiz);
-      peca(new THREE.BoxGeometry(0.75, 0.165, 1.55), vermelho, lado * 4.675, 0, 0, raiz);
-      // vermelha na asa esquerda, verde na direita, como nos aviões de verdade
-      peca(new THREE.SphereGeometry(0.09, 8, 6), new THREE.MeshBasicMaterial({ color: lado < 0 ? 0xff2a2a : 0x2aff6a }), lado * 5.07, 0, -0.2, raiz);
-    }
-
-    // cauda
-    peca(new THREE.BoxGeometry(3.4, 0.11, 0.85), branco, 0, 0.12, 3.45);
-    peca(new THREE.BoxGeometry(0.1, 1.35, 1.0), vermelho, 0, 0.78, 3.55).rotation.x = 0.32;
-    peca(new THREE.SphereGeometry(0.07, 8, 6), new THREE.MeshBasicMaterial({ color: 0xffffff }), 0, 0.12, 3.95);
-
-    // trem de pouso fixo
-    for (const lado of [-1, 1]) {
-      peca(new THREE.BoxGeometry(0.08, 0.76, 0.14), escuro, lado * 1.31, -0.7, -1.0).rotation.z = lado * 0.17;
-      peca(new THREE.CylinderGeometry(0.3, 0.3, 0.18, 14), escuro, lado * 1.38, -1.08, -1.0).rotation.z = Math.PI / 2;
-    }
-    peca(new THREE.CylinderGeometry(0.12, 0.12, 0.08, 10), escuro, 0, -0.3, 3.6).rotation.z = Math.PI / 2;
-
-    // matrícula pintada nos dois lados da fuselagem
-    const c = document.createElement('canvas');
-    c.width = 256;
-    c.height = 64;
-    const ctx = c.getContext('2d');
-    ctx.fillStyle = '#f1efe9';
-    ctx.font = 'bold 44px "B612", "Segoe UI", sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('PR-VOO', 128, 34);
-    const matMatricula = new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(c), transparent: true, depthWrite: false });
-    for (const lado of [-1, 1]) {
-      const placa = peca(new THREE.PlaneGeometry(1.3, 0.33), matMatricula, lado * 0.4, 0.02, 1.7);
-      placa.rotation.y = lado * Math.PI / 2;
-    }
-    return g;
-  }
-  const aviaoModelo = criarAviao();
+  // ---------- os caças: modelos 3D (glTF) carregados conforme a escolha ----------
+  // rotacao coloca o nariz em -Z e a cabine para cima; cabine e bocais são posições em metros
+  // depois de centrar e escalar o modelo para o comprimento real.
+  const CACAS = {
+    f16: { nome: 'F-16D', arquivo: 'modelos/f16.glb', comprimento: 15.0, rotacao: [0, 0, 0, 'XYZ'], cabine: [0, 0.85, -3.4], bocais: [[0, -0.2, 6.9]], raioBocal: 0.5 },
+    f14: { nome: 'F-14', arquivo: 'modelos/f14.glb', comprimento: 19.1, rotacao: [-Math.PI / 2, Math.PI / 2, 0, 'YXZ'], cabine: [0, 1.0, -5.0], bocais: [[-1.35, -0.3, 8.9], [1.35, -0.3, 8.9]], raioBocal: 0.5 },
+    f18: { nome: 'F/A-18F', arquivo: 'modelos/f18.glb', comprimento: 18.3, rotacao: [0, Math.PI / 2, 0, 'XYZ'], cabine: [0, 1.0, -4.6], bocais: [[-0.9, -0.3, 8.1], [0.9, -0.3, 8.1]], raioBocal: 0.45 },
+  };
+  const aviaoModelo = new THREE.Group();         // recebe o caça carregado
   scene.add(aviaoModelo);
+  const carregador = new THREE.GLTFLoader();
+  const cacaCache = {};
+  let cacaAtual = null;                           // { id, config, grupo, plumas, envergadura }
+  let cacaEscolhido = 'f16';
+  let carregando = null;
+  const elCargaTexto = $('carga-texto');
+  const elCargaBarra = $('carga-barra');
+  const elPrefixo = $('prefixo');
+
+  // chama de pós-combustão: cone com gradiente, somado à cena
+  const texChama = (() => {
+    const c = document.createElement('canvas');
+    c.width = 16; c.height = 256;
+    const g = c.getContext('2d');
+    const gr = g.createLinearGradient(0, 0, 0, 256);
+    gr.addColorStop(0, '#9fd8ff'); gr.addColorStop(0.1, '#ffb060'); gr.addColorStop(0.3, '#ff7a1a'); gr.addColorStop(0.65, '#7a2606'); gr.addColorStop(1, '#000000');
+    g.fillStyle = gr; g.fillRect(0, 0, 16, 256);
+    const t = new THREE.CanvasTexture(c);
+    t.flipY = false;
+    return t;
+  })();
+  const geoChama = new THREE.ConeGeometry(1, 1, 18, 1, true);
+  geoChama.rotateX(Math.PI / 2);
+  geoChama.translate(0, 0, 0.5);
+
+  function montarCaca(id, gltf) {
+    const cfg = CACAS[id];
+    const grupo = new THREE.Group();
+    const modelo = gltf.scene;
+    modelo.rotation.set(cfg.rotacao[0], cfg.rotacao[1], cfg.rotacao[2], cfg.rotacao[3]);
+    grupo.add(modelo);
+    const caixa = new THREE.Box3().setFromObject(grupo);
+    const tam = new THREE.Vector3();
+    caixa.getSize(tam);
+    const centro = new THREE.Vector3();
+    caixa.getCenter(centro);
+    const esc = cfg.comprimento / tam.z;
+    modelo.scale.setScalar(esc);
+    modelo.position.copy(centro).multiplyScalar(-esc);
+    modelo.traverse((o) => {
+      if (o.isMesh && o.material) [].concat(o.material).forEach((m) => { m.envMapIntensity = 0.8; });
+    });
+    const plumas = [];
+    for (const [x, y, zz] of cfg.bocais) {
+      const chama = new THREE.Mesh(geoChama, new THREE.MeshBasicMaterial({ map: texChama, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, opacity: 0.6 }));
+      chama.position.set(x, y, zz);
+      chama.scale.set(cfg.raioBocal, cfg.raioBocal, 1);
+      chama.visible = false;
+      chama.frustumCulled = false;
+      grupo.add(chama);
+      plumas.push(chama);
+    }
+    return { id, config: cfg, grupo, plumas, envergadura: tam.x * esc };
+  }
+
+  function carregarCaca(id) {
+    if (cacaCache[id]) return Promise.resolve(cacaCache[id]);
+    const cfg = CACAS[id];
+    elCargaTexto.textContent = 'Carregando o ' + cfg.nome + '…';
+    elCargaBarra.style.width = '0%';
+    return new Promise((resolver, rejeitar) => {
+      carregador.load(cfg.arquivo, (gltf) => {
+        cacaCache[id] = montarCaca(id, gltf);
+        elCargaBarra.style.width = '100%';
+        elCargaTexto.textContent = cfg.nome + ' pronto para decolar.';
+        resolver(cacaCache[id]);
+      }, (xhr) => {
+        if (xhr.total) {
+          const p = Math.round(xhr.loaded / xhr.total * 100);
+          elCargaBarra.style.width = p + '%';
+          elCargaTexto.textContent = 'Carregando o ' + cfg.nome + '… ' + p + '%';
+        } else {
+          elCargaTexto.textContent = 'Carregando o ' + cfg.nome + '… ' + (xhr.loaded / 1048576).toFixed(1) + ' MB';
+        }
+      }, (erro) => {
+        elCargaTexto.textContent = 'Não deu para carregar o ' + cfg.nome + '. Confira a internet e tente de novo.';
+        rejeitar(erro);
+      });
+    });
+  }
+
+  function usarCaca(c) {
+    if (cacaAtual) aviaoModelo.remove(cacaAtual.grupo);
+    cacaAtual = c;
+    aviaoModelo.add(c.grupo);
+    const L = c.config.comprimento;
+    OFFSET_ATRAS.set(0, 0.22 * L, 1.45 * L);
+    OFFSET_CABINE.fromArray(c.config.cabine);
+    sombra.scale.set(c.envergadura * 1.05, c.envergadura * 1.05, 1);
+    elPrefixo.textContent = c.config.nome;
+    document.title = 'Voo Livre · ' + c.config.nome;
+  }
+
+  function escolherCaca(id) {
+    if (!CACAS[id]) return Promise.resolve(null);
+    cacaEscolhido = id;
+    for (const b of document.querySelectorAll('.caca')) b.setAttribute('aria-pressed', String(b.dataset.caca === id));
+    carregando = carregarCaca(id).then((c) => { if (cacaEscolhido === id) usarCaca(c); return c; }).catch(() => null);
+    return carregando;
+  }
+  $('cacas').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-caca]');
+    if (b) escolherCaca(b.dataset.caca);
+  });
 
   // sombra redonda no chão, que só aparece quando o avião voa baixo
   const sombra = (() => {
@@ -820,7 +901,7 @@ h1 {
       })
     );
     m.rotation.x = -Math.PI / 2;
-    m.scale.set(9, 9, 1);
+    m.scale.set(16, 16, 1);
     scene.add(m);
     return m;
   })();
@@ -888,10 +969,30 @@ h1 {
 
   function iniciar() {
     if (estado !== 'inicio') return;
-    $('inicio').hidden = true;
-    elHud.hidden = false;
-    estado = 'voando';
-    mensagem('Dica: ← → fazem curva e W acelera', 4.5);
+    const partir = () => {
+      if (estado !== 'inicio' || !cacaAtual || cacaAtual.id !== cacaEscolhido) return;
+      $('inicio').hidden = true;
+      elHud.hidden = false;
+      estado = 'voando';
+      mensagem('Dica: ← → fazem curva, W acelera e acima de 82% liga a pós-combustão', 5);
+    };
+    if (cacaAtual && cacaAtual.id === cacaEscolhido) { partir(); return; }
+    $('decolar').disabled = true;
+    (carregando || escolherCaca(cacaEscolhido)).then(() => { $('decolar').disabled = false; partir(); });
+  }
+  function trocarCaca() {
+    if (estado !== 'pausado') return;
+    estado = 'inicio';
+    elPausa.hidden = true;
+    elHud.hidden = true;
+    $('inicio').hidden = false;
+    aviao.pos.set(INICIO.x, INICIO.y, INICIO.z);
+    aviao.quat.identity();
+    aviao.vel = INICIO.vel;
+    aviao.motor = INICIO.motor;
+    aviao.estol = false;
+    ctrl.arfagem = ctrl.rolagem = ctrl.guinada = 0;
+    camQuat.copy(aviao.quat);
   }
   function pausar() {
     if (estado !== 'voando') return;
@@ -930,6 +1031,7 @@ h1 {
 
   $('decolar').addEventListener('click', iniciar);
   $('continuar').addEventListener('click', continuar);
+  $('trocar').addEventListener('click', trocarCaca);
 
   // ---------- física de voo (simples, de fliperama) ----------
   const frente = new THREE.Vector3();
@@ -1003,8 +1105,8 @@ h1 {
 
   // ---------- câmera ----------
   const camQuat = new THREE.Quaternion();
-  const OFFSET_ATRAS = new THREE.Vector3(0, 3.2, 14);
-  const OFFSET_CABINE = new THREE.Vector3(0, 0.95, -0.9);
+  const OFFSET_ATRAS = new THREE.Vector3(0, 3.3, 21.75);   // ajustados em usarCaca()
+  const OFFSET_CABINE = new THREE.Vector3(0, 0.85, -3.4);
   const inclinaCam = new THREE.Quaternion().setFromAxisAngle(EIXO_X, -0.09);
   const offTmp = new THREE.Vector3();
 
@@ -1092,9 +1194,16 @@ h1 {
     sombra.material.opacity = opacidade;
     sombra.position.set(aviao.pos.x, 0.15, aviao.pos.z);
 
-    const girando = estado === 'voando' || estado === 'inicio';
-    if (girando) helice.rotation.z += (20 + aviao.motor * 55) * dt;
-    disco.material.opacity = girando ? 0.08 + aviao.motor * 0.14 : 0;
+    // pós-combustão acima de 82% de motor: a chama cresce e tremula
+    const pc = clamp((aviao.motor - 0.82) / 0.18, 0, 1);
+    const tremor = 0.9 + 0.1 * Math.sin(agora * 0.037) * Math.sin(agora * 0.023 + 1);
+    if (cacaAtual) {
+      for (const ch of cacaAtual.plumas) {
+        ch.visible = estado !== 'batido' && pc > 0.01;
+        ch.scale.z = (0.8 + cacaAtual.config.comprimento * 0.42 * pc) * tremor;
+        ch.material.opacity = 0.35 + 0.35 * pc;
+      }
+    }
 
     aviaoModelo.position.copy(aviao.pos);
     aviaoModelo.quaternion.copy(aviao.quat);
@@ -1118,6 +1227,7 @@ h1 {
     motor: aviao.motor,
     modoCamera,
     inverter,
+    caca: cacaEscolhido,
     voando: estado !== 'inicio',
   }));
 
@@ -1130,6 +1240,7 @@ h1 {
       if (typeof dados.motor === 'number') aviao.motor = clamp(dados.motor, 0, 1);
       if (dados.modoCamera === 'cabine') modoCamera = 'cabine';
       if (dados.inverter === true) inverter = true;
+      if (CACAS[dados.caca]) cacaEscolhido = dados.caca;
       if (dados.voando) {
         $('inicio').hidden = true;
         elHud.hidden = false;
@@ -1140,6 +1251,7 @@ h1 {
       // estado salvo inválido: começa do zero
     }
     camQuat.copy(aviao.quat);
+    escolherCaca(cacaEscolhido);
     redimensionar();
     ultimo = performance.now();
     requestAnimationFrame(quadro);
