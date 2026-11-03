@@ -146,19 +146,22 @@ As fotos ficam em `ceu/`, cortadas do topo até um pouco abaixo do horizonte, em
 
 ## Armas
 
-- **Metralhadora** (Z): tiros infinitos, 13 por segundo.
-- **Míssil guiado** (Espaço): 4 por vez. Precisa de alvo travado: fique atrás do inimigo com a mira em cima dele por 2
-  segundos (a barra embaixo da caixa enche) até a caixa ficar vermelha. Um míssil novo volta a cada 20 s.
+- **Metralhadora** (Z): tiros infinitos, 13 por segundo. Fique atrás de um inimigo com a mira em cima dele por 2
+  segundos: o anel laranja em volta da mira se fecha, a mira trava e o caça ajuda a seguir o inimigo.
+- **Míssil guiado** (Espaço): 4 por vez. Precisa de alvo travado: aponte o nariz para um inimigo (até uns 25° para o lado
+  e 5 km) e em menos de 1 segundo a caixa dele fica vermelha e redonda. Trava de longe, sem precisar estar atrás dele.
+  Um míssil novo volta a cada 20 s.
 - **Foguete** (X): 12 por vez, voa reto. Um foguete novo volta a cada 6 s.
 - **Flares** (F): solta uma salva de 6 chamarizes de calor atrás do avião. Cada míssil que vem atrás de você tem 85% de
   chance de ir atrás dos flares e estourar neles. São 5 salvas; uma nova volta a cada 12 s. Os inimigos também soltam
   flares contra os seus mísseis (mais nos níveis altos).
 
-Na tela: a mira (círculo com cruz) mostra para onde o nariz aponta. Ela é azul e fica vermelha quando há um inimigo
-embaixo dela, para acertar a metralhadora. As caixas azuis marcam os inimigos com a distância e a vida; travado, a
-caixa fica vermelha e redonda. Com um inimigo travado, o caça ajuda a mira: o nariz segue o inimigo bem devagar (uns
-7° por segundo, no máximo). Se o inimigo escapa demais da mira ou fica de lado, a trava solta e é preciso segui-lo de
-novo. A seta na borda aponta para o inimigo mais perto quando ele está fora da tela.
+Na tela: a mira (um círculo pequeno com cruz) mostra para onde o nariz aponta. Ela é azul e fica vermelha quando há um
+inimigo embaixo dela, para acertar a metralhadora. As caixas azuis marcam os inimigos com a distância e a vida; com o
+míssil travado, a caixa fica vermelha e redonda. Com a mira travada (2 s atrás do inimigo, o anel laranja fechado), o
+caça ajuda a metralhadora: o nariz segue o inimigo, até uns 30° por segundo; as curvas fortes ainda são suas. Se o
+inimigo escapa demais da mira ou fica de lado, a trava solta e é preciso segui-lo de novo. A seta na borda aponta para o
+inimigo mais perto quando ele está fora da tela.
 
 ## Explosões
 
