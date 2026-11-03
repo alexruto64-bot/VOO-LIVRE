@@ -6,6 +6,13 @@
 <title>Voo Livre</title>
 <meta name="description" content="Jogo de avião 3D no navegador: voe sobre uma floresta sem fim ou sobre campos e lagos, com céus de verdade, usando o teclado.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2714%27 fill=%27%2374e0ff%27/%3E%3Cpath d=%27M32 8c2 0 3 3 3 7v10l19 10v5l-19-5v11l6 5v4l-9-3-9 3v-4l6-5V35L10 40v-5l19-10V15c0-4 1-7 3-7z%27 fill=%27%23c8352b%27/%3E%3C/svg%3E">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icones/icone-apple-180.png">
+<meta name="theme-color" content="#05192a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Voo Livre">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=B612:wght@400;700&family=B612+Mono:wght@400;700&display=swap">
@@ -254,6 +261,7 @@ h1 {
 .modo:hover, .cenario:hover { border-color: var(--texto-suave); }
 .modo:focus-visible, .cenario:focus-visible { outline: 3px solid var(--texto); outline-offset: 2px; }
 .cacas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0; }
+#cacas { grid-template-columns: repeat(4, 1fr); }
 .caca, .opcao {
   display: grid; gap: 4px; padding: 6px;
   border: 2px solid var(--painel-borda); border-radius: 8px;
@@ -280,7 +288,9 @@ h1 {
 }
 .secundario:hover { border-color: var(--ciano); }
 .secundario:focus-visible { outline: 3px solid var(--texto); outline-offset: 3px; }
-.principal:disabled { opacity: 0.6; cursor: wait; }
+.principal:disabled, .secundario:disabled { opacity: 0.6; cursor: wait; }
+.offline { display: grid; gap: 8px; padding: 10px 12px; border: 1px solid var(--painel-borda); border-radius: 8px; }
+.offline[hidden] { display: none; }
 .olhando-tras {
   position: fixed; z-index: 3; left: 50%; top: calc(18px + env(safe-area-inset-top, 0px)); transform: translateX(-50%);
   margin: 0; padding: 6px 12px; border-radius: 6px; background: var(--painel); border: 1px solid var(--painel-borda);
@@ -434,6 +444,7 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
       <button class="caca" type="button" data-caca="f16" aria-pressed="true"><img src="modelos/f16.jpg" alt=""><span>F-16D Fighting Falcon</span><small>15 m · 1 motor</small></button>
       <button class="caca" type="button" data-caca="f14" aria-pressed="false"><img src="modelos/f14.jpg" alt=""><span>F-14 Tomcat</span><small>19 m · 2 motores</small></button>
       <button class="caca" type="button" data-caca="f18" aria-pressed="false"><img src="modelos/f18.jpg" alt=""><span>F/A-18F Super Hornet</span><small>18 m · 2 motores</small></button>
+      <button class="caca" type="button" data-caca="viper" aria-pressed="false"><img src="modelos/viper.jpg" alt=""><span>F-16C Viper</span><small>15 m · 1 motor</small></button>
     </div>
     <p class="grupo">Cenário</p>
     <div class="modos" id="cenarios" role="group" aria-label="Cenário">
@@ -442,6 +453,7 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
       <button class="cenario" type="button" data-cenario="cidade" aria-pressed="false"><span>Cidade</span><small>Prédios para passar no meio, cercados de campos.</small></button>
       <button class="cenario" type="button" data-cenario="pico" aria-pressed="false"><span>Açores</span><small>Ilha do Pico: vulcão de 2.350 m no meio do mar.</small></button>
       <button class="cenario" type="button" data-cenario="caboverde" aria-pressed="false"><span>Cabo Verde</span><small>Ilhas do Fogo e da Brava, com a cratera do vulcão.</small></button>
+      <button class="cenario" type="button" data-cenario="litoral" aria-pressed="false"><span>Ilhotas</span><small>Mar aberto com ilhotas do Brasil: Urubuqueçaba e pedras com gravuras rupestres.</small></button>
     </div>
     <p class="grupo">Céu</p>
     <div class="cacas" id="ceus" role="group" aria-label="Céu">
@@ -468,8 +480,18 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
       <dt><kbd>R</kbd></dt><dd>Recomeçar</dd>
     </dl>
     <p class="nota so-toque">No celular, deite o aparelho. Lado esquerdo: encoste e arraste para pilotar (para baixo o nariz sobe). Lado direito: motor, tiro, míssil, foguete, flares e o botão de olhar para trás.</p>
-    <p class="nota"><span class="so-teclado">Precisa de teclado (ou jogue no celular). Se as teclas pararem de responder, clique no jogo.</span> <b id="versao-jogo">Versão 6</b></p>
-    <p class="creditos">Modelos 3D do Sketchfab, licença CC BY 4.0: <a href="https://sketchfab.com/3d-models/general-dynamics-f-16d-block-60-ea8edb08d79e4eafa9c794c581f88cf3" target="_blank" rel="noopener">F-16D Block 60</a> por Muhamad Mirza Arrafi · <a href="https://sketchfab.com/3d-models/f-14-tomcat-top-gun-gear-up-downloadable-9d2d0c87539046aa8c2198fcc47cdcf8" target="_blank" rel="noopener">F-14 Tomcat</a> por dwsd · <a href="https://sketchfab.com/3d-models/boeing-fa-18ef-super-hornet-f71e9fea01e24fea9b1b380161d21d38" target="_blank" rel="noopener">F/A-18E/F Super Hornet</a> por andertan. Céus do <a href="https://polyhaven.com/hdris/skies" target="_blank" rel="noopener">Poly Haven</a> (CC0): Kloofendal 48d Partly Cloudy, Kloppenheim 06 e Kloofendal Overcast, por Greg Zaal (com edição do céu por Jarod Guest). Sons do Freesound (CC0): <a href="https://freesound.org/people/qubodup/sounds/187734/" target="_blank" rel="noopener">Idle F-22 Jet Plane</a>, <a href="https://freesound.org/people/qubodup/sounds/854183/" target="_blank" rel="noopener">Autocannon Shot 1</a> e <a href="https://freesound.org/people/qubodup/sounds/442773/" target="_blank" rel="noopener">Big Water Splash</a> por qubodup · <a href="https://freesound.org/people/TiesWijnen/sounds/413312/" target="_blank" rel="noopener">Afterburner</a> por TiesWijnen · <a href="https://freesound.org/people/klangfabrik/sounds/249298/" target="_blank" rel="noopener">rpg launcher</a> por klangfabrik · <a href="https://freesound.org/people/Mozfoo/sounds/458377/" target="_blank" rel="noopener">Rocket Loop</a> por Mozfoo · <a href="https://freesound.org/people/northern87/sounds/88532/" target="_blank" rel="noopener">Woosh</a> por northern87 · <a href="https://freesound.org/people/kyles/sounds/450833/" target="_blank" rel="noopener">flare fire into sky</a> por kyles · <a href="https://freesound.org/people/derplayer/sounds/587194/" target="_blank" rel="noopener">explosion big 01</a> por derplayer · <a href="https://freesound.org/people/Robo9418/sounds/841831/" target="_blank" rel="noopener">Deep Explosion with Falling Debris</a> por Robo9418 · <a href="https://freesound.org/people/areniporgen/sounds/693421/" target="_blank" rel="noopener">CTS 7290</a> por areniporgen.</p>
+    <p class="nota"><span class="so-teclado">Precisa de teclado (ou jogue no celular). Se as teclas pararem de responder, clique no jogo.</span> <b id="versao-jogo">Versão 6.1</b></p>
+    <div class="offline" id="offline" hidden>
+      <p class="grupo">Jogar sem internet</p>
+      <p class="nota" id="offline-texto" aria-live="polite">Guarde o jogo neste aparelho (caças, cenários, céus e sons) para jogar sem internet.</p>
+      <div class="carga" id="baixar-carga" aria-hidden="true" hidden><span id="baixar-barra"></span></div>
+      <div class="botoes">
+        <button class="secundario" id="baixar" type="button">Baixar tudo</button>
+        <button class="secundario" id="instalar" type="button" hidden>Instalar o app</button>
+      </div>
+      <p class="nota" id="instalar-iphone" hidden>No iPhone ou iPad: toque em Compartilhar e depois em “Adicionar à Tela de Início” para ter o jogo como app.</p>
+    </div>
+    <p class="creditos">Modelos 3D do Sketchfab, licença CC BY 4.0: <a href="https://sketchfab.com/3d-models/general-dynamics-f-16d-block-60-ea8edb08d79e4eafa9c794c581f88cf3" target="_blank" rel="noopener">F-16D Block 60</a> por Muhamad Mirza Arrafi · <a href="https://sketchfab.com/3d-models/f-14-tomcat-top-gun-gear-up-downloadable-9d2d0c87539046aa8c2198fcc47cdcf8" target="_blank" rel="noopener">F-14 Tomcat</a> por dwsd · <a href="https://sketchfab.com/3d-models/boeing-fa-18ef-super-hornet-f71e9fea01e24fea9b1b380161d21d38" target="_blank" rel="noopener">F/A-18E/F Super Hornet</a> por andertan · <a href="https://sketchfab.com/3d-models/ilha-do-pico-azores-portugal-54f9cfe3429741089dc22ec37a8839f4" target="_blank" rel="noopener">Ilha do Pico</a> e <a href="https://sketchfab.com/3d-models/islas-fogo-y-brava-cabo-verde-a851f7640f294748a7bc59c38da46fbe" target="_blank" rel="noopener">Islas Fogo y Brava</a> por CMPLab · <a href="https://sketchfab.com/3d-models/ilha-de-urubuquecaba-4aec6c8b87bf4f7c9416c913fa1e1e66" target="_blank" rel="noopener">Ilha de Urubuqueçaba</a> por Emilio Cid · <a href="https://sketchfab.com/3d-models/gravuras-rupestres-proximas-a-ilha-das-meninas-13befe10866044d797eaea0265f3d222" target="_blank" rel="noopener">Gravuras rupestres próximas à Ilha das Meninas</a> por GeoHereditas · <a href="https://sketchfab.com/3d-models/a-forest-3-with-a-road-at-night-for-game-61f8c7817fe6457fb26e4814cfc48a3f" target="_blank" rel="noopener">a forest (3) with a road at night for game</a> por dasy444. Céus do <a href="https://polyhaven.com/hdris/skies" target="_blank" rel="noopener">Poly Haven</a> (CC0): Kloofendal 48d Partly Cloudy, Kloppenheim 06 e Kloofendal Overcast, por Greg Zaal (com edição do céu por Jarod Guest). Sons do Freesound (CC0): <a href="https://freesound.org/people/qubodup/sounds/187734/" target="_blank" rel="noopener">Idle F-22 Jet Plane</a>, <a href="https://freesound.org/people/qubodup/sounds/854183/" target="_blank" rel="noopener">Autocannon Shot 1</a> e <a href="https://freesound.org/people/qubodup/sounds/442773/" target="_blank" rel="noopener">Big Water Splash</a> por qubodup · <a href="https://freesound.org/people/TiesWijnen/sounds/413312/" target="_blank" rel="noopener">Afterburner</a> por TiesWijnen · <a href="https://freesound.org/people/klangfabrik/sounds/249298/" target="_blank" rel="noopener">rpg launcher</a> por klangfabrik · <a href="https://freesound.org/people/Mozfoo/sounds/458377/" target="_blank" rel="noopener">Rocket Loop</a> por Mozfoo · <a href="https://freesound.org/people/northern87/sounds/88532/" target="_blank" rel="noopener">Woosh</a> por northern87 · <a href="https://freesound.org/people/kyles/sounds/450833/" target="_blank" rel="noopener">flare fire into sky</a> por kyles · <a href="https://freesound.org/people/derplayer/sounds/587194/" target="_blank" rel="noopener">explosion big 01</a> por derplayer · <a href="https://freesound.org/people/Robo9418/sounds/841831/" target="_blank" rel="noopener">Deep Explosion with Falling Debris</a> por Robo9418 · <a href="https://freesound.org/people/areniporgen/sounds/693421/" target="_blank" rel="noopener">CTS 7290</a> por areniporgen.</p>
   </div>
 </div>
 
@@ -505,8 +527,8 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="js/three.min.js"></script>
+<script src="js/GLTFLoader.js"></script>
 <script>
 (() => {
   'use strict';
@@ -1925,9 +1947,68 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
     ilha.grupo.add(m);
     return m;
   })();
+  // Mar com ilhotas (modelos 3D, sem relevo de satélite): o fundo é feito aqui a partir do mapa de colisão de cada
+  // ilhota, raso na beira das pedras e descendo até o mar fundo, para a água ficar clara e com espuma em volta delas.
+  function relevoDasIlhotas(c) {
+    return Promise.all(c.construcoes.map((p) => carregarConstrucao(p.nome))).then((modelos) => {
+      const nx = c.nx, nz = c.nz, passo = c.largura / (nx - 1), x0 = -c.largura / 2, z0 = -c.profundidade / 2;
+      // distância (m) até a pedra mais perto: zero embaixo das ilhotas, depois duas passadas pela grade
+      const dist = new Float32Array(nx * nz).fill(1e9);
+      c.construcoes.forEach((p, k) => {
+        const col = modelos[k] && modelos[k].col;
+        if (!col) return;
+        const e = p.escala || 1, cs = Math.cos(p.rumo || 0), sn = Math.sin(p.rumo || 0);
+        const raio = Math.hypot(Math.max(-col.x0, col.x0 + col.nx * col.celula), Math.max(-col.z0, col.z0 + col.nz * col.celula)) * e;
+        const i0 = Math.max(0, Math.floor((p.x - raio - x0) / passo)), i1 = Math.min(nx - 1, Math.ceil((p.x + raio - x0) / passo));
+        const j0 = Math.max(0, Math.floor((p.z - raio - z0) / passo)), j1 = Math.min(nz - 1, Math.ceil((p.z + raio - z0) / passo));
+        for (let j = j0; j <= j1; j++) for (let i = i0; i <= i1; i++) {
+          const dx = x0 + i * passo - p.x, dz = z0 + j * passo - p.z;
+          const lx = (dx * cs - dz * sn) / e, lz = (dx * sn + dz * cs) / e;
+          const ix = Math.floor((lx - col.x0) / col.celula), iz = Math.floor((lz - col.z0) / col.celula);
+          if (ix >= 0 && iz >= 0 && ix < col.nx && iz < col.nz && col.dados[iz * col.nx + ix]) dist[j * nx + i] = 0;
+        }
+      });
+      const d1 = passo, d2 = passo * Math.SQRT2;
+      for (let j = 0; j < nz; j++) for (let i = 0; i < nx; i++) {
+        const k = j * nx + i;
+        let v = dist[k];
+        if (i > 0) v = Math.min(v, dist[k - 1] + d1);
+        if (j > 0) {
+          v = Math.min(v, dist[k - nx] + d1);
+          if (i > 0) v = Math.min(v, dist[k - nx - 1] + d2);
+          if (i < nx - 1) v = Math.min(v, dist[k - nx + 1] + d2);
+        }
+        dist[k] = v;
+      }
+      for (let j = nz - 1; j >= 0; j--) for (let i = nx - 1; i >= 0; i--) {
+        const k = j * nx + i;
+        let v = dist[k];
+        if (i < nx - 1) v = Math.min(v, dist[k + 1] + d1);
+        if (j < nz - 1) {
+          v = Math.min(v, dist[k + nx] + d1);
+          if (i < nx - 1) v = Math.min(v, dist[k + nx + 1] + d2);
+          if (i > 0) v = Math.min(v, dist[k + nx - 1] + d2);
+        }
+        dist[k] = v;
+      }
+      // praia submersa: 1 m de fundo a uns 10 m da pedra, 10 m de fundo a uns 100 m, mar fundo a partir de uns 400 m
+      const alturas = new Float32Array(nx * nz);
+      for (let k = 0; k < alturas.length; k++) alturas[k] = Math.max(FUNDO_MAR, -0.4 - 0.05 * dist[k] - 0.0004 * dist[k] * dist[k]);
+      const texAlt = new THREE.DataTexture(alturas, nx, nz, THREE.RedFormat, THREE.FloatType);
+      texAlt.needsUpdate = true;
+      const tex = new THREE.DataTexture(new Uint8Array([196, 184, 150, 255]), 1, 1);   // areia do fundo
+      tex.encoding = THREE.sRGBEncoding;
+      tex.needsUpdate = true;
+      return { alturas, texAlt, tex };
+    });
+  }
   function carregarIlha(id) {
     if (ilha.carga[id]) return ilha.carga[id];
     const c = CENARIOS[id];
+    if (c.semRelevo) {
+      ilha.carga[id] = relevoDasIlhotas(c).catch((e) => { ilha.carga[id] = null; throw e; });
+      return ilha.carga[id];
+    }
     ilha.carga[id] = Promise.all([
       fetch(c.pasta + 'relevo.bin').then((r) => { if (!r.ok) throw new Error('relevo'); return r.arrayBuffer(); }),
       carregarTextura(c.pasta + (MOVEL ? 'satelite_2k.jpg' : 'satelite.jpg'), true, false),
@@ -2060,6 +2141,23 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
       nome: 'Ilha do Fogo', tipo: 'ilha', pasta: 'cenarios/caboverde/', largura: 55382.2, profundidade: 34808.2, nx: 757, nz: 476,
       inicio: { x: -2000, y: 1500, z: 6000, rumo: 63 }, nevoa: 1.9, corChao: 0x1d3a4a,
     },
+    // mar aberto com ilhotas brasileiras em 3D (fotogrametria): a Ilha de Urubuqueçaba e uma pedra com gravuras rupestres da Ilha das Meninas,
+    // repetidas com outro tamanho e outro rumo para formar um arquipélago. O fundo do mar é feito pelo jogo.
+    litoral: {
+      nome: 'Ilhotas', tipo: 'ilha', semRelevo: true, largura: 6000, profundidade: 6000, nx: 1001, nz: 1001,
+      inicio: { x: 0, y: 260, z: 2600, rumo: 0 }, nevoa: 1.9, corChao: 0x1d3a4a,
+      construcoes: [
+        { nome: 'urubuquecaba', x: 0, z: 0, y: 0, rumo: 0 },
+        { nome: 'urubuquecaba', x: -1500, z: -1200, y: 0, rumo: 2.1, escala: 0.85 },
+        { nome: 'urubuquecaba', x: 1700, z: -1800, y: 0, rumo: 4.2, escala: 1.15 },
+        { nome: 'pedra_gravuras', x: 380, z: -350, y: 0, rumo: 0.5, escala: 1.6 },
+        { nome: 'pedra_gravuras', x: -420, z: 260, y: 0, rumo: 2.4, escala: 1.2 },
+        { nome: 'pedra_gravuras', x: 900, z: 700, y: 0, rumo: 1.1, escala: 2.2 },
+        { nome: 'pedra_gravuras', x: -1100, z: -600, y: 0, rumo: 3.7, escala: 1.8 },
+        { nome: 'pedra_gravuras', x: 1300, z: -1100, y: 0, rumo: 5, escala: 1.4 },
+        { nome: 'pedra_gravuras', x: -300, z: -1900, y: 0, rumo: 0.9, escala: 2.5 },
+      ],
+    },
   };
   // Cenário na tela. Os que precisam de arquivos entram quando carregam; até lá, os campos.
   let cenarioEscolhido = 'floresta';
@@ -2165,6 +2263,7 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
     f16: { nome: 'F-16D', arquivo: 'modelos/f16.glb', comprimento: 15.0, rotacao: [0, 0, 0, 'XYZ'], cabine: [0, 0.85, -3.4], bocais: [[0, -0.2, 6.9]], raioBocal: 0.5 },
     f14: { nome: 'F-14', arquivo: 'modelos/f14.glb', comprimento: 19.1, rotacao: [-Math.PI / 2, Math.PI / 2, 0, 'YXZ'], cabine: [0, 1.0, -5.0], bocais: [[-1.35, -0.3, 8.9], [1.35, -0.3, 8.9]], raioBocal: 0.5 },
     f18: { nome: 'F/A-18F', arquivo: 'modelos/f18.glb', comprimento: 18.3, rotacao: [0, Math.PI / 2, 0, 'XYZ'], cabine: [0, 1.0, -4.6], bocais: [[-0.9, -0.3, 8.1], [0.9, -0.3, 8.1]], raioBocal: 0.45 },
+    viper: { nome: 'F-16C', arquivo: 'modelos/viper.glb', comprimento: 15.0, rotacao: [0, Math.PI / 2, 0, 'XYZ'], cabine: [0, -0.2, -3.2], bocais: [[0, -1.12, 7.1]], raioBocal: 0.58, esconder: ['wheels'] },
   };
   const aviaoModelo = new THREE.Group();         // recebe o caça carregado
   scene.add(aviaoModelo);
@@ -2177,78 +2276,117 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
   const elCargaBarra = $('carga-barra');
   const elPrefixo = $('prefixo');
 
-  // Chama de pós-combustão: um cone aberto que soma luz. Núcleo claro perto do bocal, diamantes de choque,
-  // corpo laranja que tremula e a ponta que se apaga em vermelho. Com pouca pós-combustão fica azulada.
-  const geoChama = new THREE.CylinderGeometry(0.32, 1, 1, 28, 18, true);   // base = bocal, topo = ponta
-  geoChama.rotateX(Math.PI / 2);
-  geoChama.translate(0, 0, 0.5);                                           // bocal em z = 0, ponta em z = 1
+  // brilho redondo: clarão do canhão e halo da chama do motor
+  const texFlash = (() => {
+    const c = document.createElement('canvas'); c.width = c.height = 64;
+    const g = c.getContext('2d');
+    const gr = g.createRadialGradient(32, 32, 2, 32, 32, 32);
+    gr.addColorStop(0, 'rgba(255,255,220,1)'); gr.addColorStop(0.3, 'rgba(255,200,90,0.9)'); gr.addColorStop(1, 'rgba(255,120,30,0)');
+    g.fillStyle = gr; g.fillRect(0, 0, 64, 64);
+    return new THREE.CanvasTexture(c);
+  })();
+  // Chama do motor, refeita a partir do material de fogo do jato novo (o .blend): uma bola amassada saindo do
+  // bocal, com o relevo mudando o tempo todo. Onde o ruído fractal 3D é denso, a emissão laranja-avermelhada
+  // é tão forte que estoura em amarelo quase branco; onde é ralo fica laranja; o resto é transparente.
+  // Um brilho em volta imita o "bloom" da cena original. Medidas em raios do bocal: centro 0,61 atrás da saída,
+  // raio 0,87; o eixo +Z aponta para trás do avião.
+  const geoChama = new THREE.IcosahedronGeometry(1, 4);
   const tempoChama = { value: 0 };
   function criarMaterialChama(forca) {
-    return new THREE.ShaderMaterial({
+    const chama = new THREE.ShaderMaterial({
       transparent: true,
       depthWrite: false,
       side: THREE.DoubleSide,
-      blending: THREE.AdditiveBlending,
+      blending: THREE.CustomBlending,
+      blendSrc: THREE.OneFactor,
+      blendDst: THREE.OneMinusSrcAlphaFactor,
       fog: true,
       uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { forca: { value: forca } }]),
       vertexShader: `
-        varying vec2 vUv;
-        varying float vFrente;
+        uniform float tempo;
+        varying vec3 vGen;
         #include <fog_pars_vertex>
+        vec3 hash3(vec3 p) {
+          p = vec3(dot(p, vec3(127.1, 311.7, 74.7)), dot(p, vec3(269.5, 183.3, 246.1)), dot(p, vec3(113.5, 271.9, 124.6)));
+          return fract(sin(p) * 43758.5453);
+        }
+        // Voronoi (distância ao ponto mais perto): os calombos que o Displace empurra ao longo do eixo
+        float voronoi(vec3 p) {
+          vec3 i = floor(p), f = fract(p);
+          float d = 1.0;
+          for (int z = -1; z <= 1; z++) for (int y = -1; y <= 1; y++) for (int x = -1; x <= 1; x++) {
+            vec3 g = vec3(float(x), float(y), float(z));
+            d = min(d, length(g + hash3(i + g) - f));
+          }
+          return d;
+        }
         void main() {
-          vUv = uv;
-          vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-          vFrente = abs(dot(normalize(normalMatrix * normal), normalize(-mvPosition.xyz)));
+          vGen = position * 0.5 + 0.5;
+          float v = voronoi(position / 0.75 + vec3(0.0, 0.0, -tempo * 2.5));
+          vec3 p = position * 0.871 + vec3(0.0, 0.0, 0.613 + (v - 0.5) * 1.3);
+          vec4 mvPosition = modelViewMatrix * vec4(p, 1.0);
           gl_Position = projectionMatrix * mvPosition;
           #include <fog_vertex>
         }`,
       fragmentShader: `
         uniform float forca;
         uniform float tempo;
-        varying vec2 vUv;
-        varying float vFrente;
+        varying vec3 vGen;
         #include <fog_pars_fragment>
-        float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
-        float ruido(vec2 p) {
-          vec2 i = floor(p), f = fract(p);
-          vec2 u = f * f * (3.0 - 2.0 * f);
-          return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), u.x), mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x), u.y);
+        float hash(vec3 p) { return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453); }
+        float ruido(vec3 p) {
+          vec3 i = floor(p), f = fract(p);
+          vec3 u = f * f * (3.0 - 2.0 * f);
+          return mix(mix(mix(hash(i), hash(i + vec3(1, 0, 0)), u.x), mix(hash(i + vec3(0, 1, 0)), hash(i + vec3(1, 1, 0)), u.x), u.y),
+                     mix(mix(hash(i + vec3(0, 0, 1)), hash(i + vec3(1, 0, 1)), u.x), mix(hash(i + vec3(0, 1, 1)), hash(i + vec3(1, 1, 1)), u.x), u.y), u.z);
+        }
+        float fbm(vec3 p) {
+          float s = 0.0, a = 0.5;
+          for (int i = 0; i < 5; i++) { s += a * ruido(p); p *= 2.0; a *= 0.5; }
+          return s / 0.96875;
         }
         void main() {
-          float y = vUv.y;
-          float ang = vUv.x * 6.2832;
-          vec2 volta = vec2(cos(ang), sin(ang)) * 1.6;
-          float n = ruido(volta + vec2(0.0, y * 9.0 - tempo * 24.0));
-          float n2 = ruido(volta * 2.0 + vec2(5.0, y * 19.0 - tempo * 43.0));
-          float corpo = 1.0 - smoothstep(0.1, 1.0, y + (n - 0.5) * 0.3);
-          float nucleo = pow(vFrente, 2.2) * (1.0 - smoothstep(0.0, 0.5, y));
-          float diamantes = pow(0.5 + 0.5 * cos(y * 36.0 - 0.8), 10.0) * (1.0 - smoothstep(0.04, 0.5, y)) * vFrente;
-          vec3 azul = vec3(0.45, 0.62, 1.0), laranja = vec3(1.0, 0.5, 0.14), vermelho = vec3(0.75, 0.14, 0.04), branco = vec3(1.0, 0.93, 0.8);
-          vec3 cor = mix(mix(azul, laranja, smoothstep(0.25, 0.75, forca)), vermelho, smoothstep(0.25, 0.9, y));
-          cor = mix(cor, branco, clamp(nucleo * 1.3 + diamantes, 0.0, 1.0));
-          float a = (corpo * pow(vFrente, 0.8) * (0.6 + 0.4 * n2) + diamantes * 0.7) * forca;
-          a *= 1.0 - smoothstep(fogNear, fogFar, vFogDepth);
-          gl_FragColor = vec4(cor, clamp(a, 0.0, 1.0));
+          // mesma conta do Blender: ruído de escala 6 rolando depressa, cor -> brilho, rampa a partir de 0,48
+          vec3 p = (vGen + vec3(0.0, 0.0, -tempo * 4.858)) * 6.0;
+          vec3 n = vec3(fbm(p), fbm(p + vec3(165.4, 162.8, 193.4)), fbm(p + vec3(155.6, 177.2, 138.1)));
+          float L = dot(clamp(n, 0.0, 1.0), vec3(0.2126, 0.7152, 0.0722));
+          float f = clamp((L - 0.48133) / 0.51867, 0.0, 1.0);
+          vec3 emissao = f * 200.0 * vec3(1.0, 0.074, 0.0049) * forca;
+          vec3 cor = 1.0 - exp(-emissao * 0.6);
+          // o "bloom": um brilho laranja em volta das partes densas, que preenche os vãos entre as línguas de fogo
+          cor += vec3(1.0, 0.36, 0.08) * smoothstep(0.26, 0.5, L) * 0.5 * forca;
+          float nev = 1.0 - smoothstep(fogNear, fogFar, vFogDepth);
+          gl_FragColor = vec4(cor * nev, clamp(f * forca, 0.0, 1.0) * nev);
         }`,
     });
+    chama.uniforms.tempo = tempoChama;
+    const halo = new THREE.SpriteMaterial({ map: texFlash, color: 0xff7a26, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, opacity: 0.55 * forca });
+    return { chama, halo };
   }
-  const matChamaJogador = criarMaterialChama(1);
-  matChamaJogador.uniforms.tempo = tempoChama;
-  function novaChama(material) {
-    if (!material.uniforms.tempo || material.uniforms.tempo !== tempoChama) material.uniforms.tempo = tempoChama;
-    const ch = new THREE.Mesh(geoChama, material);
-    ch.frustumCulled = false;
-    ch.renderOrder = 5;
+  const matsChamaJogador = criarMaterialChama(1);
+  // uma chama: a bola de fogo e o brilho em volta, num grupo posto na saída do bocal (escala = raio do bocal)
+  function novaChama(mats) {
+    const ch = new THREE.Group();
+    const bola = new THREE.Mesh(geoChama, mats.chama);
+    bola.frustumCulled = false;
+    bola.renderOrder = 5;
+    const halo = new THREE.Sprite(mats.halo);
+    halo.scale.set(4.4, 4.4, 1);
+    halo.position.z = 0.8;
+    halo.renderOrder = 5;
+    ch.add(bola, halo);
     return ch;
   }
-  // a cada quadro: comprimento e força da chama pela pós-combustão (pc de 0 a 1)
-  function atualizarChamas(plumas, pc, agora, L) {
+  // a cada quadro: força da chama pelo motor (fraca a partir de 55%, forte na pós-combustão) e comprimento
+  function atualizarChamas(plumas, motor, pc, agora) {
     tempoChama.value = agora / 1000;
-    const tremor = 0.93 + 0.07 * Math.sin(agora * 0.037) * Math.sin(agora * 0.023 + 1);
-    matChamaJogador.uniforms.forca.value = 0.35 + 0.65 * pc;
+    const forca = clamp((motor - 0.55) / 0.27, 0, 1) * 0.35 + pc * 0.65;
+    matsChamaJogador.chama.uniforms.forca.value = forca;
+    matsChamaJogador.halo.opacity = 0.55 * forca * (0.85 + 0.15 * Math.random());
+    const tremor = 0.94 + 0.06 * Math.sin(agora * 0.037) * Math.sin(agora * 0.023 + 1);
     for (const ch of plumas) {
-      ch.visible = pc > 0.01;
-      ch.scale.z = (0.8 + L * 0.42 * pc) * tremor;
+      ch.visible = forca > 0.03;
+      ch.scale.z = ch.scale.x * (1 + 1.6 * pc) * tremor;
     }
   }
 
@@ -2257,6 +2395,10 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
     const grupo = new THREE.Group();
     const modelo = gltf.scene;
     modelo.rotation.set(cfg.rotacao[0], cfg.rotacao[1], cfg.rotacao[2], cfg.rotacao[3]);
+    for (const nome of cfg.esconder || []) {                // ex.: o trem de pouso, que fica baixado no modelo
+      const o = modelo.getObjectByName(nome);
+      if (o) o.parent.remove(o);
+    }
     grupo.add(modelo);
     const caixa = new THREE.Box3().setFromObject(grupo);
     const tam = new THREE.Vector3();
@@ -2271,9 +2413,9 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
     });
     const plumas = [];
     for (const [x, y, zz] of cfg.bocais) {
-      const chama = novaChama(matChamaJogador);
+      const chama = novaChama(matsChamaJogador);
       chama.position.set(x, y, zz);
-      chama.scale.set(cfg.raioBocal, cfg.raioBocal, 1);
+      chama.scale.setScalar(cfg.raioBocal);
       chama.visible = false;
       grupo.add(chama);
       plumas.push(chama);
@@ -2955,14 +3097,6 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
   const somAcerto = () => ruido(0.1, 2600, 2.5, 0.3);
 
   // --- clarão na boca do canhão
-  const texFlash = (() => {
-    const c = document.createElement('canvas'); c.width = c.height = 64;
-    const g = c.getContext('2d');
-    const gr = g.createRadialGradient(32, 32, 2, 32, 32, 32);
-    gr.addColorStop(0, 'rgba(255,255,220,1)'); gr.addColorStop(0.3, 'rgba(255,200,90,0.9)'); gr.addColorStop(1, 'rgba(255,120,30,0)');
-    g.fillStyle = gr; g.fillRect(0, 0, 64, 64);
-    return new THREE.CanvasTexture(c);
-  })();
   const flash = new THREE.Sprite(new THREE.SpriteMaterial({ map: texFlash, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
   flash.scale.set(2.2, 2.2, 1);
   flash.visible = false;
@@ -3358,6 +3492,101 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
     malhasPedaco.forEach((m, k) => { m.count = cont[k]; m.instanceMatrix.needsUpdate = true; });
   }
 
+  // --- chapas da batida no chão, tiradas do explosionfisic.blend: o tanque da cena quebrado em 207 chapas, cada uma
+  // saindo com a velocidade da sua partícula na simulação do Blender (aqui sempre para cima, porque bate no chão).
+  // Voam, giram, caem com a gravidade e ficam espalhadas no chão. A conta é toda na placa de vídeo: a posição de
+  // cada chapa sai do tempo desde a explosão (até a hora em que ela pousa).
+  const VIDA_CHAPAS = 22;
+  const chapas = { geo: null, malhas: [] };
+  fetch('efeitos/explosao_chapas.json').then((r) => (r.ok ? r.json() : null)).then((d) => {
+    if (!d) return;
+    let n = 0;
+    for (const c of d.chapas) n += c.t.length / 3;
+    const pos = new Float32Array(n * 3), pivo = new Float32Array(n * 3), vel = new Float32Array(n * 4), giro = new Float32Array(n * 4);
+    const r = mulberry32(7);
+    let k = 0;
+    for (const c of d.chapas) {
+      // a simulação não gira as partículas; aqui cada chapa gira num eixo qualquer, para brilhar no sol
+      const ax = r() - 0.5, ay = r() - 0.5, az = r() - 0.5, al = Math.hypot(ax, ay, az) || 1, w = 2 + r() * 7;
+      const vy = Math.abs(c.v[1]) * 0.8 + 6 + r() * 6;
+      for (let i = 0; i < c.t.length; i += 3, k++) {
+        pos[k * 3] = c.p[0] + c.t[i]; pos[k * 3 + 1] = c.p[1] + c.t[i + 1]; pos[k * 3 + 2] = c.p[2] + c.t[i + 2];
+        pivo.set(c.p, k * 3);
+        vel.set([c.v[0], vy, c.v[2], Math.max(c.a, 0)], k * 4);
+        giro.set([ax / al, ay / al, az / al, w], k * 4);
+      }
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    g.setAttribute('pivo', new THREE.BufferAttribute(pivo, 3));
+    g.setAttribute('vel', new THREE.BufferAttribute(vel, 4));
+    g.setAttribute('giro', new THREE.BufferAttribute(giro, 4));
+    g.computeVertexNormals();
+    chapas.geo = g;
+  }).catch(() => null);
+  function criarMalhaChapas() {
+    const uni = { tChapa: { value: 0 }, chaoChapa: { value: 0 }, arrasto: { value: new THREE.Vector3() }, tamChapa: { value: 1 } };
+    const mat = new THREE.MeshStandardMaterial({ color: 0x4c5055, metalness: 0.8, roughness: 0.45, side: THREE.DoubleSide });
+    mat.onBeforeCompile = (sh) => {
+      Object.assign(sh.uniforms, uni);
+      sh.vertexShader = sh.vertexShader
+        .replace('#include <common>', `#include <common>
+          attribute vec3 pivo;
+          attribute vec4 vel;      // velocidade inicial (m/s) e atraso do nascimento (s)
+          attribute vec4 giro;     // eixo e velocidade de giro (rad/s)
+          uniform float tChapa;
+          uniform float chaoChapa;
+          uniform vec3 arrasto;
+          uniform float tamChapa;
+          vec3 girar(vec3 v, vec3 e, float a) { return v * cos(a) + cross(e, v) * sin(a) + e * dot(e, v) * (1.0 - cos(a)); }
+          // tempo de voo da chapa: para de contar quando ela chega no chão
+          float tVoo() {
+            float vy = vel.y + arrasto.y;
+            float pouso = (vy + sqrt(vy * vy + 19.6 * max(pivo.y - chaoChapa, 0.0))) / 9.8;
+            return min(max(tChapa - vel.w, 0.0), pouso);
+          }`)
+        .replace('#include <beginnormal_vertex>', `#include <beginnormal_vertex>
+          objectNormal = girar(objectNormal, giro.xyz, giro.w * tVoo());`)
+        .replace('#include <begin_vertex>', `
+          float tv = tVoo();
+          vec3 centro = pivo + (vel.xyz + arrasto) * tv;
+          centro.y -= 4.9 * tv * tv;
+          vec3 transformed = centro + girar(position - pivo, giro.xyz, giro.w * tv) * tamChapa;
+          transformed.y = max(transformed.y, chaoChapa + 0.04);`);
+    };
+    const m = new THREE.Mesh(chapas.geo, mat);
+    m.frustumCulled = false;
+    m.visible = false;
+    m.userData.uni = uni;
+    scene.add(m);
+    return m;
+  }
+  // o tanque deitado no chão, de comprido na direção em que o avião vinha; as chapas levam um pouco do embalo
+  function lancarChapas(pos, vel, escala) {
+    if (!chapas.geo) return;
+    if (chapas.malhas.length < 3) chapas.malhas.push(criarMalhaChapas());
+    const m = chapas.malhas.find((x) => !x.visible) || chapas.malhas.reduce((a, b) => (a.userData.uni.tChapa.value > b.userData.uni.tChapa.value ? a : b));
+    const rumo = Math.atan2(-vel.z, vel.x);
+    m.position.set(pos.x, superficie(pos.x, pos.z) + 2.6 * escala, pos.z);
+    m.rotation.set(0, rumo, 0);
+    m.scale.setScalar(escala);
+    const u = m.userData.uni;
+    u.tChapa.value = 0;
+    u.chaoChapa.value = -2.6;
+    u.tamChapa.value = 1;
+    u.arrasto.value.set(vel.x, 0, vel.z).multiplyScalar(0.12 / escala).applyAxisAngle(EIXO_Y, -rumo);
+    m.visible = true;
+  }
+  function atualizarChapas(dt) {
+    for (const m of chapas.malhas) {
+      if (!m.visible) continue;
+      const u = m.userData.uni;
+      u.tChapa.value += dt;
+      u.tamChapa.value = clamp((VIDA_CHAPAS - u.tChapa.value) / 2, 0, 1);
+      if (u.tChapa.value > VIDA_CHAPAS) m.visible = false;
+    }
+  }
+
   // --- focos de fogo: o que sobra no chão depois de uma batida (chamas e uma coluna de fumaça preta)
   const focos = [];
   function atualizarFocos(dt) {
@@ -3428,6 +3657,7 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
         vida: 0.8 + Math.random() * 1.2, tam0: 2.5, tam1: 0.8, r: 1, g: 0.72, b: 0.35, alfa: 1, arrasto: 0.8, grav: 9.8 });
     }
     soltarPedacos(tmpD.set(pos.x, pos.y + 2, pos.z), tmpC.copy(vel).multiplyScalar(0.25).setY(0), Math.round(22 * escala), 38, 2 * escala, 4);
+    lancarChapas(pos, vel, escala);
     focos.push({ x: pos.x, y: pos.y, z: pos.z, t: 0, dur: 16, raio: 9 * escala, esc: escala, taxaFogo: 32, taxaFumaca: 7, af: 0, am: 0 });
     sacudir(pos, 1.6 * escala, 1100);
     if (!somDe('explosaoChao', 1.2, pos, 6000)) somExplosao(2);
@@ -3465,6 +3695,7 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
   function atualizarEfeitos(dt) {
     atualizarExplosoesGrandes(dt);
     atualizarPedacos(dt);
+    atualizarChapas(dt);
     atualizarFocos(dt);
     atualizarFlares(dt);
     atualizarParticulas(fumacas, dt);
@@ -3473,6 +3704,7 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
   function limparEfeitos() {
     for (const e of explosoesGrandes) e.malha.visible = false;
     pedacos.length = 0;
+    for (const m of chapas.malhas) m.visible = false;
     focos.length = 0;
     fumacas.lista.length = 0;
     brilhos.lista.length = 0;
@@ -3592,7 +3824,7 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
     }
     const chama = novaChama(matChamaMissil);
     chama.position.z = 1.5;
-    chama.scale.set(0.2, 0.2, 3.5);
+    chama.scale.set(0.17, 0.17, 1.2);
     g.add(chama);
     g.frustumCulled = false;
     return { malha: g, pos: new THREE.Vector3(), ant: new THREE.Vector3(), quat: new THREE.Quaternion(), vel: 0, vida: 0, alvo: null, guiado, inimigo: !!inimigo, rastreando: !!inimigo, chama, fumaca: 0 };
@@ -3693,7 +3925,7 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
       m.vida -= dt;
       m.malha.position.copy(m.pos);
       m.malha.quaternion.copy(m.quat);
-      m.chama.scale.z = 3 + Math.random() * 1.5;
+      m.chama.scale.z = 1.1 + Math.random() * 0.35;
       rastroMissil(m, dt);
       let acabou = false;
       for (const ini of inimigos) {
@@ -3740,7 +3972,7 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
     m.vida -= dt;
     m.malha.position.copy(m.pos);
     m.malha.quaternion.copy(m.quat);
-    m.chama.scale.z = 3 + Math.random() * 1.5;
+    m.chama.scale.z = 1.1 + Math.random() * 0.35;
     rastroMissil(m, dt);
     // ronco do motor do míssil: mais alto e mais agudo chegando perto
     const d = m.pos.distanceTo(aviao.pos);
@@ -3777,7 +4009,7 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
     for (const [x, y, zz] of base.config.bocais) {
       const ch = novaChama(matChamaInimigo);
       ch.position.set(x, y, zz);
-      ch.scale.set(base.config.raioBocal, base.config.raioBocal, base.config.comprimento * 0.3);
+      ch.scale.set(base.config.raioBocal, base.config.raioBocal, base.config.raioBocal * 2);
       grupo.add(ch);
     }
     scene.add(grupo);
@@ -4221,7 +4453,7 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
 
     // pós-combustão acima de 82% de motor: a chama cresce e tremula
     const pc = clamp((aviao.motor - 0.82) / 0.18, 0, 1);
-    if (cacaAtual) atualizarChamas(cacaAtual.plumas, destruido ? 0 : pc, agora, cacaAtual.config.comprimento);
+    if (cacaAtual) atualizarChamas(cacaAtual.plumas, destruido ? 0 : aviao.motor, destruido ? 0 : pc, agora);
 
     aviaoModelo.position.copy(aviao.pos);
     aviaoModelo.quaternion.copy(aviao.quat);
@@ -4255,6 +4487,135 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
     ceu: ceuEscolhido,
     voando: estado !== 'inicio',
   }));
+
+  // --- app instalável e jogo sem internet (o service worker fica em sw.js)
+  // No site (https) o service worker guarda o que o jogo vai usando; "Baixar tudo" guarda de uma vez o que falta,
+  // nas versões deste aparelho (céus 4k ou 8k, texturas menores no celular). Rodando no próprio computador
+  // (localhost) ele só liga com ?sw=1 na URL, para não atrapalhar quem está mexendo nos arquivos.
+  const CACHE_ARQUIVOS = 'voo-arquivos-1';                  // os mesmos nomes do sw.js
+  const CACHE_FONTES = 'voo-fontes-1';
+  const URL_FONTES = document.querySelector('link[href^="https://fonts.googleapis.com/css2"]')?.href;
+  const usarSW = 'serviceWorker' in navigator && 'caches' in window && (location.protocol === 'https:' || new URLSearchParams(location.search).has('sw'));
+  const IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const noApp = () => matchMedia('(display-mode: fullscreen), (display-mode: standalone)').matches || navigator.standalone === true;
+  const elOfflineTexto = $('offline-texto'), elBaixar = $('baixar'), elInstalar = $('instalar');
+  const mb = (b) => (b / 1048576).toFixed(b < 10485760 ? 1 : 0).replace('.', ',') + ' MB';
+  let baixando = false;
+  let pedidoInstalar = null;
+
+  // tudo o que o jogo carrega neste aparelho (a página e o manifesto o próprio service worker já guarda)
+  function arquivosDoJogo() {
+    const l = ['js/three.min.js', 'js/GLTFLoader.js', 'icones/icone-192.png', 'icones/icone-512.png'];
+    for (const id in CACAS) l.push(CACAS[id].arquivo, 'modelos/' + id + '.jpg');
+    for (const n of ['floresta.json', 'floresta.glb', 'chao.jpg', 'chao_relevo.jpg', 'arvores.webp', 'casca.jpg']) l.push('cenarios/floresta/' + n);
+    for (const id in CENARIOS) {
+      const c = CENARIOS[id];
+      if (c.tipo === 'ilha' && !c.semRelevo) l.push(c.pasta + 'relevo.bin', c.pasta + (MOVEL ? 'satelite_2k.jpg' : 'satelite.jpg'));
+      for (const k of c.construcoes || []) l.push('cenarios/construcoes/' + k.nome + '.glb', 'cenarios/construcoes/' + k.nome + '_alturas.json');
+    }
+    for (const id in CEUS) l.push('ceu/' + CEUS[id].id + '_' + resCeu + '.jpg', 'ceu/' + CEUS[id].id + '_mini.jpg');
+    for (const n in ARQ_SONS) l.push(encodeURI(ARQ_SONS[n]));
+    for (const a of ATLAS_EXPLOSAO) l.push(a.arquivo + (MOVEL ? '_peq' : '') + '.webp');
+    l.push('efeitos/explosao_chapas.json');
+    return [...new Set(l.map((u) => new URL(u, location.href).href))];
+  }
+  async function faltando() {
+    const cache = await caches.open(CACHE_ARQUIVOS);
+    const tem = new Set((await cache.keys()).map((r) => r.url));
+    const lista = arquivosDoJogo();
+    return { lista, faltam: lista.filter((u) => !tem.has(u)) };
+  }
+  async function atualizarOffline() {
+    if (!usarSW) return;
+    $('offline').hidden = false;
+    elInstalar.hidden = !pedidoInstalar;
+    $('instalar-iphone').hidden = !IOS || noApp();
+    if (baixando) return;
+    const { lista, faltam } = await faltando();
+    elBaixar.hidden = !faltam.length;
+    if (!faltam.length) elOfflineTexto.textContent = 'Pronto! O jogo está guardado neste aparelho e abre mesmo sem internet.';
+    else if (faltam.length < lista.length) {
+      elBaixar.textContent = 'Baixar o que falta';
+      elOfflineTexto.textContent = 'Parte do jogo já está guardada neste aparelho: faltam ' + faltam.length + ' de ' + lista.length + ' arquivos para jogar sem internet.';
+    } else elBaixar.textContent = 'Baixar tudo';
+  }
+  async function baixarTudo() {
+    if (baixando) return;
+    baixando = true;
+    elBaixar.disabled = true;
+    const barra = $('baixar-barra');
+    barra.style.width = '0%';
+    $('baixar-carga').hidden = false;
+    try {
+      if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+      elOfflineTexto.textContent = 'Conferindo o que falta…';
+      const { faltam } = await faltando();
+      // o tamanho de cada arquivo, para a barra andar pelo peso e não pela quantidade
+      const tamanhos = await Promise.all(faltam.map((u) => fetch(u, { method: 'HEAD', headers: { 'x-voo-baixar': '1' } })
+        .then((r) => +r.headers.get('content-length') || 1e6).catch(() => 1e6)));
+      const total = tamanhos.reduce((a, b) => a + b, 0);
+      const cache = await caches.open(CACHE_ARQUIVOS);
+      let feito = 0;
+      for (let i = 0; i < faltam.length; i++) {
+        const r = await fetch(faltam[i], { cache: 'no-cache', headers: { 'x-voo-baixar': '1' } });
+        if (!r.ok) throw new Error(faltam[i]);
+        const guardar = cache.put(faltam[i], r.clone());
+        const leitor = r.body.getReader();
+        let lidos = 0;
+        for (;;) {
+          const { done, value } = await leitor.read();
+          if (done) break;
+          lidos += value.length;
+          const agora = feito + Math.min(lidos, tamanhos[i]);
+          barra.style.width = (agora / total * 100).toFixed(1) + '%';
+          elOfflineTexto.textContent = 'Baixando… ' + mb(agora) + ' de ' + mb(total);
+        }
+        await guardar;
+        feito += tamanhos[i];
+      }
+      barra.style.width = '100%';
+      await guardarFontes().catch(() => {});
+    } catch (erro) {
+      elOfflineTexto.textContent = 'Não deu para baixar tudo (a internet caiu?). Toque de novo para continuar de onde parou.';
+      baixando = false;
+      elBaixar.disabled = false;
+      elBaixar.textContent = 'Continuar';
+      return;
+    }
+    baixando = false;
+    elBaixar.disabled = false;
+    $('baixar-carga').hidden = true;
+    atualizarOffline();
+  }
+  // as fontes do painel (do Google); sem elas o jogo usa as do aparelho
+  async function guardarFontes() {
+    if (!URL_FONTES || await caches.match(URL_FONTES)) return;
+    const cache = await caches.open(CACHE_FONTES);
+    const css = await fetch(URL_FONTES, { mode: 'cors' });
+    if (!css.ok) return;
+    const texto = await css.clone().text();
+    await cache.put(URL_FONTES, css);
+    for (const m of texto.matchAll(/url\((https:\/\/fonts\.gstatic\.com\/[^)]+)\)/g)) {
+      if (await cache.match(m[1])) continue;
+      const f = await fetch(m[1], { mode: 'cors' });
+      if (f.ok) await cache.put(m[1], f);
+    }
+  }
+  elBaixar.addEventListener('click', baixarTudo);
+  elInstalar.addEventListener('click', () => {
+    if (!pedidoInstalar) return;
+    pedidoInstalar.prompt();
+    pedidoInstalar.userChoice.finally(() => { pedidoInstalar = null; atualizarOffline(); });
+  });
+  window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); pedidoInstalar = e; atualizarOffline(); });
+  window.addEventListener('appinstalled', () => { pedidoInstalar = null; atualizarOffline(); });
+  if (usarSW) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+    atualizarOffline();
+  } else if ('serviceWorker' in navigator) {
+    // no computador de testes sem ?sw=1: tira um service worker que tenha ficado de um teste anterior
+    navigator.serviceWorker.getRegistrations().then((rs) => rs.forEach((r) => r.unregister())).catch(() => {});
+  }
 
   function comecar(dados) {
     dados = dados || {};
@@ -4326,6 +4687,50 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
     avancar: (seg, fps) => { fps = fps || 60; for (let i = 0; i < seg * fps; i++) passoJogo(ultimo + 1000 / fps); return estado; },
     // avança os efeitos com o avião parado no mesmo lugar
     esperar: (seg) => { const p = aviao.pos.clone(), q = aviao.quat.clone(); for (let i = 0; i < seg * 60; i++) { passoJogo(ultimo + 1000 / 60); aviao.pos.copy(p); aviao.quat.copy(q); aviao.vel = 200; } return estado; },
+    // foto do caça sozinho num fundo azul, para a miniatura do menu (640 x 400)
+    vitrine: (id, nome, vista) => {
+      const c = cacaCache[id];
+      if (!c) return Promise.resolve('sem modelo');
+      const cena = new THREE.Scene();
+      cena.background = new THREE.Color(0x8fb6d6);
+      cena.environment = scene.environment;
+      const luz = new THREE.DirectionalLight(0xfff1dc, 1.25);
+      luz.position.set(-4, 6, -3);
+      cena.add(luz, new THREE.HemisphereLight(0xd6ecff, 0x8c8a80, 0.7));
+      const g = c.grupo.clone();
+      g.traverse((o) => { if (o.isSprite || (o.material && o.material.isShaderMaterial)) o.visible = false; });
+      cena.add(g);
+      const L = c.config.comprimento;
+      const cam = new THREE.PerspectiveCamera(30, 1.6, 0.1, 1000);
+      cam.position.fromArray(vista || [-1.5, -0.35, -0.9]).multiplyScalar(L);
+      cam.lookAt(0, 0, 0);
+      renderer.setSize(640, 400, false);
+      renderer.render(cena, cam);
+      const url = canvas.toDataURL('image/jpeg', 0.9);
+      redimensionar();
+      return fetch('/__foto?nome=' + encodeURIComponent(nome || 'vitrine'), { method: 'POST', body: url }).then((r) => r.status);
+    },
+    // põe um inimigo e um míssil parados à frente, de costas, para conferir a chama deles
+    inimigoNaFrente: (d) => {
+      if (!inimigos.length) criarInimigo(1);
+      const ini = inimigos[0];
+      ini.pos.copy(window.__vooTeste.aFrente(d || 90));
+      ini.quat.copy(aviao.quat);
+      ini.grupo.position.copy(ini.pos);
+      ini.grupo.quaternion.copy(ini.quat);
+      const m = criarMissil(true, true);
+      m.malha.position.copy(window.__vooTeste.aFrente((d || 90) - 30)).add(new THREE.Vector3(6, 3, 0).applyQuaternion(aviao.quat));
+      m.malha.quaternion.copy(aviao.quat);
+      scene.add(m.malha);
+      return ini.id;
+    },
+    // põe a câmera num ponto em volta do avião (metros, no referencial dele) olhando para outro ponto dele
+    olharDe: (de, para) => {
+      camera.position.fromArray(de).applyQuaternion(aviao.quat).add(aviao.pos);
+      camera.up.set(0, 1, 0).applyQuaternion(aviao.quat);
+      camera.lookAt(new THREE.Vector3().fromArray(para || [0, 0, 0]).applyQuaternion(aviao.quat).add(aviao.pos));
+      camera.up.set(0, 1, 0);
+    },
     foto: (nome, larg) => {
       larg = larg || 960;
       renderer.setSize(larg, Math.round(larg * 0.5625), false);
