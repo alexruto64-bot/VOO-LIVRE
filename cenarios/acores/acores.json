@@ -1,0 +1,413 @@
+{
+ "largura": 51127.84656212304,
+ "profundidade": 52527.89915560917,
+ "nx": 987,
+ "nz": 1014,
+ "cx": 751.880096501809,
+ "cz": 14959.82123039807,
+ "celula": 51.85379975874548,
+ "feicoes": [
+  {
+   "nome": "Ilha do Pico (centro)",
+   "x": -3224.5,
+   "z": 390.3,
+   "raio": 10172.0,
+   "alturaMax": 2305.5
+  },
+  {
+   "nome": "Ilha do Pico (cume)",
+   "x": -8218.8,
+   "z": 466.7,
+   "raio": 600.0,
+   "alturaMax": 2305.5
+  },
+  {
+   "nome": "Ilha do Fogo (centro)",
+   "x": 1300.0,
+   "z": 27501.5,
+   "raio": 10173.0,
+   "alturaMax": 2761.7
+  },
+  {
+   "nome": "Ilha do Fogo (cume, Pico do Fogo)",
+   "x": 5107.6,
+   "z": 25512.1,
+   "raio": 700.0,
+   "alturaMax": 2761.7
+  },
+  {
+   "nome": "Ilha Brava (centro)",
+   "x": -17481.9,
+   "z": 32185.5,
+   "raio": 3791.6,
+   "alturaMax": 951.0
+  },
+  {
+   "nome": "Ilha Brava (cume)",
+   "x": -17293.2,
+   "z": 32201.2,
+   "raio": 400.0,
+   "alturaMax": 951.0
+  },
+  {
+   "nome": "Agulhas (campo de torres)",
+   "x": 10578.2,
+   "z": 14337.6,
+   "raio": 2776.2,
+   "alturaMax": 360.5,
+   "largura": 5444.6,
+   "profundidade": 3681.6,
+   "extensao": {
+    "x0": 7855.9,
+    "x1": 13300.5,
+    "z0": 12496.8,
+    "z1": 16178.4
+   },
+   "torres": [
+    {
+     "x": 11250.6,
+     "z": 15988.9,
+     "raio": 137.6,
+     "alturaMax": 242.4,
+     "tipo": "torre"
+    },
+    {
+     "x": 9029.2,
+     "z": 14180.3,
+     "raio": 262.2,
+     "alturaMax": 356.9,
+     "tipo": "crista"
+    },
+    {
+     "x": 10297.2,
+     "z": 16068.7,
+     "raio": 126.1,
+     "alturaMax": 220.7,
+     "tipo": "torre"
+    },
+    {
+     "x": 12480.3,
+     "z": 13017.8,
+     "raio": 100.4,
+     "alturaMax": 206.4,
+     "tipo": "torre"
+    },
+    {
+     "x": 9667.6,
+     "z": 14792.7,
+     "raio": 250.6,
+     "alturaMax": 296.5,
+     "tipo": "crista"
+    },
+    {
+     "x": 11558.7,
+     "z": 13003.2,
+     "raio": 112.2,
+     "alturaMax": 215.6,
+     "tipo": "torre"
+    },
+    {
+     "x": 10918.3,
+     "z": 12981.8,
+     "raio": 95.7,
+     "alturaMax": 238.1,
+     "tipo": "torre"
+    },
+    {
+     "x": 10306.4,
+     "z": 14590.5,
+     "raio": 104.0,
+     "alturaMax": 336.6,
+     "tipo": "torre"
+    },
+    {
+     "x": 12736.9,
+     "z": 13776.8,
+     "raio": 123.2,
+     "alturaMax": 226.4,
+     "tipo": "torre"
+    },
+    {
+     "x": 12258.1,
+     "z": 14452.0,
+     "raio": 133.7,
+     "alturaMax": 267.3,
+     "tipo": "torre"
+    },
+    {
+     "x": 9006.0,
+     "z": 15624.2,
+     "raio": 129.8,
+     "alturaMax": 268.4,
+     "tipo": "torre"
+    },
+    {
+     "x": 11122.7,
+     "z": 14316.8,
+     "raio": 123.5,
+     "alturaMax": 360.5,
+     "tipo": "torre"
+    },
+    {
+     "x": 12084.2,
+     "z": 15660.9,
+     "raio": 134.0,
+     "alturaMax": 247.5,
+     "tipo": "torre"
+    },
+    {
+     "x": 9016.6,
+     "z": 13394.3,
+     "raio": 95.4,
+     "alturaMax": 229.6,
+     "tipo": "torre"
+    },
+    {
+     "x": 12369.5,
+     "z": 15032.1,
+     "raio": 124.7,
+     "alturaMax": 241.6,
+     "tipo": "torre"
+    },
+    {
+     "x": 8176.3,
+     "z": 14906.4,
+     "raio": 139.4,
+     "alturaMax": 257.4,
+     "tipo": "torre"
+    },
+    {
+     "x": 9775.9,
+     "z": 13411.1,
+     "raio": 113.3,
+     "alturaMax": 260.9,
+     "tipo": "torre"
+    },
+    {
+     "x": 10974.3,
+     "z": 13598.8,
+     "raio": 89.3,
+     "alturaMax": 269.9,
+     "tipo": "torre"
+    },
+    {
+     "x": 11545.2,
+     "z": 13882.9,
+     "raio": 88.6,
+     "alturaMax": 299.8,
+     "tipo": "torre"
+    },
+    {
+     "x": 9769.1,
+     "z": 14079.1,
+     "raio": 87.2,
+     "alturaMax": 327.8,
+     "tipo": "torre"
+    },
+    {
+     "x": 11588.9,
+     "z": 15342.7,
+     "raio": 102.6,
+     "alturaMax": 268.4,
+     "tipo": "torre"
+    },
+    {
+     "x": 10299.7,
+     "z": 15421.8,
+     "raio": 116.7,
+     "alturaMax": 318.0,
+     "tipo": "torre"
+    },
+    {
+     "x": 11566.0,
+     "z": 14734.4,
+     "raio": 110.8,
+     "alturaMax": 279.3,
+     "tipo": "torre"
+    },
+    {
+     "x": 8977.0,
+     "z": 14973.4,
+     "raio": 107.7,
+     "alturaMax": 267.2,
+     "tipo": "torre"
+    },
+    {
+     "x": 8321.6,
+     "z": 13685.7,
+     "raio": 137.0,
+     "alturaMax": 260.0,
+     "tipo": "torre"
+    },
+    {
+     "x": 8602.4,
+     "z": 13060.2,
+     "raio": 114.6,
+     "alturaMax": 175.4,
+     "tipo": "torre"
+    },
+    {
+     "x": 13214.5,
+     "z": 14831.4,
+     "raio": 104.9,
+     "alturaMax": 197.7,
+     "tipo": "torre"
+    },
+    {
+     "x": 9332.9,
+     "z": 12708.1,
+     "raio": 97.3,
+     "alturaMax": 175.6,
+     "tipo": "torre"
+    },
+    {
+     "x": 9714.0,
+     "z": 15440.2,
+     "raio": 89.0,
+     "alturaMax": 285.1,
+     "tipo": "torre"
+    },
+    {
+     "x": 7943.1,
+     "z": 14388.1,
+     "raio": 87.9,
+     "alturaMax": 209.8,
+     "tipo": "torre"
+    },
+    {
+     "x": 10957.2,
+     "z": 14868.8,
+     "raio": 112.6,
+     "alturaMax": 343.7,
+     "tipo": "torre"
+    },
+    {
+     "x": 10385.8,
+     "z": 13741.6,
+     "raio": 136.9,
+     "alturaMax": 296.2,
+     "tipo": "torre"
+    },
+    {
+     "x": 10210.9,
+     "z": 12652.7,
+     "raio": 152.7,
+     "alturaMax": 201.3,
+     "tipo": "torre"
+    },
+    {
+     "x": 9610.7,
+     "z": 16002.3,
+     "raio": 151.2,
+     "alturaMax": 227.3,
+     "tipo": "torre"
+    }
+   ]
+  },
+  {
+   "nome": "Ilha dos Cânions (centro)",
+   "x": 19477.0,
+   "z": 30622.5,
+   "raio": 2970.4,
+   "alturaMax": 404.1,
+   "extensao": {
+    "x0": 15789.5,
+    "x1": 23308.3,
+    "z0": 27897.3,
+    "z1": 33238.3
+   }
+  },
+  {
+   "nome": "Cânion Grande (oeste-leste) - boca 1",
+   "x": 16129.9,
+   "z": 31703.7,
+   "raio": 170.0,
+   "alturaMax": 290.8
+  },
+  {
+   "nome": "Cânion Grande (oeste-leste) - boca 2",
+   "x": 23017.1,
+   "z": 29943.0,
+   "raio": 117.5,
+   "alturaMax": 305.1
+  },
+  {
+   "nome": "Cânion Norte-Sul - boca 1",
+   "x": 18470.7,
+   "z": 28314.7,
+   "raio": 125.0,
+   "alturaMax": 309.1
+  },
+  {
+   "nome": "Cânion Norte-Sul - boca 2",
+   "x": 19966.1,
+   "z": 32943.9,
+   "raio": 152.5,
+   "alturaMax": 298.4
+  },
+  {
+   "nome": "Cânion do Leste - boca 1",
+   "x": 20857.1,
+   "z": 28157.1,
+   "raio": 147.5,
+   "alturaMax": 264.6
+  },
+  {
+   "nome": "Cânion do Leste - boca 2",
+   "x": 23192.8,
+   "z": 30744.5,
+   "raio": 127.5,
+   "alturaMax": 289.3
+  },
+  {
+   "nome": "Ilha dos Cânions - ramo 1 (fundo sem saída)",
+   "x": 17292.5,
+   "z": 29610.7,
+   "raio": 102.5,
+   "alturaMax": 341.9
+  },
+  {
+   "nome": "Ilha dos Cânions - ramo 2 (fundo sem saída)",
+   "x": 20831.8,
+   "z": 31816.8,
+   "raio": 87.5,
+   "alturaMax": 333.9
+  },
+  {
+   "nome": "Ilha dos Cânions - ramo 3 (fundo sem saída)",
+   "x": 18022.2,
+   "z": 32315.5,
+   "raio": 87.5,
+   "alturaMax": 340.7
+  },
+  {
+   "nome": "Ilha dos Cânions - ramo 4 (fundo sem saída)",
+   "x": 22542.0,
+   "z": 29055.2,
+   "raio": 87.5,
+   "alturaMax": 289.5
+  },
+  {
+   "nome": "Ilhéu Leste (cone vulcânico)",
+   "x": 20200.3,
+   "z": 16341.7,
+   "raio": 1336.5,
+   "alturaMax": 522.8,
+   "cratera": {
+    "x": 20200.0,
+    "z": 16300.0
+   }
+  },
+  {
+   "nome": "Ilhéu Oeste (cone vulcânico)",
+   "x": -18209.9,
+   "z": 18614.5,
+   "raio": 1007.9,
+   "alturaMax": 361.1,
+   "cratera": {
+    "x": -18200.0,
+    "z": 18600.0
+   }
+  }
+ ]
+}

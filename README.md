@@ -4,12 +4,36 @@ MELHOR JOGO DE AVIAO
 **Jogar agora:** https://alexruto64-bot.github.io/VOO-LIVRE/
 
 Jogo de avião em 3D para o navegador, no computador (teclado) ou no celular deitado (controles na tela). Quatro caças,
-seis cenários (floresta, campos, cidade, duas ilhas de verdade e um mar com ilhotas), céus de fotografia e ondas de
-caças inimigos no modo sobrevivência. Dá para instalar como app e jogar sem internet.
+quatro cenários (floresta, uma cidade grande, os Açores com ilhas de verdade e um mar com ilhotas), céus de fotografia
+e três modos: voo livre, sobrevivência (você contra ondas de caças) e mata-mata 5 × 5 em equipe. Abre numa capa, como
+um jogo de console, com menu, configurações de gráficos e de som e música de fundo. Dá para instalar como app e jogar
+sem internet.
+
+## Menu e configurações
+
+O jogo abre na capa: uma cena do próprio jogo (um F-14 em pós-combustão entre os prédios da cidade ao entardecer, com um
+caça inimigo explodindo na frente do sol), em `texturas/capa.jpg` (`capa_peq.jpg` em telas pequenas). Um toque ou uma
+tecla leva ao menu principal, com o caça voando atrás e a câmera passeando em volta dele:
+
+- **Jogar:** modo, caça, cenário (com miniaturas, `cenarios/*_mini.jpg`) e céu, e o botão Decolar. As escolhas ficam
+  guardadas no navegador.
+- **Configurações:** gráficos em baixo, médio ou alto (o jogo recarrega para trocar); volume geral, da música e dos
+  efeitos; sensibilidade do manche; inverter o manche; câmera tremendo com as explosões; e o jogo sem internet. A pausa
+  também abre as Configurações (menos os gráficos, que só mudam no menu).
+- **Como jogar:** os comandos do teclado e do celular, as armas, os pontos e os modos.
+- **Créditos:** de onde vem cada modelo, textura, céu, som e música.
+
+Gráficos: **alto** (o padrão no computador) tem as texturas grandes, mais árvores e o alcance maior; **médio** (o padrão
+no celular) usa texturas menores e menos árvores; **baixo** é o médio com menos pixels na tela, sem suavizar o
+serrilhado, com menos fumaça e com as árvores e os detalhes do chão mais perto.
+
+No menu dá para usar as setas ↑ ↓, Enter e Esc, e as opções fazem um tique ao passar e ao escolher. O recorde da
+sobrevivência (pontos e nível) fica guardado neste navegador e aparece no menu; quando você o bate, o fim de voo mostra
+"Novo recorde!".
 
 ## Os caças
 
-Na tela de início você escolhe qual caça pilotar. Os três primeiros são modelos 3D de artistas do Sketchfab, com
+Na tela Jogar você escolhe qual caça pilotar. Os três primeiros são modelos 3D de artistas do Sketchfab, com
 licença CC BY 4.0 (uso livre com crédito ao autor):
 
 - **F-16D Fighting Falcon** — [General Dynamics F-16D Block 60](https://sketchfab.com/3d-models/general-dynamics-f-16d-block-60-ea8edb08d79e4eafa9c794c581f88cf3), por Muhamad Mirza Arrafi.
@@ -26,7 +50,7 @@ Aparece fraca a partir de 55% de motor e cresce na pós-combustão (acima de 82%
 
 ## Cenários
 
-Escolhidos na tela de início. A escolha (e a do céu) fica guardada no navegador.
+Escolhidos na tela Jogar. A escolha (e a do céu) fica guardada no navegador.
 
 - **Floresta:** mata fechada sem fim, com morros, estrada de terra e três vilas em clareiras. É um quadro de floresta
   de uns 395 m (modelo [a forest (3) with a road at night for game](https://sketchfab.com/3d-models/a-forest-3-with-a-road-at-night-for-game-61f8c7817fe6457fb26e4814cfc48a3f),
@@ -35,30 +59,37 @@ Escolhidos na tela de início. A escolha (e a do céu) fica guardada no navegado
   - árvores em 3D só perto do avião e só para o lado em que a câmera olha;
   - mais longe, até o horizonte, "fotos de lado" das árvores montadas pelo próprio jogo, cada vez mais ralas;
   - o alcance das árvores se ajusta sozinho: diminui se o jogo ficar lento e aumenta se sobrar fôlego.
-- **Campos:** lavouras, matas, lagos e estradas desenhados numa textura que se repete, com um aeroporto (pista pintada
-  no chão, em asfalto de verdade) e duas vilas. As matas são floresta de verdade: árvores de foto de perto e copas
-  vistas de cima no chão, de longe.
-- **Cidade:** nove quarteirões de prédios (de uns 46 m na média até 350 m) para passar no meio, cercados de floresta.
-  As ruas entre as quadras têm asfalto de verdade, faixa tracejada, calçadas e faixas de pedestre; dentro das quadras,
-  praças e pátios.
-- **Açores:** a Ilha do Pico, com o vulcão de 2.350 m, no meio do mar. Relevo e foto de satélite do modelo
-  [Ilha do Pico, Azores, Portugal](https://sketchfab.com/3d-models/ilha-do-pico-azores-portugal-54f9cfe3429741089dc22ec37a8839f4),
-  por CMPLab (CC BY 4.0; feito com dados ALOS AW3D30 e Landsat).
-- **Cabo Verde:** as ilhas do Fogo e da Brava, com a cratera do vulcão. Do modelo
-  [Islas Fogo y Brava, Cabo Verde](https://sketchfab.com/3d-models/islas-fogo-y-brava-cabo-verde-a851f7640f294748a7bc59c38da46fbe),
-  por CMPLab (CC BY 4.0; dados ASTER GDEM e Landsat).
+- **Cidade:** uma cidade grande de uns 11 x 10 km, cercada de floresta. É uma grade de quadras de 860 x 744 m (o
+  tamanho das quadras do modelo 3D do centro), cada uma com 4 x 4 lotes separados por ruas; entre as quadras, avenidas.
+  No meio ficam as 9 quadras do modelo 3D (o centro, com prédios de até 350 m); em volta, uns 15 mil prédios feitos pelo
+  jogo, altos perto do centro (torres de vidro de até 300 m) e mais baixos longe dele, com uma torre aqui e outra ali.
+  As paredes são fotos de fachadas de verdade do [ambientCG](https://ambientcg.com/) (CC0: vidro escuro, vidro verde,
+  escritório branco, tijolo, concreto e tijolo com pilares), e o vidro reflete o céu. Entre os prédios há praças,
+  estacionamentos e bosques: pedaços da mata do cenário floresta, com as mesmas árvores. A leste fica o aeroporto
+  (o terminal, pista de 3 km, taxiways e hangares). Dá para voar entre os prédios e bater neles (e os caças que vêm
+  atrás também batem). O tipo de cada lote fica numa textura pequena, lida pelo chão e pelo gerador dos prédios.
+- **Açores:** um arquipélago de uns 51 x 53 km. A Ilha do Pico, com o vulcão de 2.350 m (relevo e foto de satélite do
+  modelo [Ilha do Pico, Azores, Portugal](https://sketchfab.com/3d-models/ilha-do-pico-azores-portugal-54f9cfe3429741089dc22ec37a8839f4),
+  por CMPLab, CC BY 4.0; dados ALOS AW3D30 e Landsat), e ao sul as ilhas do Fogo e da Brava, com a cratera do vulcão
+  do Fogo (do modelo [Islas Fogo y Brava, Cabo Verde](https://sketchfab.com/3d-models/islas-fogo-y-brava-cabo-verde-a851f7640f294748a7bc59c38da46fbe),
+  por CMPLab, CC BY 4.0; dados ASTER GDEM e Landsat), mais perto do que na vida real. O jogo acrescentou obstáculos
+  para fugir rente a eles: as Agulhas (34 torres de pedra de 180 a 360 m saindo do mar raso, no canal entre o Pico e o
+  Fogo, com uns 300 m entre uma e outra), a Ilha dos Cânions (um planalto de uns 400 m cortado por três cânions de
+  água, que dá para atravessar voando baixo) e dois ilhéus vulcânicos com cratera. No mata-mata uma equipe chega pelo
+  sul e a outra pelo norte, e a briga começa no meio das Agulhas.
 - **Ilhotas:** mar aberto com ilhotas do Brasil em 3D (fotogrametria), repetidas com outro tamanho e outro rumo para
   formar um arquipélago: [Ilha de Urubuqueçaba](https://sketchfab.com/3d-models/ilha-de-urubuquecaba-4aec6c8b87bf4f7c9416c913fa1e1e66),
   por Emilio Cid, e a pedra de [Gravuras rupestres próximas à Ilha das Meninas](https://sketchfab.com/3d-models/gravuras-rupestres-proximas-a-ilha-das-meninas-13befe10866044d797eaea0265f3d222),
   por GeoHereditas (as duas CC BY 4.0; simplificadas e com as texturas refeitas para o jogo). O fundo do mar é feito pelo
   próprio jogo: raso e claro na beira das pedras, com espuma, e fundo mais longe.
 
-Nas ilhas o mar tem ondas, reflexo do céu, brilho do sol, água rasa na praia e espuma. As fotos de satélite estão em
-`cenarios/pico/` e `cenarios/caboverde/` (4096 px, ou 2048 px no celular), com as nuvens da foto apagadas.
+Nas ilhas o mar tem ondas, reflexo do céu, brilho do sol, água rasa na praia e espuma. O relevo e a foto de satélite
+dos Açores ficam em `cenarios/acores/` (4096 px, ou 2048 px no celular), montados a partir dos do Pico e do Fogo e
+Brava (ainda sobram umas nuvens na foto do Pico).
 
-**Construções:** vila, cidade e aeroporto são modelos glTF em `cenarios/construcoes/`, cada um com um mapa das alturas
-das partes sólidas visto de cima, que é a colisão (dá para bater nos prédios e voar entre eles). Origem e licença dos
-três modelos a confirmar.
+**Construções:** vila, o centro da cidade e o aeroporto são modelos glTF em `cenarios/construcoes/`, cada um com um
+mapa das alturas das partes sólidas visto de cima, que é a colisão (dá para bater nos prédios e voar entre eles).
+Origem e licença dos três modelos a confirmar.
 
 **Tamanhos:** tudo foi conferido ao lado do caça (15 a 19 m de comprimento), para nenhum prédio ficar menor que ele:
 a cidade e as vilas estão no dobro do tamanho original do modelo, o aeroporto em 1,5 vez, a Ilha de Urubuqueçaba em
@@ -90,25 +121,44 @@ As fotos ficam em `ceu/`, cortadas do topo até um pouco abaixo do horizonte, em
 ## Modos
 
 - **Voo livre:** só você, o caça e o céu.
-- **Sobrevivência:** ondas de caças inimigos. Cada nível traz mais caças (até 8), mais rápidos, que curvam mais
-  apertado e atiram melhor. Derrube todos para passar de nível. O casco aguenta uns 25 tiros; chegando a zero, ou
-  batendo no chão, o voo acaba e a pontuação fica na tela.
-- **Mísseis inimigos:** de vez em quando um inimigo lança um míssil guiado em você (mais vezes nos níveis altos). Toca
-  um bipe e aparece o aviso MÍSSIL. O míssil é um pouco mais lento que o caça a toda e curva menos: uma curva bem
-  fechada no último segundo faz ele passar direto, e os flares enganam. Se acertar, tira 30% do casco.
+- **Sobrevivência:** só você contra ondas de caças inimigos, até acabar a vida. O nível 1 tem 2 caças lentos, que
+  curvam pouco, atiram mal e não lançam mísseis; cada nível traz um caça a mais (até 8), mais rápidos, que curvam mais
+  apertado, atiram melhor, antecipam para onde você vai, fogem de quem está atrás deles e soltam flares. Mísseis
+  guiados só a partir do nível 3. Ao passar de nível o casco ganha um conserto de 25%.
+- **Mata-mata 5 × 5:** a sua equipe (você e mais 4 caças do computador, a equipe 1) contra outra de 5, por 5 minutos.
+  Cada equipe nasce de um lado do mapa; quem cai volta na base da equipe uns segundos depois. Ganha a equipe com mais
+  pontos (a soma dos pontos dos pilotos). No fim aparece o placar das duas equipes, do melhor para o pior; os 3
+  primeiros da equipe que venceu ganham medalha. Os companheiros aparecem com um losango verde e o nome; em cima, no
+  meio, o placar das equipes e o relógio; no canto, quem derrubou quem. Na pausa dá para ver o placar.
+
+## Vida e pontos
+
+- Todos os caças têm vida de 100%. Um míssil guiado tira 50%; um foguete (o míssil sem guia), 60%; a metralhadora
+  acertando sem parar acaba com a vida em 5 segundos (1,5% por tiro). Bater no chão, num prédio ou no mar derruba na
+  hora; uma trombada tira 60%.
+- Cada 1% de vida tirado de um adversário vale 1 ponto (derrubar um caça inteiro, 100 pontos). Quem derruba um caça
+  sozinho, sem ninguém mais ter acertado nele, ganha mais 30 pontos.
+- Um caça que bate no chão ou num prédio dá os pontos que faltavam para quem o atacou por último ou, se ninguém, para
+  quem ele perseguia: fugir rente aos obstáculos derruba quem vem atrás.
+- **Mísseis inimigos:** um caça do computador que fica 2 s atrás de você, com você na frente do nariz, lança um míssil
+  guiado. Toca um bipe e aparece o aviso MÍSSIL. O míssil é um pouco mais lento que o caça a toda e curva menos: uma
+  curva bem fechada no último segundo faz ele passar direto, e os flares enganam.
 
 ## Armas
 
-- **Metralhadora** (Z): tiros infinitos.
-- **Míssil guiado** (Espaço): 4 por vez. Precisa de alvo travado: mantenha a mira num inimigo por quase 1 segundo, até a
-  caixa ficar azul. Um míssil novo volta a cada 20 s.
+- **Metralhadora** (Z): tiros infinitos, 13 por segundo.
+- **Míssil guiado** (Espaço): 4 por vez. Precisa de alvo travado: fique atrás do inimigo com a mira em cima dele por 2
+  segundos (a barra embaixo da caixa enche) até a caixa ficar vermelha. Um míssil novo volta a cada 20 s.
 - **Foguete** (X): 12 por vez, voa reto. Um foguete novo volta a cada 6 s.
 - **Flares** (F): solta uma salva de 6 chamarizes de calor atrás do avião. Cada míssil que vem atrás de você tem 85% de
   chance de ir atrás dos flares e estourar neles. São 5 salvas; uma nova volta a cada 12 s. Os inimigos também soltam
   flares contra os seus mísseis (mais nos níveis altos).
 
-Na tela: a mira azul mostra para onde o nariz aponta; as caixas vermelhas marcam os inimigos com a distância; a seta
-na borda aponta para o inimigo mais perto quando ele está fora da tela.
+Na tela: a mira (círculo com cruz) mostra para onde o nariz aponta. Ela é azul e fica vermelha quando há um inimigo
+embaixo dela, para acertar a metralhadora. As caixas azuis marcam os inimigos com a distância e a vida; travado, a
+caixa fica vermelha e redonda. Com um inimigo travado, o caça ajuda a mira: o nariz segue o inimigo bem devagar (uns
+7° por segundo, no máximo). Se o inimigo escapa demais da mira ou fica de lado, a trava solta e é preciso segui-lo de
+novo. A seta na borda aponta para o inimigo mais perto quando ele está fora da tela.
 
 ## Explosões
 
@@ -119,9 +169,9 @@ na borda aponta para o inimigo mais perto quando ele está fora da tela.
   espalhadas no chão), mais um foco de fogo com fumaça preta que fica queimando. A câmera treme e se afasta para mostrar.
 - **Na água:** coluna d'água, espuma e um pouco de fogo.
 
-## Sons
+## Sons e música
 
-Ficam em `SONS/`.
+Os sons ficam em `SONS/`.
 
 - **Motor:** ronco de turbina em repetição, mais agudo e mais alto com o motor e a velocidade. Acima de 82% entra o
   ronco da pós-combustão.
@@ -149,6 +199,14 @@ Do Freesound, licença CC0:
 [Deep Explosion with Falling Debris](https://freesound.org/people/Robo9418/sounds/841831/), por Robo9418;
 [CTS 7290](https://freesound.org/people/areniporgen/sounds/693421/), por areniporgen.
 
+**Música** (em `musica/`): o tema do menu toca nas telas do menu, no voo livre e no fim de voo; o de batalha, nos
+combates. A troca é suave e a música abaixa na pausa; o volume dela fica em Configurações. As duas são de Kevin MacLeod
+([incompetech.com](https://incompetech.com/)), licença [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/),
+editadas para tocar em loop e com o volume igualado:
+[Five Armies](https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100875) (menu) e
+[Clash Defiant](https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1600003) (batalha). Os sons dos menus
+(o tique ao passar por uma opção e ao escolher) são gerados pelo jogo.
+
 ## Comandos
 
 | Tecla     | O que faz                                   |
@@ -164,8 +222,8 @@ Do Freesound, licença CC0:
 | T         | Segure para olhar para trás (câmera na frente do avião) |
 | C         | Trocar câmera (atrás do avião ou cabine)    |
 | I         | Inverter ↑ ↓                                |
-| P ou Esc  | Pausar (na pausa dá para trocar de caça)    |
-| R         | Recomeçar                                   |
+| P ou Esc  | Pausar (na pausa: configurações, trocar de caça ou voltar ao menu) |
+| R         | Recomeçar (nos combates, começa tudo de novo) |
 | H         | Mostrar ou esconder a lista de comandos     |
 
 ## No celular
@@ -181,13 +239,15 @@ O jogo é só na horizontal: com o celular em pé ele pausa e pede para deitar o
 Os botões têm ícones (as quantidades de míssil, foguete e flares aparecem embaixo de cada um). As mensagens e os avisos
 aparecem embaixo do avião, à esquerda dos botões, para não tapar a vista. Não há painel de velocidade e altitude.
 
-No celular o jogo usa texturas menores, menos árvores e um alcance menor das texturas do chão, para rodar liso.
+No celular os gráficos começam no médio (texturas menores, menos árvores e um alcance menor das texturas do chão), para
+rodar liso; dá para trocar em Configurações. Os caças do computador, de longe (mais de 700 m), viram uma silhueta
+simples do mesmo tamanho, para não pesar.
 
 ## App e jogo sem internet
 
-Na tela de início, em **Jogar sem internet**:
+Em **Configurações**, na parte **Jogar sem internet**:
 
-- **Baixar tudo** guarda neste aparelho os arquivos que o jogo usa (uns 50 MB; no celular, as versões menores das
+- **Baixar tudo** guarda neste aparelho os arquivos que o jogo usa (uns 60 MB; no celular, as versões menores das
   texturas). Depois disso o jogo abre e roda sem internet. Se a internet cair no meio, é só tocar de novo para continuar.
 - **Instalar o app** (Chrome e Edge, no Android e no computador) põe o jogo com ícone próprio, em tela cheia e deitado.
   No iPhone e no iPad: Compartilhar → Adicionar à Tela de Início.
@@ -209,10 +269,10 @@ resto vem da cópia guardada, e o que o jogo carregar com internet também fica 
   velocidade de novo.
 - **Teto:** acima de 12.000 m o ar fica rarefeito e o motor perde força.
 - **Batida:** bater no chão, numa árvore, numa construção ou na água explode o caça (ou faz o respingo). No voo livre o
-  voo recomeça sozinho; na sobrevivência, acaba o voo.
+  voo recomeça sozinho; na sobrevivência, acaba o voo; no mata-mata, você volta na base da equipe.
 
-O mundo não tem fim: na floresta, o quadro de mata se repete em todas as direções; nos campos, o chão é uma textura de
-1,6 km que se repete; nas ilhas, o mar continua em volta. As árvores e as nuvens são reposicionadas em volta do avião
+O mundo não tem fim: na floresta, o quadro de mata se repete em todas as direções; em volta da cidade, a mata continua
+(o chão é uma textura de 1,6 km que se repete); nas ilhas, o mar continua em volta. As árvores e as nuvens são reposicionadas em volta do avião
 enquanto ele voa.
 
 ## Como publicar uma versão nova
