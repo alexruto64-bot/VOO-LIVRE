@@ -113,7 +113,7 @@ body {
 .aviso {
   position: fixed;
   z-index: 3;
-  top: calc(18px + env(safe-area-inset-top, 0px));
+  bottom: calc(84px + env(safe-area-inset-bottom, 0px));
   left: 50%;
   transform: translateX(-50%);
   margin: 0;
@@ -275,7 +275,7 @@ h1 {
 .caca:hover, .opcao:hover { border-color: var(--texto-suave); }
 .caca:focus-visible, .opcao:focus-visible { outline: 3px solid var(--texto); outline-offset: 2px; }
 .grupo { margin: 0 0 -8px; font: 700 11px/1 var(--fonte-rotulo); letter-spacing: 0.14em; text-transform: uppercase; color: var(--texto-suave); }
-.aviso.alerta { top: calc(62px + env(safe-area-inset-top, 0px)); border-color: #ff5a46; background: rgba(60, 6, 0, 0.66); color: #ff8a76; animation-duration: 0.4s; }
+.aviso.alerta { bottom: calc(132px + env(safe-area-inset-bottom, 0px)); border-color: #ff5a46; background: rgba(60, 6, 0, 0.66); color: #ff8a76; animation-duration: 0.4s; }
 .carga { height: 6px; border-radius: 3px; background: var(--trilho); overflow: hidden; }
 .carga span { display: block; height: 100%; width: 0; background: var(--ciano); transition: width 0.2s; }
 .creditos { margin: 0; font-size: 11px; line-height: 1.45; color: var(--texto-suave); }
@@ -335,9 +335,19 @@ h1 {
 body.toque .so-toque { display: block; }
 body.toque .so-teclado { display: none; }
 body.toque .ajuda { display: none; }
-body.toque .mensagem { bottom: auto; top: calc(108px + env(safe-area-inset-top, 0px)); font-size: 13px; }
-body.toque .instrumentos { transform: scale(0.82); transform-origin: top left; }
-body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px + env(safe-area-inset-top, 0px)); }
+/* no celular, embaixo do avião e à esquerda dos botões de tiro (que ocupam uns 260 px da direita) */
+body.toque .mensagem, body.toque .aviso {
+  left: auto; right: calc(max(18px, env(safe-area-inset-right, 0px)) + 244px); transform: none;
+  max-width: min(330px, calc(100% - 244px - 120px)); white-space: normal; text-align: center;
+}
+body.toque .mensagem { bottom: calc(12px + env(safe-area-inset-bottom, 0px)); font-size: 13px; }
+body.toque .aviso { top: auto; bottom: calc(72px + env(safe-area-inset-bottom, 0px)); font-size: 12px; letter-spacing: 0.06em; }
+body.toque .aviso.alerta { top: auto; bottom: calc(72px + env(safe-area-inset-bottom, 0px)); }
+body.toque .manche-dica { bottom: auto; top: 38%; }
+body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top right; top: calc(64px + env(safe-area-inset-top, 0px)); }
+.bt-toque svg { display: block; width: 28px; height: 28px; margin: 0 auto; }
+.bt-tiro svg { width: 40px; height: 40px; }
+.bt-pequeno svg { width: 24px; height: 24px; }
 @media (max-height: 380px) {
   body.toque .bt-tiro, body.toque .bt-missil, body.toque .bt-foguete, body.toque .bt-flare { transform: scale(0.86); transform-origin: bottom right; }
 }
@@ -364,14 +374,6 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
 <canvas id="cena" aria-label="Vista do avião voando sobre campos e matas"></canvas>
 
 <div id="hud" hidden>
-  <section class="painel instrumentos" aria-label="Instrumentos de voo">
-    <p class="prefixo" id="prefixo">F-16D</p>
-    <span class="rot">VEL</span><span class="val" id="vel">0</span><span class="uni">km/h</span>
-    <span class="rot">ALT</span><span class="val" id="alt">0</span><span class="uni">m</span>
-    <span class="rot">RUMO</span><span class="val" id="rumo">000°</span><span class="uni" id="cardeal">N</span>
-    <span class="rot">MOTOR</span><span class="barra" aria-hidden="true"><span class="nivel" id="motor-nivel"></span></span><span class="uni" id="motor">45%</span>
-  </section>
-
   <section class="painel instrumentos combate" id="combate" aria-label="Combate" hidden>
     <p class="prefixo">SOBREVIVÊNCIA</p>
     <span class="rot">NÍVEL</span><span class="val" id="nivel">1</span><span class="uni"></span>
@@ -388,7 +390,7 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
   <div class="dano" id="dano" aria-hidden="true"></div>
 
   <p class="aviso" id="aviso" hidden>ESTOL · baixe o nariz e acelere</p>
-  <p class="aviso alerta" id="alerta-missil" hidden>MÍSSIL · solte flares (F) ou faça uma curva fechada</p>
+  <p class="aviso alerta" id="alerta-missil" hidden>MÍSSIL · solte flares<span class="so-teclado"> (F)</span> ou faça uma curva fechada</p>
   <p class="olhando-tras" id="olhando-tras" hidden>CÂMERA TRASEIRA</p>
   <p class="mensagem" id="mensagem" hidden></p>
 
@@ -421,13 +423,13 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
     <div class="acel-trilho"><div class="acel-nivel" id="acel-nivel"></div></div>
     <span class="acel-rot">MOTOR</span>
   </div>
-  <button class="bt-toque bt-tiro" type="button" data-acao="tiro">Tiro</button>
-  <button class="bt-toque bt-missil" type="button" data-acao="missil">Míssil<small id="t-guiados">4</small></button>
-  <button class="bt-toque bt-foguete" type="button" data-acao="foguete">Foguete<small id="t-foguetes">12</small></button>
-  <button class="bt-toque bt-flare" type="button" data-acao="flare">Flares<small id="t-flares">5</small></button>
-  <button class="bt-toque bt-pequeno bt-tras" type="button" data-acao="tras" aria-label="Segure para olhar para trás">TRÁS</button>
-  <button class="bt-toque bt-pequeno bt-camera" type="button" data-acao="camera" aria-label="Trocar câmera">CÂM</button>
-  <button class="bt-toque bt-pequeno bt-pausa" type="button" data-acao="pausa" aria-label="Pausar">II</button>
+  <button class="bt-toque bt-tiro" type="button" data-acao="tiro" aria-label="Tiro"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4.2 21v-9.5c0-3 .8-5.4 1.8-7 1 1.6 1.8 4 1.8 7V21zM10.2 21v-9.5c0-3 .8-5.4 1.8-7 1 1.6 1.8 4 1.8 7V21zM16.2 21v-9.5c0-3 .8-5.4 1.8-7 1 1.6 1.8 4 1.8 7V21z"/><path fill="none" stroke="#05192a" stroke-width="1.1" d="M4 17.2h4M10 17.2h4M16 17.2h4"/></svg></button>
+  <button class="bt-toque bt-missil" type="button" data-acao="missil" aria-label="Míssil guiado"><svg viewBox="0 0 24 24" aria-hidden="true"><g transform="rotate(45 12 12)"><path fill="currentColor" d="M12 1.5c1.3 1.1 1.9 2.8 1.9 4.8v10.4l2.6 2.7v2.1H7.5v-2.1l2.6-2.7V6.3c0-2 .6-3.7 1.9-4.8z"/></g><circle cx="5.5" cy="5.5" r="3.2" fill="none" stroke="currentColor" stroke-width="1.3"/><path stroke="currentColor" stroke-width="1.3" d="M5.5 1v2M5.5 8v2M1 5.5h2M8 5.5h2"/></svg><small id="t-guiados">4</small></button>
+  <button class="bt-toque bt-foguete" type="button" data-acao="foguete" aria-label="Foguete"><svg viewBox="0 0 24 24" aria-hidden="true"><g transform="rotate(45 12 12)"><path fill="currentColor" d="M12 2.5c1.7 1.6 2.6 3.8 2.6 6.4V15H9.4V8.9c0-2.6.9-4.8 2.6-6.4zM9.4 11.5l-2.5 3.2v2.4l2.5-1.4zM14.6 11.5l2.5 3.2v2.4l-2.5-1.4z"/><path fill="#ffb547" d="M10.4 16h3.2c0 2.4-.8 4.2-1.6 5.5-.8-1.3-1.6-3.1-1.6-5.5z"/></g></svg><small id="t-foguetes">12</small></button>
+  <button class="bt-toque bt-flare" type="button" data-acao="flare" aria-label="Flares"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="1.8 2.2" d="M12 3C8.5 7 6.5 11 5.5 16M12 3v13.5M12 3c3.5 4 5.5 8 6.5 13"/><circle cx="5.3" cy="18.6" r="2.4" fill="currentColor"/><circle cx="12" cy="19.4" r="2.4" fill="currentColor"/><circle cx="18.7" cy="18.6" r="2.4" fill="currentColor"/></svg><small id="t-flares">5</small></button>
+  <button class="bt-toque bt-pequeno bt-tras" type="button" data-acao="tras" aria-label="Segure para olhar para trás"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.7" d="M2.5 14s3.4-5.5 9.5-5.5 9.5 5.5 9.5 5.5-3.4 5.5-9.5 5.5S2.5 14 2.5 14z"/><circle cx="12" cy="14" r="2.5" fill="currentColor"/><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M9 2.8L6 5.2l3 2.4M6.3 5.2h8.2c2 0 3.5 1 4.3 2.6"/></svg></button>
+  <button class="bt-toque bt-pequeno bt-camera" type="button" data-acao="camera" aria-label="Trocar câmera"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="6.5" width="13" height="11" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path fill="currentColor" d="M15.5 10.2l6-3.4v10.4l-6-3.4z"/></svg></button>
+  <button class="bt-toque bt-pequeno bt-pausa" type="button" data-acao="pausa" aria-label="Pausar"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5.5" y="4.5" width="4.5" height="15" rx="1.2" fill="currentColor"/><rect x="14" y="4.5" width="4.5" height="15" rx="1.2" fill="currentColor"/></svg></button>
 </div>
 <div class="girar" id="girar"><div><svg viewBox="0 0 24 24" fill="none" stroke="#74e0ff" stroke-width="1.6" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.5h2"/></svg>Gire o celular.<br>O Voo Livre se joga com o celular deitado (na horizontal).</div></div>
 
@@ -480,7 +482,7 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
       <dt><kbd>R</kbd></dt><dd>Recomeçar</dd>
     </dl>
     <p class="nota so-toque">No celular, deite o aparelho. Lado esquerdo: encoste e arraste para pilotar (para baixo o nariz sobe). Lado direito: motor, tiro, míssil, foguete, flares e o botão de olhar para trás.</p>
-    <p class="nota"><span class="so-teclado">Precisa de teclado (ou jogue no celular). Se as teclas pararem de responder, clique no jogo.</span> <b id="versao-jogo">Versão 6.1</b></p>
+    <p class="nota"><span class="so-teclado">Precisa de teclado (ou jogue no celular). Se as teclas pararem de responder, clique no jogo.</span> <b id="versao-jogo">Versão 6.2</b></p>
     <div class="offline" id="offline" hidden>
       <p class="grupo">Jogar sem internet</p>
       <p class="nota" id="offline-texto" aria-live="polite">Guarde o jogo neste aparelho (caças, cenários, céus e sons) para jogar sem internet.</p>
@@ -491,7 +493,7 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
       </div>
       <p class="nota" id="instalar-iphone" hidden>No iPhone ou iPad: toque em Compartilhar e depois em “Adicionar à Tela de Início” para ter o jogo como app.</p>
     </div>
-    <p class="creditos">Modelos 3D do Sketchfab, licença CC BY 4.0: <a href="https://sketchfab.com/3d-models/general-dynamics-f-16d-block-60-ea8edb08d79e4eafa9c794c581f88cf3" target="_blank" rel="noopener">F-16D Block 60</a> por Muhamad Mirza Arrafi · <a href="https://sketchfab.com/3d-models/f-14-tomcat-top-gun-gear-up-downloadable-9d2d0c87539046aa8c2198fcc47cdcf8" target="_blank" rel="noopener">F-14 Tomcat</a> por dwsd · <a href="https://sketchfab.com/3d-models/boeing-fa-18ef-super-hornet-f71e9fea01e24fea9b1b380161d21d38" target="_blank" rel="noopener">F/A-18E/F Super Hornet</a> por andertan · <a href="https://sketchfab.com/3d-models/ilha-do-pico-azores-portugal-54f9cfe3429741089dc22ec37a8839f4" target="_blank" rel="noopener">Ilha do Pico</a> e <a href="https://sketchfab.com/3d-models/islas-fogo-y-brava-cabo-verde-a851f7640f294748a7bc59c38da46fbe" target="_blank" rel="noopener">Islas Fogo y Brava</a> por CMPLab · <a href="https://sketchfab.com/3d-models/ilha-de-urubuquecaba-4aec6c8b87bf4f7c9416c913fa1e1e66" target="_blank" rel="noopener">Ilha de Urubuqueçaba</a> por Emilio Cid · <a href="https://sketchfab.com/3d-models/gravuras-rupestres-proximas-a-ilha-das-meninas-13befe10866044d797eaea0265f3d222" target="_blank" rel="noopener">Gravuras rupestres próximas à Ilha das Meninas</a> por GeoHereditas · <a href="https://sketchfab.com/3d-models/a-forest-3-with-a-road-at-night-for-game-61f8c7817fe6457fb26e4814cfc48a3f" target="_blank" rel="noopener">a forest (3) with a road at night for game</a> por dasy444. Céus do <a href="https://polyhaven.com/hdris/skies" target="_blank" rel="noopener">Poly Haven</a> (CC0): Kloofendal 48d Partly Cloudy, Kloppenheim 06 e Kloofendal Overcast, por Greg Zaal (com edição do céu por Jarod Guest). Sons do Freesound (CC0): <a href="https://freesound.org/people/qubodup/sounds/187734/" target="_blank" rel="noopener">Idle F-22 Jet Plane</a>, <a href="https://freesound.org/people/qubodup/sounds/854183/" target="_blank" rel="noopener">Autocannon Shot 1</a> e <a href="https://freesound.org/people/qubodup/sounds/442773/" target="_blank" rel="noopener">Big Water Splash</a> por qubodup · <a href="https://freesound.org/people/TiesWijnen/sounds/413312/" target="_blank" rel="noopener">Afterburner</a> por TiesWijnen · <a href="https://freesound.org/people/klangfabrik/sounds/249298/" target="_blank" rel="noopener">rpg launcher</a> por klangfabrik · <a href="https://freesound.org/people/Mozfoo/sounds/458377/" target="_blank" rel="noopener">Rocket Loop</a> por Mozfoo · <a href="https://freesound.org/people/northern87/sounds/88532/" target="_blank" rel="noopener">Woosh</a> por northern87 · <a href="https://freesound.org/people/kyles/sounds/450833/" target="_blank" rel="noopener">flare fire into sky</a> por kyles · <a href="https://freesound.org/people/derplayer/sounds/587194/" target="_blank" rel="noopener">explosion big 01</a> por derplayer · <a href="https://freesound.org/people/Robo9418/sounds/841831/" target="_blank" rel="noopener">Deep Explosion with Falling Debris</a> por Robo9418 · <a href="https://freesound.org/people/areniporgen/sounds/693421/" target="_blank" rel="noopener">CTS 7290</a> por areniporgen.</p>
+    <p class="creditos">Modelos 3D do Sketchfab, licença CC BY 4.0: <a href="https://sketchfab.com/3d-models/general-dynamics-f-16d-block-60-ea8edb08d79e4eafa9c794c581f88cf3" target="_blank" rel="noopener">F-16D Block 60</a> por Muhamad Mirza Arrafi · <a href="https://sketchfab.com/3d-models/f-14-tomcat-top-gun-gear-up-downloadable-9d2d0c87539046aa8c2198fcc47cdcf8" target="_blank" rel="noopener">F-14 Tomcat</a> por dwsd · <a href="https://sketchfab.com/3d-models/boeing-fa-18ef-super-hornet-f71e9fea01e24fea9b1b380161d21d38" target="_blank" rel="noopener">F/A-18E/F Super Hornet</a> por andertan · <a href="https://sketchfab.com/3d-models/ilha-do-pico-azores-portugal-54f9cfe3429741089dc22ec37a8839f4" target="_blank" rel="noopener">Ilha do Pico</a> e <a href="https://sketchfab.com/3d-models/islas-fogo-y-brava-cabo-verde-a851f7640f294748a7bc59c38da46fbe" target="_blank" rel="noopener">Islas Fogo y Brava</a> por CMPLab · <a href="https://sketchfab.com/3d-models/ilha-de-urubuquecaba-4aec6c8b87bf4f7c9416c913fa1e1e66" target="_blank" rel="noopener">Ilha de Urubuqueçaba</a> por Emilio Cid · <a href="https://sketchfab.com/3d-models/gravuras-rupestres-proximas-a-ilha-das-meninas-13befe10866044d797eaea0265f3d222" target="_blank" rel="noopener">Gravuras rupestres próximas à Ilha das Meninas</a> por GeoHereditas · <a href="https://sketchfab.com/3d-models/a-forest-3-with-a-road-at-night-for-game-61f8c7817fe6457fb26e4814cfc48a3f" target="_blank" rel="noopener">a forest (3) with a road at night for game</a> por dasy444. Texturas e árvores do <a href="https://polyhaven.com/" target="_blank" rel="noopener">Poly Haven</a> (CC0): Aerial Rocks 02, Aerial Grass Rock, Aerial Ground Rock, Aerial Beach 01, Aerial Asphalt 01, Island Tree 01 e 02. Céus do <a href="https://polyhaven.com/hdris/skies" target="_blank" rel="noopener">Poly Haven</a> (CC0): Kloofendal 48d Partly Cloudy, Kloppenheim 06 e Kloofendal Overcast, por Greg Zaal (com edição do céu por Jarod Guest). Sons do Freesound (CC0): <a href="https://freesound.org/people/qubodup/sounds/187734/" target="_blank" rel="noopener">Idle F-22 Jet Plane</a>, <a href="https://freesound.org/people/qubodup/sounds/854183/" target="_blank" rel="noopener">Autocannon Shot 1</a> e <a href="https://freesound.org/people/qubodup/sounds/442773/" target="_blank" rel="noopener">Big Water Splash</a> por qubodup · <a href="https://freesound.org/people/TiesWijnen/sounds/413312/" target="_blank" rel="noopener">Afterburner</a> por TiesWijnen · <a href="https://freesound.org/people/klangfabrik/sounds/249298/" target="_blank" rel="noopener">rpg launcher</a> por klangfabrik · <a href="https://freesound.org/people/Mozfoo/sounds/458377/" target="_blank" rel="noopener">Rocket Loop</a> por Mozfoo · <a href="https://freesound.org/people/northern87/sounds/88532/" target="_blank" rel="noopener">Woosh</a> por northern87 · <a href="https://freesound.org/people/kyles/sounds/450833/" target="_blank" rel="noopener">flare fire into sky</a> por kyles · <a href="https://freesound.org/people/derplayer/sounds/587194/" target="_blank" rel="noopener">explosion big 01</a> por derplayer · <a href="https://freesound.org/people/Robo9418/sounds/841831/" target="_blank" rel="noopener">Deep Explosion with Falling Debris</a> por Robo9418 · <a href="https://freesound.org/people/areniporgen/sounds/693421/" target="_blank" rel="noopener">CTS 7290</a> por areniporgen.</p>
   </div>
 </div>
 
@@ -871,6 +873,36 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
 
   const uniChao = THREE.UniformsUtils.merge([THREE.UniformsLib.fog]);
   uniChao.mapa = { value: criarTexturaChao() };
+  uniChao.mascara = { value: (() => {
+    const L = TEX / 4, k = L / TEX, c = document.createElement('canvas');
+    c.width = c.height = L;
+    const g = c.getContext('2d');
+    g.fillStyle = '#00ff00';
+    g.fillRect(0, 0, L, L);
+    g.fillStyle = '#ffff00';
+    for (const t of matas) g.fillRect(t.x * k, t.y * k, t.w * k, t.h * k);
+    g.fillStyle = '#000000';
+    g.fillRect(0, (ESTRADA_Y - LARG_ESTRADA / 2 - 3) * k, L, (LARG_ESTRADA + 6) * k);
+    g.fillRect((ESTRADA_X - LARG_ESTRADA / 2 - 3) * k, 0, (LARG_ESTRADA + 6) * k, L);
+    for (const l of lagos) {
+      g.beginPath();
+      g.ellipse(l.x * k, l.y * k, (l.rx + 10) * k, (l.ry + 10) * k, 0, 0, Math.PI * 2);
+      for (const b of l.bolhas) { g.moveTo((b.x + b.r + 10) * k, b.y * k); g.arc(b.x * k, b.y * k, (b.r + 10) * k, 0, Math.PI * 2); }
+      g.fill();
+    }
+    const t = new THREE.CanvasTexture(c);
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    t.flipY = false;
+    return t;
+  })() };
+  uniChao.copa = { value: null };
+  uniChao.temCopa = { value: 0 };
+  uniChao.matoTudo = { value: 0 };
+  uniChao.asfaltoTex = { value: null };
+  uniChao.temAsfalto = { value: 0 };
+  // ruas da cidade: centro da primeira rua em x e em z, distância entre ruas em x e em z; meia largura das ruas
+  uniChao.ruas = { value: new THREE.Vector4() };
+  uniChao.meiaRua = { value: new THREE.Vector2(13, 17) };
   uniChao.periodo = { value: PERIODO };
   // asfalto (retângulos x0, z0, x1, z1: chão da cidade e pátio do aeroporto) e pista (centro x, z, comprimento,
   // largura; corre de norte a sul), pintados no próprio chão para não piscar contra ele
@@ -896,21 +928,75 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
         uniform float periodo;
         uniform vec4 asfaltos[3];
         uniform vec4 pista;
+        uniform sampler2D mascara;
+        uniform sampler2D copa;
+        uniform float temCopa;
+        uniform float matoTudo;
+        uniform sampler2D asfaltoTex;
+        uniform float temAsfalto;
+        uniform vec4 ruas;
+        uniform vec2 meiaRua;
         varying vec2 vMundo;
         #include <fog_pars_fragment>
         float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
         // linha de largura l (m) em volta de 0, sem serrilhado
         float linha(float d, float l) { float w = fwidth(d) + 0.001; return 1.0 - smoothstep(l * 0.5 - w, l * 0.5 + w, abs(d)); }
+        // asfalto: a foto do Poly Haven em dois tamanhos (até carregar, cinza com granulado)
+        vec3 asfalto(vec2 p) {
+          if (temAsfalto < 0.5) return vec3(0.36, 0.365, 0.37) * (0.94 + 0.12 * hash(floor(p * 0.5)));
+          vec3 t = texture2D(asfaltoTex, p / 7.0).rgb * 0.6 + texture2D(asfaltoTex, p / 41.0 + 0.3).rgb * 0.4;
+          return mix(vec3(dot(t, vec3(0.3, 0.59, 0.11))), t, 0.35) * 0.98;
+        }
+        // ruas da cidade, entre as quadras: calçada junto das quadras, faixa branca tracejada no meio, faixa
+        // contínua na beira e faixa de pedestre na entrada dos cruzamentos
+        vec3 rua(vec2 p) {
+          vec3 cor = asfalto(p);
+          float ex = p.x - (ruas.x + ruas.z * floor((p.x - ruas.x) / ruas.z + 0.5));
+          float ez = p.y - (ruas.y + ruas.w * floor((p.y - ruas.y) / ruas.w + 0.5));
+          float ax = abs(ex), az = abs(ez);
+          bool norteSul = ax < meiaRua.x, lesteOeste = az < meiaRua.y;
+          if (!norteSul && !lesteOeste) {
+            // dentro das quadras, onde não há prédio: praças de grama e pátios de concreto
+            float h = hash(floor(p / 46.0) + 3.7);
+            if (h < 0.5) return vec3(0.33, 0.45, 0.22) * (0.85 + 0.25 * hash(floor(p * 0.6)));
+            return vec3(0.55, 0.54, 0.51) * (0.92 + 0.12 * hash(floor(p * 0.9)));
+          }
+          vec3 calcada = vec3(0.6, 0.59, 0.56) * (0.9 + 0.2 * hash(floor(p * 0.8)));
+          if (norteSul && !lesteOeste) {
+            if (ax > meiaRua.x - 3.5) return calcada;
+            float tinta = linha(ex, 0.25) * step(fract(p.y / 9.0), 0.55) + linha(ax - (meiaRua.x - 4.0), 0.2);
+            tinta += step(az - meiaRua.y, 4.5) * step(fract(p.x / 1.1), 0.5) * step(ax, meiaRua.x - 4.2);
+            return mix(cor, vec3(0.9), clamp(tinta, 0.0, 1.0));
+          }
+          if (lesteOeste && !norteSul) {
+            if (az > meiaRua.y - 3.5) return calcada;
+            float tinta = linha(ez, 0.25) * step(fract(p.x / 9.0), 0.55) + linha(az - (meiaRua.y - 4.0), 0.2);
+            tinta += step(ax - meiaRua.x, 4.5) * step(fract(p.y / 1.1), 0.5) * step(az, meiaRua.y - 4.2);
+            return mix(cor, vec3(0.9), clamp(tinta, 0.0, 1.0));
+          }
+          return cor;
+        }
         void main() {
           vec3 cor = texture2D(mapa, vMundo / periodo).rgb;
           // manchas de luz bem grandes, para esconder a repetição da textura vista do alto
           float n = sin(vMundo.x * 0.00041 + 1.3 * sin(vMundo.y * 0.00023))
                   * sin(vMundo.y * 0.00033 + 0.9 * sin(vMundo.x * 0.00017));
+          // matas: copas de árvore vistas de cima (na cidade cercada de floresta, todo o chão livre)
+          if (temCopa > 0.5) {
+            vec2 mk = texture2D(mascara, vMundo / periodo).rg;
+            float mato = max(mk.r, matoTudo * mk.g);
+            if (mato > 0.003) {
+              // de longe as copas misturam com o fundo e clareiam: escurece para emendar com as árvores de perto
+              vec3 cp = texture2D(copa, vMundo / 64.0).rgb * 0.62 + texture2D(copa, vMundo / 211.0 + 0.37).rgb * 0.38;
+              cp *= mix(1.0, 0.8, smoothstep(700.0, 2400.0, distance(cameraPosition.xz, vMundo)));
+              cor = mix(cor, cp, mato);
+            }
+          }
           cor *= 0.93 + 0.09 * n;
           for (int k = 0; k < 3; k++) {
             vec4 a = asfaltos[k];
             if (vMundo.x > a.x && vMundo.x < a.z && vMundo.y > a.y && vMundo.y < a.w)
-              cor = vec3(0.36, 0.365, 0.37) * (0.94 + 0.12 * hash(floor(vMundo * 0.5)));
+              cor = ruas.z > 0.0 ? rua(vMundo) : asfalto(vMundo);
           }
           if (pista.z > 0.0) {
             vec2 d = vMundo - pista.xy;
@@ -922,7 +1008,7 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
               tinta = max(tinta, faixa * step(6.0, ponta) * step(ponta, 56.0));                            // cabeceiras
               float toque = step(fract(abs(d.x) / 2.2), 0.6) * step(abs(abs(d.x) - 9.0), 4.0);
               tinta = max(tinta, toque * (step(abs(ponta - 160.0), 11.0) + step(abs(ponta - 310.0), 11.0)));  // zona de toque
-              cor = mix(vec3(0.22, 0.225, 0.23) * (0.95 + 0.1 * hash(floor(vMundo * 0.7))), vec3(0.95), tinta);
+              cor = mix(asfalto(vMundo) * 0.72, vec3(0.95), tinta);
             }
           }
           gl_FragColor = vec4(cor, 1.0);
@@ -934,83 +1020,223 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
   chao.frustumCulled = false;
   scene.add(chao);
 
-  // ---------- árvores: nascem nas matas da textura e se repetem em volta do avião ----------
-  const arvores = [];
-  function plantar(cx, cy) {
-    if (naEstrada(cx, cy, 6) || noLago(cx, cy)) return;
-    arvores.push({
-      x: cx * M_POR_PX,
-      z: cy * M_POR_PX,
-      s: entre(0.75, 1.45),
-      q: new THREE.Quaternion().setFromAxisAngle(EIXO_Y, rand() * Math.PI * 2),
-    });
-  }
-  for (const t of matas) {
-    const n = Math.floor((t.w * t.h) / 700);
-    for (let i = 0; i < n; i++) plantar(t.x + 4 + rand() * (t.w - 8), t.y + 4 + rand() * (t.h - 8));
-  }
-  for (let i = 0; i < 90; i++) plantar(rand() * TEX, rand() * TEX);
-
-  const COPIAS = 4;                 // 2 x 2 repetições: janela de 3,2 km em volta do avião
+  // ---------- árvores dos campos e da cidade: fotos de árvores de verdade em três planos ----------
+  // Cada árvore são três quadros com a foto dela de frente, de lado e de cima (as "Island Tree" 01 e 02 do Poly
+  // Haven, CC0, fotografadas uma vez fora do jogo), com 14 a 24 m de altura. Ficam nas matas da textura do chão (na
+  // cidade, em toda parte: ela é cercada de floresta) e se repetem a cada 1,6 km. A placa de vídeo leva cada árvore
+  // para a cópia mais perto da câmera, então nada é recalculado a cada quadro.
+  // c: centro da caixa da árvore, m: meia largura de cada foto (frente, lado, cima), em metros do modelo original.
+  const ESPECIES = [
+    { c: [0.04, 2.495, -0.17], m: [2.56, 2.56, 2.46], alt: 5.03, raio: 2.4, linha: 0, esc: [2.8, 4.6] },
+    { c: [0.055, 1.685, 0.925], m: [2.15, 2.08, 2.15], alt: 3.41, raio: 2.1, linha: 1, esc: [3.8, 6.2] },
+  ];
+  const COPIAS = 4;                 // 2 x 2 repetições: janela de 3,2 km em volta da câmera
   const JAN_ARV = PERIODO * 2;
-  const FADE_ARV = 260;
-  const nArv = arvores.length * COPIAS;
-  const geoTronco = new THREE.CylinderGeometry(0.35, 0.5, 3, 5);
-  geoTronco.translate(0, 1.5, 0);
-  const geoCopa = new THREE.ConeGeometry(2.4, 7, 7);
-  geoCopa.translate(0, 6.2, 0);
-  const troncos = new THREE.InstancedMesh(geoTronco, new THREE.MeshLambertMaterial({ color: 0x6a4a30 }), nArv);
-  const copas = new THREE.InstancedMesh(
-    geoCopa,
-    new THREE.MeshPhongMaterial({ color: 0xffffff, flatShading: true, shininess: 4, specular: 0x000000 }),
-    nArv
-  );
-  for (const m of [troncos, copas]) {
-    m.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-    m.frustumCulled = false;
-    scene.add(m);
+  const FADE_ARV = 520;
+  function geoEspecie(e) {
+    const [cx, cy, cz] = e.c, [mf, ms, mt] = e.m, v0 = e.linha === 0 ? 0.5 : 0, v1 = v0 + 0.5, ht = e.alt * 0.72;
+    const pos = [], uv = [], ao = [], ind = [];
+    // a, b, c, d: canto de baixo à esquerda, de baixo à direita, de cima à direita e de cima à esquerda da foto
+    const quadro = (a, b, c, d, u0, u1, aoBaixo) => {
+      const k = pos.length / 3;
+      pos.push(...a, ...b, ...c, ...d);
+      uv.push(u0, v0, u1, v0, u1, v1, u0, v1);
+      ao.push(aoBaixo, aoBaixo, 1, 1);
+      ind.push(k, k + 1, k + 2, k, k + 2, k + 3);
+    };
+    quadro([cx - mf, cy - mf, cz], [cx + mf, cy - mf, cz], [cx + mf, cy + mf, cz], [cx - mf, cy + mf, cz], 0, 1 / 3, 0.62);
+    quadro([cx, cy - ms, cz + ms], [cx, cy - ms, cz - ms], [cx, cy + ms, cz - ms], [cx, cy + ms, cz + ms], 1 / 3, 2 / 3, 0.62);
+    quadro([cx - mt, ht, cz + mt], [cx + mt, ht, cz + mt], [cx + mt, ht, cz - mt], [cx - mt, ht, cz - mt], 2 / 3, 1, 1);
+    const g = new THREE.InstancedBufferGeometry();
+    g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+    g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+    g.setAttribute('ao', new THREE.Float32BufferAttribute(ao, 1));
+    g.setIndex(ind);
+    return g;
   }
-  const corArv = new THREE.Color();
-  for (let i = 0; i < nArv; i++) {
-    corArv.setHSL(entre(0.24, 0.33), entre(0.35, 0.55), entre(0.11, 0.19));
-    copas.setColorAt(i, corArv);
+  function novaArvore(cx, cy) {
+    if (naEstrada(cx, cy, 6) || noLago(cx, cy)) return null;
+    const e = rand() < 0.5 ? 0 : 1, esp = ESPECIES[e];
+    return { x: cx * M_POR_PX, z: cy * M_POR_PX, e, s: entre(esp.esc[0], esp.esc[1]) * (rand() < 0.5 ? -1 : 1), r: rand() * Math.PI * 2 };
   }
+  const POR_ARVORE = MOVEL ? 300 : 170;      // px² de mata por árvore (1 px² = 0,6 m²)
+  const arvoresCampos = [], arvoresCidade = [];
+  for (const t of matas) {
+    const n = Math.floor((t.w * t.h) / POR_ARVORE);
+    for (let i = 0; i < n; i++) { const a = novaArvore(t.x + 4 + rand() * (t.w - 8), t.y + 4 + rand() * (t.h - 8)); if (a) arvoresCampos.push(a); }
+  }
+  for (let i = 0; i < 90; i++) { const a = novaArvore(rand() * TEX, rand() * TEX); if (a) arvoresCampos.push(a); }
+  for (let i = Math.floor(TEX * TEX / (POR_ARVORE * (MOVEL ? 2.2 : 1.5))); i > 0; i--) { const a = novaArvore(rand() * TEX, rand() * TEX); if (a) arvoresCidade.push(a); }
 
-  const mArv = new THREE.Matrix4();
-  const pArv = new THREE.Vector3();
-  const eArv = new THREE.Vector3();
-  // lugares sem árvores nos campos (aeroporto, cidade, vilas): retângulos x0, z0, x1, z1
-  let semArvores = [];
-  // Reposiciona as árvores em volta do avião e diz se ele bateu em alguma.
-  function atualizarArvores(px, py, pz) {
-    let i = 0;
-    let bateu = false;
-    const perto = semArvores.filter((r) => px > r[0] - JAN_ARV && px < r[2] + JAN_ARV && pz > r[1] - JAN_ARV && pz < r[3] + JAN_ARV);
-    for (let k = 0; k < COPIAS; k++) {
-      const ox = (k & 1) * PERIODO;
-      const oz = (k >> 1) * PERIODO;
-      for (const a of arvores) {
-        const bx = a.x + ox;
-        const bz = a.z + oz;
-        const x = bx + JAN_ARV * Math.round((px - bx) / JAN_ARV);
-        const z = bz + JAN_ARV * Math.round((pz - bz) / JAN_ARV);
-        const dx = x - px;
-        const dz = z - pz;
-        let f = clamp((JAN_ARV / 2 - Math.max(Math.abs(dx), Math.abs(dz))) / FADE_ARV, 0, 1);
-        if (perto.length && perto.some((r) => x > r[0] && x < r[2] && z > r[1] && z < r[3])) f = 0;
-        const s = a.s * f;
-        pArv.set(x, 0, z);
-        eArv.set(s, s, s);
-        mArv.compose(pArv, a.q, eArv);
-        troncos.setMatrixAt(i, mArv);
-        copas.setMatrixAt(i, mArv);
-        if (py < 9.7 * a.s && Math.abs(dx) < 2.4 * a.s && Math.abs(dz) < 2.4 * a.s) bateu = true;
-        i++;
+  const matArvores = new THREE.ShaderMaterial({
+    fog: true,
+    side: THREE.DoubleSide,
+    uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, {
+      mapa: { value: null }, centro: { value: new THREE.Vector2() }, janela: { value: JAN_ARV }, fade: { value: FADE_ARV },
+      sem: { value: Array.from({ length: 6 }, () => new THREE.Vector4()) }, nSem: { value: 0 }, luz: { value: new THREE.Color(0.95, 0.95, 0.95) },
+    }]),
+    vertexShader: `
+      attribute vec4 inst;        // x, z, escala (negativa = espelhada), rumo
+      attribute float ao;
+      uniform vec2 centro;
+      uniform float janela;
+      uniform float fade;
+      uniform vec4 sem[6];        // lugares sem árvore: x0, z0, x1, z1
+      uniform int nSem;
+      varying vec2 vUv;
+      varying float vAo;
+      varying float vDist;
+      #include <fog_pars_vertex>
+      void main() {
+        vec2 p = inst.xy + janela * floor((centro - inst.xy) / janela + 0.5);
+        vec2 d = p - centro;
+        float f = clamp((janela * 0.5 - max(abs(d.x), abs(d.y))) / fade, 0.0, 1.0);
+        for (int k = 0; k < 6; k++) {
+          if (k >= nSem) break;
+          vec4 r = sem[k];
+          if (p.x > r.x && p.x < r.z && p.y > r.y && p.y < r.w) f = 0.0;
+        }
+        vec3 q = vec3(position.x * sign(inst.z), position.y, position.z) * abs(inst.z) * f;
+        float cr = cos(inst.w), sr = sin(inst.w);
+        vec4 mvPosition = viewMatrix * vec4(p.x + q.x * cr + q.z * sr, q.y, p.y - q.x * sr + q.z * cr, 1.0);
+        vUv = uv;
+        vAo = ao;
+        vDist = -mvPosition.z;
+        gl_Position = projectionMatrix * mvPosition;
+        #include <fog_vertex>
+      }`,
+    fragmentShader: `
+      uniform sampler2D mapa;
+      uniform vec3 luz;
+      varying vec2 vUv;
+      varying float vAo;
+      varying float vDist;
+      #include <fog_pars_fragment>
+      void main() {
+        vec4 t = texture2D(mapa, vUv);
+        // de longe as folhas ficam meio transparentes na textura reduzida: o corte baixa para a copa não sumir
+        if (t.a < mix(0.5, 0.18, smoothstep(150.0, 1400.0, vDist))) discard;
+        gl_FragColor = vec4(t.rgb * luz * vAo, 1.0);
+        #include <fog_fragment>
+      }`,
+  });
+  function florestaDe(lista) {
+    const grupo = new THREE.Group();
+    ESPECIES.forEach((esp, k) => {
+      const minhas = lista.filter((a) => a.e === k);
+      const geo = geoEspecie(esp);
+      const dados = new Float32Array(minhas.length * COPIAS * 4);
+      let i = 0;
+      for (let c = 0; c < COPIAS; c++) {
+        const ox = (c & 1) * PERIODO, oz = (c >> 1) * PERIODO;
+        for (const a of minhas) { dados[i++] = a.x + ox; dados[i++] = a.z + oz; dados[i++] = a.s; dados[i++] = a.r; }
+      }
+      geo.setAttribute('inst', new THREE.InstancedBufferAttribute(dados, 4));
+      geo.instanceCount = minhas.length * COPIAS;
+      const m = new THREE.Mesh(geo, matArvores);
+      m.frustumCulled = false;
+      grupo.add(m);
+    });
+    grupo.visible = false;
+    scene.add(grupo);
+    return grupo;
+  }
+  const florestaCampos = florestaDe(arvoresCampos);
+  const florestaCidade = florestaDe(arvoresCidade);
+  let arvoresProntas = false;
+
+  // Copas vistas de cima para pintar as matas do chão, montadas com as fotos de cima das mesmas árvores: um
+  // quadro de 64 m que se repete sem emenda.
+  function montarCopas(img) {
+    const L = 512, c = document.createElement('canvas');
+    c.width = c.height = L;
+    const g = c.getContext('2d');
+    g.fillStyle = '#26361c';
+    g.fillRect(0, 0, L, L);
+    const lado = img.width / 3, r = mulberry32(91);
+    const copas = [];
+    for (let i = 0; i < 70; i++) copas.push({ x: r() * L, y: r() * L, t: (13 + r() * 9) * L / 64, a: r() * 6.283, e: r() < 0.5 ? 0 : 1 });
+    for (const sombra of [true, false]) {
+      for (const k of copas) {
+        for (const ox of [-L, 0, L]) for (const oy of [-L, 0, L]) {
+          const x = k.x + ox, y = k.y + oy;
+          if (x < -k.t || y < -k.t || x > L + k.t || y > L + k.t) continue;
+          g.save();
+          g.translate(x + (sombra ? k.t * 0.12 : 0), y + (sombra ? k.t * 0.1 : 0));
+          g.rotate(k.a);
+          if (sombra) {
+            g.globalAlpha = 0.45;
+            g.filter = 'blur(6px) brightness(0)';
+          }
+          g.drawImage(img, 2 * lado, k.e * lado, lado, lado, -k.t / 2, -k.t / 2, k.t, k.t);
+          g.restore();
+        }
       }
     }
-    troncos.instanceMatrix.needsUpdate = true;
-    copas.instanceMatrix.needsUpdate = true;
-    return bateu;
+    const t = new THREE.CanvasTexture(c);
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    t.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+    return t;
+  }
+  new THREE.TextureLoader().load('texturas/arvores_campo' + (MOVEL ? '_peq' : '') + '.webp', (t) => {
+    t.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+    matArvores.uniforms.mapa.value = t;
+    uniChao.copa.value = montarCopas(t.image);
+    uniChao.temCopa.value = 1;
+    arvoresProntas = true;
+    if (CENARIOS[cenario] && CENARIOS[cenario].tipo === 'campos') aplicarFlorestaCampos(CENARIOS[cenario]);
+  });
+  // asfalto de verdade nas ruas, no pátio do aeroporto e na pista
+  carregarTextura('texturas/asfalto' + (MOVEL ? '_peq' : '') + '.jpg', false, false).then((t) => {
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    uniChao.asfaltoTex.value = t;
+    uniChao.temAsfalto.value = 1;
+  }).catch(() => {});
+
+  // qual floresta aparece e onde não pode ter árvore (aeroporto, cidade, vilas)
+  let semArvores = [];
+  function aplicarFlorestaCampos(c) {
+    const campos = c && c.tipo === 'campos';
+    florestaCampos.visible = arvoresProntas && campos && !c.cercada;
+    florestaCidade.visible = arvoresProntas && campos && !!c.cercada;
+    const u = matArvores.uniforms;
+    u.nSem.value = Math.min(6, semArvores.length);
+    u.sem.value.forEach((v, i) => { const r = semArvores[i]; if (r) v.set(r[0], r[1], r[2], r[3]); else v.set(0, 0, 0, 0); });
+  }
+  // a luz das árvores acompanha um pouco o céu escolhido (o chão dos campos não tem sombra, então elas também
+  // não podem ficar muito mais escuras que ele)
+  function luzArvores() {
+    const k = Math.max(SOL_DIR.y, 0) * 0.55;
+    const canal = (cs, cc) => 0.66 + 0.34 * Math.min(1, cs * sol.intensity * k + cc * luzCeu.intensity * 0.7);
+    matArvores.uniforms.luz.value.setRGB(canal(sol.color.r, luzCeu.color.r), canal(sol.color.g, luzCeu.color.g), canal(sol.color.b, luzCeu.color.b));
+  }
+  // grade de 32 m com as árvores de cada floresta, para achar depressa as que estão perto do avião
+  function gradeArvores(lista) {
+    const n = Math.ceil(PERIODO / 32), g = Array.from({ length: n * n }, () => []);
+    for (const a of lista) g[(Math.floor(a.z / 32) % n) * n + (Math.floor(a.x / 32) % n)].push(a);
+    return { n, g };
+  }
+  const gradeCampos = gradeArvores(arvoresCampos), gradeCidade = gradeArvores(arvoresCidade);
+  // Leva as árvores para perto da câmera e diz se o avião bateu em alguma.
+  function atualizarArvores(px, py, pz) {
+    matArvores.uniforms.centro.value.set(camera.position.x, camera.position.z);
+    if (py > 30) return false;                      // acima de todas as árvores
+    const G = CENARIOS[cenario].cercada ? gradeCidade : gradeCampos;
+    const lx = ((px % PERIODO) + PERIODO) % PERIODO, lz = ((pz % PERIODO) + PERIODO) % PERIODO;
+    const ci = Math.floor(lx / 32), cj = Math.floor(lz / 32);
+    for (let dj = -1; dj <= 1; dj++) for (let di = -1; di <= 1; di++) {
+      for (const a of G.g[((cj + dj + G.n) % G.n) * G.n + ((ci + di + G.n) % G.n)]) {
+        let dx = a.x - lx, dz = a.z - lz;
+        dx -= PERIODO * Math.round(dx / PERIODO);
+        dz -= PERIODO * Math.round(dz / PERIODO);
+        const esp = ESPECIES[a.e], e = Math.abs(a.s), r = esp.raio * e * 0.6;
+        if (py < esp.alt * e * 0.92 && dx * dx + dz * dz < r * r) {
+          const wx = px + dx, wz = pz + dz;
+          if (!semArvores.some((q) => wx > q[0] && wx < q[2] && wz > q[1] && wz < q[3])) return true;
+        }
+      }
+    }
+    return false;
   }
 
   // ---------- nuvens: grupos de bolhas que andam com o vento ----------
@@ -1777,16 +2003,35 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
   const ilha = { id: null, carga: {}, alturas: null, nx: 2, nz: 2, W: 1, D: 1, x0: 0, z0: 0, grupo: new THREE.Group() };
   ilha.grupo.visible = false;
   scene.add(ilha.grupo);
+  // Entre os pontos da grade o relevo é uma curva suave (Catmull-Rom), a mesma do shader: sem as quinas retas que
+  // a interpolação linear deixava nas encostas.
+  const PESO_X = new Float64Array(4), PESO_Z = new Float64Array(4);
+  function pesosCR(t, w) {
+    const t2 = t * t, t3 = t2 * t;
+    w[0] = -0.5 * t3 + t2 - 0.5 * t; w[1] = 1.5 * t3 - 2.5 * t2 + 1; w[2] = -1.5 * t3 + 2 * t2 + 0.5 * t; w[3] = 0.5 * t3 - 0.5 * t2;
+  }
   function alturaIlha(x, z) {
     const fx = (x - ilha.x0) / ilha.W * (ilha.nx - 1), fz = (z - ilha.z0) / ilha.D * (ilha.nz - 1);
     if (!ilha.alturas || fx < 0 || fz < 0 || fx > ilha.nx - 1 || fz > ilha.nz - 1) return FUNDO_MAR;
     const i = Math.min(ilha.nx - 2, Math.floor(fx)), j = Math.min(ilha.nz - 2, Math.floor(fz));
-    const tx = fx - i, tz = fz - j, k = j * ilha.nx + i, h = ilha.alturas, n = ilha.nx;
-    return (h[k] * (1 - tx) + h[k + 1] * tx) * (1 - tz) + (h[k + n] * (1 - tx) + h[k + n + 1] * tx) * tz;
+    const h = ilha.alturas, n = ilha.nx, lx = ilha.nx - 1, lz = ilha.nz - 1;
+    pesosCR(fx - i, PESO_X);
+    pesosCR(fz - j, PESO_Z);
+    let soma = 0;
+    for (let b = 0; b < 4; b++) {
+      const linha = Math.min(lz, Math.max(0, j + b - 1)) * n;
+      let v = 0;
+      for (let a = 0; a < 4; a++) v += h[linha + Math.min(lx, Math.max(0, i + a - 1))] * PESO_X[a];
+      soma += v * PESO_Z[b];
+    }
+    return soma;
   }
   const uniIlha = {
     alturas: { value: null }, grade: { value: new THREE.Vector2(2, 2) }, extensao: { value: new THREE.Vector4(0, 0, 1, 1) },
     satelite: { value: null }, tempo: { value: 0 },
+    texRocha: { value: null }, texRochaN: { value: null }, texGrama: { value: null }, texGramaN: { value: null },
+    texTerra: { value: null }, texAreia: { value: null }, temDetalhe: { value: 0 }, soAreia: { value: 0 },
+    alcanceDetalhe: { value: MOVEL ? 3500 : 7000 },
     mapaCeu: uniTer.mapaCeu, temCeu: uniTer.temCeu, corte: uniTer.corte,
     solDir: uniTer.solDir, corSol: uniTer.corSol, luzSol: uniTer.luzSol,
     corCeu: uniTer.corCeu, corChaoLuz: uniTer.corChaoLuz, luzCeuF: uniTer.luzCeuF,
@@ -1805,6 +2050,35 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
       float a = texelFetch(alturas, c, 0).r, b = texelFetch(alturas, c + ivec2(1, 0), 0).r;
       float d = texelFetch(alturas, c + ivec2(0, 1), 0).r, e = texelFetch(alturas, c + ivec2(1, 1), 0).r;
       return mix(mix(a, b, t.x), mix(d, e, t.x), t.y);
+    }
+    // relevo suave (Catmull-Rom nos dois sentidos) e a inclinação dele em x e z, de uma vez só
+    void pesosCR(float t, out vec4 w, out vec4 d) {
+      float t2 = t * t, t3 = t2 * t;
+      w = vec4(-0.5 * t3 + t2 - 0.5 * t, 1.5 * t3 - 2.5 * t2 + 1.0, -1.5 * t3 + 2.0 * t2 + 0.5 * t, 0.5 * t3 - 0.5 * t2);
+      d = vec4(-1.5 * t2 + 2.0 * t - 0.5, 4.5 * t2 - 5.0 * t, -4.5 * t2 + 4.0 * t + 0.5, 1.5 * t2 - t);
+    }
+    float alturaSuave(vec2 p, out vec2 inc) {
+      vec2 f = (p - extensao.xy) / extensao.zw * (grade - 1.0);
+      inc = vec2(0.0);
+      if (f.x < 0.0 || f.y < 0.0 || f.x > grade.x - 1.0 || f.y > grade.y - 1.0) return ${FUNDO_MAR.toFixed(1)};
+      vec2 i = min(floor(f), grade - 2.0);
+      vec4 wx, dx, wz, dz;
+      pesosCR(f.x - i.x, wx, dx);
+      pesosCR(f.y - i.y, wz, dz);
+      ivec2 c = ivec2(i), lim = ivec2(grade) - 1;
+      int x0 = max(c.x - 1, 0), x2 = min(c.x + 1, lim.x), x3 = min(c.x + 2, lim.x);
+      float h = 0.0, hx = 0.0, hz = 0.0;
+      for (int b = 0; b < 4; b++) {
+        int z = clamp(c.y + b - 1, 0, lim.y);
+        vec4 linha = vec4(texelFetch(alturas, ivec2(x0, z), 0).r, texelFetch(alturas, ivec2(c.x, z), 0).r,
+                          texelFetch(alturas, ivec2(x2, z), 0).r, texelFetch(alturas, ivec2(x3, z), 0).r);
+        float a = dot(linha, wx);
+        h += a * wz[b];
+        hx += dot(linha, dx) * wz[b];
+        hz += a * dz[b];
+      }
+      inc = vec2(hx, hz) / (extensao.zw / (grade - 1.0));
+      return h;
     }`;
   const VERT_ILHA = `
     uniform float descer;
@@ -1813,10 +2087,9 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
     ${ALTURA_ILHA}
     void main() {
       vec4 mundo = modelMatrix * vec4(position, 1.0);
-      float E = extensao.z / (grade.x - 1.0);
-      vNormal = normalize(vec3(altura(mundo.xz - vec2(E, 0.0)) - altura(mundo.xz + vec2(E, 0.0)), 2.0 * E,
-                               altura(mundo.xz - vec2(0.0, E)) - altura(mundo.xz + vec2(0.0, E))));
-      mundo.y = altura(mundo.xz) - descer;
+      vec2 inc;
+      mundo.y = alturaSuave(mundo.xz, inc) - descer;
+      vNormal = normalize(vec3(-inc.x, 1.0, -inc.y));
       vMundo = mundo.xyz;
       gl_Position = projectionMatrix * viewMatrix * mundo;
     }`;
@@ -1845,18 +2118,90 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
     uniform vec4 extensao;
     uniform vec2 buracoMin;
     uniform vec2 buracoMax;
+    uniform sampler2D texRocha;
+    uniform sampler2D texRochaN;
+    uniform sampler2D texGrama;
+    uniform sampler2D texGramaN;
+    uniform sampler2D texTerra;
+    uniform sampler2D texAreia;
+    uniform float temDetalhe;
+    uniform float soAreia;
+    uniform float alcanceDetalhe;
     varying vec3 vMundo;
     varying vec3 vNormal;
     ${LUZ_E_NEVOA}
+    // cor média de cada textura (luz linear): dividir por ela deixa só o desenho, e a cor continua a da foto
+    const vec3 MEDIA_ROCHA = vec3(0.1648, 0.1158, 0.0460);
+    const vec3 MEDIA_GRAMA = vec3(0.1690, 0.1211, 0.0241);
+    const vec3 MEDIA_TERRA = vec3(0.2168, 0.1442, 0.1042);
+    const vec3 MEDIA_AREIA = vec3(0.2826, 0.2371, 0.1960);
+    // Uma textura vista de cima; nas encostas íngremes, também de lado (senão ela estica e vira listra).
+    vec3 amostra(sampler2D t, vec3 pos, vec3 nrm, float escala) {
+      vec3 cima = texture2D(t, pos.xz / escala).rgb;
+      float wc = smoothstep(0.5, 0.8, nrm.y);
+      if (wc > 0.99) return cima;
+      vec2 lado = abs(nrm.x) > abs(nrm.z) ? pos.zy : pos.xy;
+      return mix(texture2D(t, lado / escala).rgb, cima, wc);
+    }
+    // a textura em vários tamanhos (9, 37, 160 e 700 m), para a repetição não aparecer: os pequenos só de perto
+    vec3 desenho(sampler2D t, vec3 pos, vec3 nrm, float bemPerto, float meio) {
+      vec3 c = amostra(t, pos + vec3(71.0, 0.0, 47.0), nrm, 160.0), d = amostra(t, pos + vec3(213.0, 0.0, 389.0), nrm, 700.0);
+      vec3 r = c * 0.6 + d * 0.4;
+      if (meio < 0.01) return r;
+      vec3 b = amostra(t, pos + vec3(13.0, 0.0, 29.0), nrm, 37.0);
+      r = mix(r, b * 0.5 + c * 0.3 + d * 0.2, meio);
+      if (bemPerto < 0.01) return r;
+      return mix(r, amostra(t, pos, nrm, 9.0) * 0.45 + b * 0.3 + c * 0.25, bemPerto);
+    }
+    float lum(vec3 c) { return dot(c, vec3(0.2126, 0.7152, 0.0722)); }
+    // inclinação de um ruído suave: grotas e lombadas que a grade do relevo (52 m) não tem
+    vec2 gradRuido(vec2 q) {
+      const float e = 0.3;
+      return vec2(ruido(q + vec2(e, 0.0)) - ruido(q - vec2(e, 0.0)), ruido(q + vec2(0.0, e)) - ruido(q - vec2(0.0, e))) / (2.0 * e);
+    }
     void main() {
       if (vMundo.x > buracoMin.x && vMundo.x < buracoMax.x && vMundo.z > buracoMin.y && vMundo.z < buracoMax.y) discard;
       vec2 uv = (vMundo.xz - extensao.xy) / extensao.zw;
       float dist = distance(vMundo, cameraPosition);
       vec3 foto = (uv.x < 0.0 || uv.y < 0.0 || uv.x > 1.0 || uv.y > 1.0) ? vec3(0.01, 0.035, 0.05) : texture2D(satelite, vec2(uv.x, 1.0 - uv.y)).rgb;
-      // de perto a foto de satélite fica borrada: um pouco de granulado de pedra e mato
-      float perto = 1.0 - smoothstep(150.0, 1400.0, dist);
-      foto *= 1.0 + perto * ((ruido(vMundo.xz * 0.11) - 0.5) * 0.28 + (ruido(vMundo.xz * 0.9) - 0.5) * 0.16);
-      vec3 luz = corSol * luzSol * max(dot(vNormal, solDir), 0.0) + mix(corChaoLuz, corCeu, vNormal.y * 0.5 + 0.5) * luzCeuF;
+      vec3 n = vNormal;
+      // de perto a foto de satélite fica borrada: entram as texturas de rocha, grama e terra (no mar das ilhotas,
+      // areia), com o relevo fino de cada uma
+      float perto = (1.0 - smoothstep(alcanceDetalhe * 0.25, alcanceDetalhe, dist)) * temDetalhe;
+      if (perto > 0.001) {
+        vec2 p = vMundo.xz;
+        float bemPerto = 1.0 - smoothstep(60.0, 450.0, dist), meio = 1.0 - smoothstep(1200.0, 2500.0, dist);
+        vec3 tex, media, nd = vec3(0.0);
+        float aspero = 0.35, corRocha = 0.0;
+        if (soAreia > 0.5) {
+          tex = desenho(texAreia, vMundo, n, bemPerto, meio);
+          media = MEDIA_AREIA;
+        } else {
+          // verde na foto: grama; inclinado, ou alto e sem verde: rocha; o resto: terra
+          float verde = clamp((foto.g - max(foto.r, foto.b)) / max(foto.g, 0.02) * 3.0, 0.0, 1.0);
+          float rocha = clamp(smoothstep(0.2, 0.5, 1.0 - n.y) + (1.0 - verde) * smoothstep(900.0, 1700.0, vMundo.y), 0.0, 1.0);
+          float grama = (1.0 - rocha) * verde;
+          float terra = 1.0 - rocha - grama;
+          tex = desenho(texRocha, vMundo, n, bemPerto, meio) * rocha + desenho(texGrama, vMundo, n, bemPerto, meio) * grama + desenho(texTerra, vMundo, n, bemPerto, meio) * terra;
+          media = MEDIA_ROCHA * rocha + MEDIA_GRAMA * grama + MEDIA_TERRA * terra;
+          if (meio > 0.01) {
+            vec2 q = p / mix(37.0, 9.0, bemPerto);
+            nd = ((texture2D(texRochaN, q).xyz * 2.0 - 1.0) * (rocha + terra) + (texture2D(texGramaN, q).xyz * 2.0 - 1.0) * grama) * meio;
+          }
+          aspero = 0.35 + 0.65 * rocha;
+          corRocha = rocha;
+        }
+        // de longe: a cor da foto com o desenho da textura; mais perto: as cores da própria textura, no brilho
+        // da foto (na rocha até mais longe, para tirar o roxo da foto de satélite)
+        float l = lum(tex) / lum(media);
+        vec3 viaFoto = foto * max(1.0 + (l - 1.0) * 1.8, 0.12);
+        vec3 viaTextura = tex * (lum(foto) / lum(media));
+        float usaTextura = 0.6 * (1.0 - smoothstep(mix(300.0, 1500.0, corRocha), mix(2500.0, 6000.0, corRocha), dist));
+        foto = mix(foto, mix(viaFoto, viaTextura, usaTextura), perto * 0.95);
+        vec2 g = gradRuido(p / 85.0) * 0.6 + gradRuido(p / 27.0 + 5.3) * 0.35;
+        n = normalize(n + (vec3(nd.x, 0.0, nd.y) * 0.8 + vec3(g.x, 0.0, g.y) * aspero) * perto);
+      }
+      vec3 luz = corSol * luzSol * max(dot(n, solDir), 0.0) + mix(corChaoLuz, corCeu, n.y * 0.5 + 0.5) * luzCeuF;
       vec3 luzPlana = corSol * luzSol * max(solDir.y, 0.0) + corCeu * luzCeuF;
       gl_FragColor = linearToOutputTexel(vec4(foto * mix(luzPlana, luz, 0.75) * 0.95, 1.0));
       gl_FragColor.rgb = mix(gl_FragColor.rgb, corDaNevoa(vMundo), smoothstep(nevoaPerto, nevoaLonge, dist));
@@ -2002,9 +2347,22 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
       return { alturas, texAlt, tex };
     });
   }
+  // texturas de perto do chão das ilhas (Poly Haven, CC0), carregadas uma vez só; no celular, as menores
+  let cargaDetalhes = null;
+  function carregarDetalhes() {
+    if (cargaDetalhes) return cargaDetalhes;
+    const q = MOVEL ? '_peq' : '';
+    const nomes = { texRocha: 'rocha' + q, texGrama: 'grama' + q, texTerra: 'terra' + q, texAreia: 'areia' + q, texRochaN: 'rocha_n', texGramaN: 'grama_n' };
+    cargaDetalhes = Promise.all(Object.entries(nomes).map(([u, n]) => carregarTextura('texturas/' + n + '.jpg', !n.endsWith('_n'), false).then((t) => {
+      t.wrapS = t.wrapT = THREE.RepeatWrapping;
+      uniIlha[u].value = t;
+    }))).then(() => { uniIlha.temDetalhe.value = 1; }).catch(() => { cargaDetalhes = null; });
+    return cargaDetalhes;
+  }
   function carregarIlha(id) {
     if (ilha.carga[id]) return ilha.carga[id];
     const c = CENARIOS[id];
+    carregarDetalhes();
     if (c.semRelevo) {
       ilha.carga[id] = relevoDasIlhotas(c).catch((e) => { ilha.carga[id] = null; throw e; });
       return ilha.carga[id];
@@ -2030,6 +2388,7 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
     uniIlha.satelite.value = dados.tex;
     uniIlha.grade.value.set(c.nx, c.nz);
     uniIlha.extensao.value.set(ilha.x0, ilha.z0, ilha.W, ilha.D);
+    uniIlha.soAreia.value = c.semRelevo ? 1 : 0;
   }
   function atualizarIlha(dt) {
     const cx = camera.position.x, cz = camera.position.z;
@@ -2113,25 +2472,26 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
   // construcoes: modelo, centro (x, z) e rumo (rad). semArvores: retângulos x0, z0, x1, z1 sem as árvores dos campos.
   // asfaltos e pista são pintados no chão dos campos.
   const quarteiroes = [];
-  for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) quarteiroes.push({ nome: 'cidade', x: i * 430, z: -3400 + j * 372, rumo: (i + j) & 1 ? Math.PI : 0 });
+  for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) quarteiroes.push({ nome: 'cidade', x: i * 860, z: -3400 + j * 744, rumo: (i + j) & 1 ? Math.PI : 0, escala: 2 });
   const CENARIOS = {
     floresta: {
       nome: 'floresta', tipo: 'floresta',
-      construcoes: [{ nome: 'vila', x: 420, z: -2300, rumo: 0.6 }, { nome: 'vila', x: -1900, z: -5200, rumo: 2.2 }, { nome: 'vila', x: 2600, z: -7800, rumo: 4 }],
-      clareiras: [{ x: 420, z: -2300, r: 34 }, { x: -1900, z: -5200, r: 34 }, { x: 2600, z: -7800, r: 34 }],
+      construcoes: [{ nome: 'vila', x: 420, z: -2300, rumo: 0.6, escala: 2 }, { nome: 'vila', x: -1900, z: -5200, rumo: 2.2, escala: 2 }, { nome: 'vila', x: 2600, z: -7800, rumo: 4, escala: 2 }],
+      clareiras: [{ x: 420, z: -2300, r: 66 }, { x: -1900, z: -5200, r: 66 }, { x: 2600, z: -7800, r: 66 }],
     },
     campos: {
       nome: 'campos', tipo: 'campos', inicio: { x: 0, y: 900, z: 1200, rumo: 0 },
-      construcoes: [{ nome: 'aeroporto', x: 1500, z: -4200, rumo: 0 }, { nome: 'vila', x: -1300, z: -2600, rumo: 1.1 }, { nome: 'vila', x: -600, z: -6400, rumo: 3.3 }],
+      construcoes: [{ nome: 'aeroporto', x: 1460, z: -4200, rumo: 0, escala: 1.5 }, { nome: 'vila', x: -1300, z: -2600, rumo: 1.1, escala: 2 }, { nome: 'vila', x: -600, z: -6400, rumo: 3.3, escala: 2 }],
       pista: [1940, -4200, 3000, 45],
-      asfaltos: [[1615, -4420, 1925, -3980], [1615, -5640, 1925, -5560], [1615, -2840, 1925, -2760]],
-      semArvores: [[1360, -5800, 2000, -2600], [-1340, -2640, -1260, -2560], [-640, -6440, -560, -6360]],
+      asfaltos: [[1615, -4500, 1925, -3900], [1615, -5640, 1925, -5560], [1615, -2840, 1925, -2760]],
+      semArvores: [[1240, -5800, 2000, -2600], [-1390, -2690, -1210, -2510], [-690, -6490, -510, -6310]],
     },
     cidade: {
-      nome: 'cidade', tipo: 'campos', inicio: { x: 0, y: 450, z: -600, rumo: 0 },
+      nome: 'cidade', tipo: 'campos', inicio: { x: 0, y: 500, z: 900, rumo: 0 }, cercada: true,
       construcoes: quarteiroes,
-      asfaltos: [[-655, -3990, 655, -2810]],
-      semArvores: [[-700, -4040, 700, -2760]],
+      ruas: [430, -3028, 860, 744],
+      asfaltos: [[-1310, -4530, 1310, -2270]],
+      semArvores: [[-1370, -4590, 1370, -2210]],
     },
     pico: {
       nome: 'Ilha do Pico', tipo: 'ilha', pasta: 'cenarios/pico/', largura: 42986.8, profundidade: 22508.1, nx: 830, nz: 435,
@@ -2144,18 +2504,18 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
     // mar aberto com ilhotas brasileiras em 3D (fotogrametria): a Ilha de Urubuqueçaba e uma pedra com gravuras rupestres da Ilha das Meninas,
     // repetidas com outro tamanho e outro rumo para formar um arquipélago. O fundo do mar é feito pelo jogo.
     litoral: {
-      nome: 'Ilhotas', tipo: 'ilha', semRelevo: true, largura: 6000, profundidade: 6000, nx: 1001, nz: 1001,
-      inicio: { x: 0, y: 260, z: 2600, rumo: 0 }, nevoa: 1.9, corChao: 0x1d3a4a,
+      nome: 'Ilhotas', tipo: 'ilha', semRelevo: true, largura: 10000, profundidade: 10000, nx: 1251, nz: 1251,
+      inicio: { x: 0, y: 300, z: 4500, rumo: 0 }, nevoa: 1.9, corChao: 0x1d3a4a,
       construcoes: [
-        { nome: 'urubuquecaba', x: 0, z: 0, y: 0, rumo: 0 },
-        { nome: 'urubuquecaba', x: -1500, z: -1200, y: 0, rumo: 2.1, escala: 0.85 },
-        { nome: 'urubuquecaba', x: 1700, z: -1800, y: 0, rumo: 4.2, escala: 1.15 },
-        { nome: 'pedra_gravuras', x: 380, z: -350, y: 0, rumo: 0.5, escala: 1.6 },
-        { nome: 'pedra_gravuras', x: -420, z: 260, y: 0, rumo: 2.4, escala: 1.2 },
-        { nome: 'pedra_gravuras', x: 900, z: 700, y: 0, rumo: 1.1, escala: 2.2 },
-        { nome: 'pedra_gravuras', x: -1100, z: -600, y: 0, rumo: 3.7, escala: 1.8 },
-        { nome: 'pedra_gravuras', x: 1300, z: -1100, y: 0, rumo: 5, escala: 1.4 },
-        { nome: 'pedra_gravuras', x: -300, z: -1900, y: 0, rumo: 0.9, escala: 2.5 },
+        { nome: 'urubuquecaba', x: 0, z: 0, y: 0, rumo: 0, escala: 3 },
+        { nome: 'urubuquecaba', x: -2600, z: -2000, y: 0, rumo: 2.1, escala: 2.6 },
+        { nome: 'urubuquecaba', x: 2900, z: -3100, y: 0, rumo: 4.2, escala: 3.4 },
+        { nome: 'pedra_gravuras', x: 900, z: 1100, y: 0, rumo: 0.5, escala: 8 },
+        { nome: 'pedra_gravuras', x: -1100, z: 600, y: 0, rumo: 2.4, escala: 6 },
+        { nome: 'pedra_gravuras', x: 1700, z: -900, y: 0, rumo: 1.1, escala: 9 },
+        { nome: 'pedra_gravuras', x: -1900, z: -500, y: 0, rumo: 3.7, escala: 7 },
+        { nome: 'pedra_gravuras', x: 300, z: -2200, y: 0, rumo: 5, escala: 6.5 },
+        { nome: 'pedra_gravuras', x: -700, z: -3600, y: 0, rumo: 0.9, escala: 8.5 },
       ],
     },
   };
@@ -2184,7 +2544,7 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
     cenario = id;
     const c = CENARIOS[id];
     const f = c.tipo === 'floresta', ilhaSim = c.tipo === 'ilha';
-    chao.visible = troncos.visible = copas.visible = c.tipo === 'campos';
+    chao.visible = c.tipo === 'campos';
     flor.grupo.visible = f;
     ilha.grupo.visible = ilhaSim;
     if (ilhaSim && ilha.carga[id]) ilha.carga[id].then((d) => { if (cenario === id) montarIlha(id, d); });
@@ -2199,6 +2559,9 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
     uniChao.asfaltos.value.forEach((v, i) => { const a = (c.asfaltos || [])[i]; if (a) v.set(a[0], a[1], a[2], a[3]); else v.set(0, 0, 0, 0); });
     if (c.pista) uniChao.pista.value.fromArray(c.pista); else uniChao.pista.value.set(0, 0, 0, 0);
     semArvores = c.semArvores || [];
+    uniChao.matoTudo.value = c.cercada ? 1 : 0;
+    if (c.ruas) uniChao.ruas.value.fromArray(c.ruas); else uniChao.ruas.value.set(0, 0, 0, 0);
+    aplicarFlorestaCampos(c);
     matChaoEnv.color.setHex(c.corChao || (f ? 0x3d4a2a : 0x6b8a4e));
     camera.far = ilhaSim ? 60000 : 20000;
     camera.updateProjectionMatrix();
@@ -2246,6 +2609,7 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
   function luzMudou() {
     uniTer.luzSol.value = sol.intensity;
     uniTer.luzCeuF.value = luzCeu.intensity;
+    luzArvores();
     aplicarNevoa();
     if (imp.malha) {
       // as fotos de lado das árvores recebem a luz média que as árvores 3D recebem
@@ -2274,7 +2638,6 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
   let carregando = null;
   const elCargaTexto = $('carga-texto');
   const elCargaBarra = $('carga-barra');
-  const elPrefixo = $('prefixo');
 
   // brilho redondo: clarão do canhão e halo da chama do motor
   const texFlash = (() => {
@@ -2457,7 +2820,6 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
     OFFSET_ATRAS.set(0, 0.22 * L, 1.45 * L);
     OFFSET_CABINE.fromArray(c.config.cabine);
     sombra.scale.set(c.envergadura * 1.05, c.envergadura * 1.05, 1);
-    elPrefixo.textContent = c.config.nome;
     document.title = 'Voo Livre · ' + c.config.nome;
   }
 
@@ -2899,32 +3261,13 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
     }
   }
 
-  // ---------- instrumentos ----------
-  const elVel = $('vel');
-  const elAlt = $('alt');
-  const elRumo = $('rumo');
-  const elCardeal = $('cardeal');
-  const elMotor = $('motor');
-  const elMotorNivel = $('motor-nivel');
-  const CARDEAIS = ['N', 'NE', 'L', 'SE', 'S', 'SO', 'O', 'NO'];
+  // ---------- avisos da tela ----------
   const cache = {};
   const escrever = (el, chave, valor) => {
     if (cache[chave] !== valor) { cache[chave] = valor; el.textContent = valor; }
   };
 
   function atualizarInstrumentos() {
-    escrever(elVel, 'vel', String(Math.round(aviao.vel * 3.6)));
-    escrever(elAlt, 'alt', String(Math.max(0, Math.round(aviao.pos.y))));
-    frente.set(0, 0, -1).applyQuaternion(aviao.quat);
-    const rumo = (Math.round(THREE.MathUtils.radToDeg(Math.atan2(frente.x, -frente.z))) + 360) % 360;
-    escrever(elRumo, 'rumo', String(rumo).padStart(3, '0') + '°');
-    escrever(elCardeal, 'cardeal', CARDEAIS[Math.round(rumo / 45) % 8]);
-    const m = Math.round(aviao.motor * 100);
-    escrever(elMotor, 'motor', m + '%');
-    if (cache.barra !== m) {
-      cache.barra = m;
-      elMotorNivel.style.transform = 'scaleX(' + (m / 100) + ')';
-    }
     elAviso.hidden = !(aviao.estol && estado === 'voando');
   }
 
@@ -4517,6 +4860,9 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
     for (const n in ARQ_SONS) l.push(encodeURI(ARQ_SONS[n]));
     for (const a of ATLAS_EXPLOSAO) l.push(a.arquivo + (MOVEL ? '_peq' : '') + '.webp');
     l.push('efeitos/explosao_chapas.json');
+    for (const n of ['rocha', 'grama', 'terra', 'areia']) l.push('texturas/' + n + (MOVEL ? '_peq' : '') + '.jpg');
+    l.push('texturas/rocha_n.jpg', 'texturas/grama_n.jpg');
+    l.push('texturas/arvores_campo' + (MOVEL ? '_peq' : '') + '.webp', 'texturas/asfalto' + (MOVEL ? '_peq' : '') + '.jpg');
     return [...new Set(l.map((u) => new URL(u, location.href).href))];
   }
   async function faltando() {
@@ -4724,6 +5070,10 @@ body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px +
       scene.add(m.malha);
       return ini.id;
     },
+    uniIlha: () => uniIlha,
+    uniChao: () => uniChao,
+    matArvores: () => matArvores,
+    florestas: () => ({ campos: florestaCampos.visible, cidade: florestaCidade.visible, nCampos: arvoresCampos.length, nCidade: arvoresCidade.length }),
     // põe a câmera num ponto em volta do avião (metros, no referencial dele) olhando para outro ponto dele
     olharDe: (de, para) => {
       camera.position.fromArray(de).applyQuaternion(aviao.quat).add(aviao.pos);

@@ -36,8 +36,11 @@ Escolhidos na tela de início. A escolha (e a do céu) fica guardada no navegado
   - mais longe, até o horizonte, "fotos de lado" das árvores montadas pelo próprio jogo, cada vez mais ralas;
   - o alcance das árvores se ajusta sozinho: diminui se o jogo ficar lento e aumenta se sobrar fôlego.
 - **Campos:** lavouras, matas, lagos e estradas desenhados numa textura que se repete, com um aeroporto (pista pintada
-  no chão) e duas vilas.
-- **Cidade:** nove quarteirões de prédios para passar no meio, cercados de campos.
+  no chão, em asfalto de verdade) e duas vilas. As matas são floresta de verdade: árvores de foto de perto e copas
+  vistas de cima no chão, de longe.
+- **Cidade:** nove quarteirões de prédios (de uns 46 m na média até 350 m) para passar no meio, cercados de floresta.
+  As ruas entre as quadras têm asfalto de verdade, faixa tracejada, calçadas e faixas de pedestre; dentro das quadras,
+  praças e pátios.
 - **Açores:** a Ilha do Pico, com o vulcão de 2.350 m, no meio do mar. Relevo e foto de satélite do modelo
   [Ilha do Pico, Azores, Portugal](https://sketchfab.com/3d-models/ilha-do-pico-azores-portugal-54f9cfe3429741089dc22ec37a8839f4),
   por CMPLab (CC BY 4.0; feito com dados ALOS AW3D30 e Landsat).
@@ -56,6 +59,22 @@ Nas ilhas o mar tem ondas, reflexo do céu, brilho do sol, água rasa na praia e
 **Construções:** vila, cidade e aeroporto são modelos glTF em `cenarios/construcoes/`, cada um com um mapa das alturas
 das partes sólidas visto de cima, que é a colisão (dá para bater nos prédios e voar entre eles). Origem e licença dos
 três modelos a confirmar.
+
+**Tamanhos:** tudo foi conferido ao lado do caça (15 a 19 m de comprimento), para nenhum prédio ficar menor que ele:
+a cidade e as vilas estão no dobro do tamanho original do modelo, o aeroporto em 1,5 vez, a Ilha de Urubuqueçaba em
+2,6 a 3,4 vezes (uns 700 m) e as pedras em 6 a 9 vezes (300 a 470 m).
+
+## Visual
+
+- **Montanhas das ilhas:** o relevo entre os pontos da grade é uma curva suave (sem as quinas retas de antes), e de
+  perto entram texturas de verdade do [Poly Haven](https://polyhaven.com/) (CC0): rocha, grama com pedras e terra,
+  escolhidas pela inclinação e pela cor da foto de satélite, em vários tamanhos para a repetição não aparecer, com o
+  relevo fino de cada uma. Nas encostas íngremes a textura também é projetada de lado, para não esticar. No mar das
+  ilhotas, o fundo raso é de areia de praia.
+- **Árvores dos campos e da cidade:** fotos das árvores "Island Tree" 01 e 02 do Poly Haven (CC0), tiradas de frente,
+  de lado e de cima, em três planos por árvore, com 14 a 24 m de altura. A placa de vídeo leva cada árvore para perto
+  da câmera, sem custo a cada quadro. De longe, o chão das matas é pintado com copas vistas de cima feitas com as
+  mesmas fotos. As texturas ficam em `texturas/` (no celular, as versões `_peq`).
 
 ## Céus
 
@@ -159,7 +178,10 @@ O jogo é só na horizontal: com o celular em pé ele pausa e pede para deitar o
   flares, com a quantidade que sobra de cada um.
 - **Em cima:** olhar para trás (segure), trocar câmera e pausar.
 
-No celular o jogo usa texturas menores e um alcance menor de árvores, para rodar liso.
+Os botões têm ícones (as quantidades de míssil, foguete e flares aparecem embaixo de cada um). As mensagens e os avisos
+aparecem embaixo do avião, à esquerda dos botões, para não tapar a vista. Não há painel de velocidade e altitude.
+
+No celular o jogo usa texturas menores, menos árvores e um alcance menor das texturas do chão, para rodar liso.
 
 ## App e jogo sem internet
 
