@@ -281,6 +281,65 @@ h1 {
 .secundario:hover { border-color: var(--ciano); }
 .secundario:focus-visible { outline: 3px solid var(--texto); outline-offset: 3px; }
 .principal:disabled { opacity: 0.6; cursor: wait; }
+.olhando-tras {
+  position: fixed; z-index: 3; left: 50%; top: calc(18px + env(safe-area-inset-top, 0px)); transform: translateX(-50%);
+  margin: 0; padding: 6px 12px; border-radius: 6px; background: var(--painel); border: 1px solid var(--painel-borda);
+  font: 700 12px/1 var(--fonte-numero); letter-spacing: 0.16em; color: var(--ciano);
+}
+.so-toque { display: none; }
+
+/* Controles de toque (celular): manche à esquerda, motor e botões à direita */
+.toque { position: fixed; inset: 0; z-index: 2; pointer-events: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.toque > * { pointer-events: auto; touch-action: none; }
+.manche-area { position: absolute; left: 0; bottom: 0; width: 46%; height: 78%; }
+.manche-dica {
+  position: absolute; left: max(24px, env(safe-area-inset-left, 0px)); bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  margin: 0; padding: 8px 12px; border-radius: 8px; background: var(--veu); color: var(--texto-suave); font: 400 12px/1.3 var(--fonte-rotulo);
+}
+.manche-base { position: absolute; width: 132px; height: 132px; margin: -66px 0 0 -66px; border-radius: 50%; border: 2px solid rgba(238, 245, 251, 0.35); background: rgba(5, 18, 31, 0.28); }
+.manche-bola { position: absolute; left: 50%; top: 50%; width: 58px; height: 58px; margin: -29px 0 0 -29px; border-radius: 50%; background: rgba(116, 224, 255, 0.55); border: 2px solid rgba(238, 245, 251, 0.7); }
+.bt-toque {
+  position: absolute; display: grid; place-items: center; padding: 0; border-radius: 50%;
+  border: 2px solid rgba(238, 245, 251, 0.45); background: rgba(5, 18, 31, 0.42); color: var(--texto);
+  font: 700 11px/1.1 var(--fonte-rotulo); letter-spacing: 0.04em; text-align: center; text-transform: uppercase;
+}
+.bt-toque.apertado { background: rgba(116, 224, 255, 0.45); border-color: var(--ciano); }
+.bt-tiro { width: 86px; height: 86px; right: calc(max(18px, env(safe-area-inset-right, 0px)) + 70px); bottom: calc(18px + env(safe-area-inset-bottom, 0px)); font-size: 13px; }
+.bt-missil { width: 64px; height: 64px; right: calc(max(18px, env(safe-area-inset-right, 0px)) + 168px); bottom: calc(22px + env(safe-area-inset-bottom, 0px)); }
+.bt-foguete { width: 58px; height: 58px; right: calc(max(18px, env(safe-area-inset-right, 0px)) + 150px); bottom: calc(104px + env(safe-area-inset-bottom, 0px)); }
+.bt-flare { width: 58px; height: 58px; right: calc(max(18px, env(safe-area-inset-right, 0px)) + 78px); bottom: calc(118px + env(safe-area-inset-bottom, 0px)); color: var(--ambar); }
+.bt-toque small { display: block; font-size: 10px; font-weight: 400; color: var(--texto-suave); }
+.bt-pequeno { width: 46px; height: 46px; border-radius: 10px; font-size: 11px; top: calc(12px + env(safe-area-inset-top, 0px)); }
+.bt-pausa { right: max(14px, env(safe-area-inset-right, 0px)); }
+.bt-camera { right: calc(max(14px, env(safe-area-inset-right, 0px)) + 56px); }
+.bt-tras { right: calc(max(14px, env(safe-area-inset-right, 0px)) + 112px); }
+.acelerador {
+  position: absolute; right: max(14px, env(safe-area-inset-right, 0px)); bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+  width: 48px; height: min(150px, 34vh); display: grid; grid-template-rows: 1fr auto; justify-items: center; gap: 4px;
+}
+.acel-trilho { position: relative; width: 22px; height: 100%; border-radius: 11px; background: var(--trilho); border: 2px solid rgba(238, 245, 251, 0.35); overflow: hidden; }
+.acel-nivel { position: absolute; left: 0; right: 0; bottom: 0; height: 60%; background: var(--ciano); opacity: 0.75; }
+.acel-nivel.pc { background: var(--ambar); }
+.acel-rot { font: 700 9px/1 var(--fonte-rotulo); letter-spacing: 0.1em; color: var(--texto-suave); }
+.girar { display: none; position: fixed; inset: 0; z-index: 6; place-items: center; padding: 24px; background: rgba(5, 18, 31, 0.92); text-align: center; font: 700 18px/1.4 var(--fonte-rotulo); }
+body.toque .so-toque { display: block; }
+body.toque .so-teclado { display: none; }
+body.toque .ajuda { display: none; }
+body.toque .mensagem { bottom: auto; top: calc(108px + env(safe-area-inset-top, 0px)); font-size: 13px; }
+body.toque .instrumentos { transform: scale(0.82); transform-origin: top left; }
+body.toque .instrumentos.combate { transform-origin: top right; top: calc(64px + env(safe-area-inset-top, 0px)); }
+@media (max-height: 380px) {
+  body.toque .bt-tiro, body.toque .bt-missil, body.toque .bt-foguete, body.toque .bt-flare { transform: scale(0.86); transform-origin: bottom right; }
+}
+/* no celular o jogo é só na horizontal: em pé, tudo fica coberto pelo aviso de girar */
+@media (orientation: portrait) { body.toque .girar { display: grid; } }
+.girar svg { width: 72px; height: 72px; margin: 0 auto 14px; display: block; animation: girar-cel 2.4s ease-in-out infinite; }
+@keyframes girar-cel { 0%, 25% { transform: rotate(0deg); } 55%, 100% { transform: rotate(-90deg); } }
+@media (max-height: 520px) {
+  .cartao { padding: 16px 18px; gap: 12px; }
+  h1 { font-size: 34px; }
+  .sub { font-size: 13px; }
+}
 @media (max-width: 640px) {
   .ajuda { display: none; }
   .cartao { margin-left: 0; }
@@ -308,9 +367,10 @@ h1 {
     <span class="rot">NÍVEL</span><span class="val" id="nivel">1</span><span class="uni"></span>
     <span class="rot">PONTOS</span><span class="val" id="pontos">0</span><span class="uni"></span>
     <span class="rot">CASCO</span><span class="barra" aria-hidden="true"><span class="nivel vida" id="vida-nivel"></span></span><span class="uni" id="vida">100%</span>
-    <span class="rot">GUIADOS</span><span class="val" id="guiados">4/4</span><span class="uni">Espaço</span>
-    <span class="rot">FOGUETES</span><span class="val" id="foguetes">12/12</span><span class="uni">X</span>
-    <span class="rot">INIMIGOS</span><span class="val" id="restam">0</span><span class="uni">no ar</span>
+    <span class="rot so-teclado">GUIADOS</span><span class="val so-teclado" id="guiados">4/4</span><span class="uni so-teclado">Espaço</span>
+    <span class="rot so-teclado">FOGUETES</span><span class="val so-teclado" id="foguetes">12/12</span><span class="uni so-teclado">X</span>
+    <span class="rot so-teclado">FLARES</span><span class="val so-teclado" id="flares">5/5</span><span class="uni so-teclado">F</span>
+    <span class="rot so-teclado">INIMIGOS</span><span class="val so-teclado" id="restam">0</span><span class="uni so-teclado">no ar</span>
   </section>
   <div class="mira" id="mira" hidden aria-hidden="true"></div>
   <div id="alvos" aria-hidden="true"></div>
@@ -318,7 +378,8 @@ h1 {
   <div class="dano" id="dano" aria-hidden="true"></div>
 
   <p class="aviso" id="aviso" hidden>ESTOL · baixe o nariz e acelere</p>
-  <p class="aviso alerta" id="alerta-missil" hidden>MÍSSIL · faça uma curva bem fechada</p>
+  <p class="aviso alerta" id="alerta-missil" hidden>MÍSSIL · solte flares (F) ou faça uma curva fechada</p>
+  <p class="olhando-tras" id="olhando-tras" hidden>CÂMERA TRASEIRA</p>
   <p class="mensagem" id="mensagem" hidden></p>
 
   <section class="painel ajuda" id="ajuda" aria-label="Comandos">
@@ -331,6 +392,8 @@ h1 {
       <dt><kbd>Z</kbd></dt><dd>Metralhadora (tiros infinitos)</dd>
       <dt><kbd>Espaço</kbd></dt><dd>Míssil guiado (precisa de alvo travado)</dd>
       <dt><kbd>X</kbd></dt><dd>Foguete, sem guia</dd>
+      <dt><kbd>F</kbd></dt><dd>Flares: enganam os mísseis que vêm atrás</dd>
+      <dt><kbd>T</kbd></dt><dd>Segure para olhar para trás</dd>
       <dt><kbd>C</kbd></dt><dd>Trocar câmera</dd>
       <dt><kbd>I</kbd></dt><dd>Inverter ↑ ↓</dd>
       <dt><kbd>P</kbd></dt><dd>Pausar</dd>
@@ -338,6 +401,25 @@ h1 {
     </dl>
   </section>
 </div>
+
+<div class="toque" id="toque" hidden>
+  <div class="manche-area" id="manche-area">
+    <p class="manche-dica" id="manche-dica">Encoste e arraste aqui para pilotar</p>
+    <div class="manche-base" id="manche-base" hidden><div class="manche-bola" id="manche-bola"></div></div>
+  </div>
+  <div class="acelerador" id="acelerador" aria-label="Motor: arraste para cima ou para baixo">
+    <div class="acel-trilho"><div class="acel-nivel" id="acel-nivel"></div></div>
+    <span class="acel-rot">MOTOR</span>
+  </div>
+  <button class="bt-toque bt-tiro" type="button" data-acao="tiro">Tiro</button>
+  <button class="bt-toque bt-missil" type="button" data-acao="missil">Míssil<small id="t-guiados">4</small></button>
+  <button class="bt-toque bt-foguete" type="button" data-acao="foguete">Foguete<small id="t-foguetes">12</small></button>
+  <button class="bt-toque bt-flare" type="button" data-acao="flare">Flares<small id="t-flares">5</small></button>
+  <button class="bt-toque bt-pequeno bt-tras" type="button" data-acao="tras" aria-label="Segure para olhar para trás">TRÁS</button>
+  <button class="bt-toque bt-pequeno bt-camera" type="button" data-acao="camera" aria-label="Trocar câmera">CÂM</button>
+  <button class="bt-toque bt-pequeno bt-pausa" type="button" data-acao="pausa" aria-label="Pausar">II</button>
+</div>
+<div class="girar" id="girar"><div><svg viewBox="0 0 24 24" fill="none" stroke="#74e0ff" stroke-width="1.6" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.5h2"/></svg>Gire o celular.<br>O Voo Livre se joga com o celular deitado (na horizontal).</div></div>
 
 <div class="tela" id="inicio">
   <div class="painel cartao">
@@ -355,8 +437,11 @@ h1 {
     </div>
     <p class="grupo">Cenário</p>
     <div class="modos" id="cenarios" role="group" aria-label="Cenário">
-      <button class="cenario" type="button" data-cenario="floresta" aria-pressed="true"><span>Floresta</span><small>Mata fechada sem fim, com morros e estrada de terra.</small></button>
-      <button class="cenario" type="button" data-cenario="campos" aria-pressed="false"><span>Campos</span><small>Lavouras, matas e lagos.</small></button>
+      <button class="cenario" type="button" data-cenario="floresta" aria-pressed="true"><span>Floresta</span><small>Mata fechada sem fim, com morros, estrada e uma vila.</small></button>
+      <button class="cenario" type="button" data-cenario="campos" aria-pressed="false"><span>Campos</span><small>Lavouras, lagos e um aeroporto.</small></button>
+      <button class="cenario" type="button" data-cenario="cidade" aria-pressed="false"><span>Cidade</span><small>Prédios para passar no meio, cercados de campos.</small></button>
+      <button class="cenario" type="button" data-cenario="pico" aria-pressed="false"><span>Açores</span><small>Ilha do Pico: vulcão de 2.350 m no meio do mar.</small></button>
+      <button class="cenario" type="button" data-cenario="caboverde" aria-pressed="false"><span>Cabo Verde</span><small>Ilhas do Fogo e da Brava, com a cratera do vulcão.</small></button>
     </div>
     <p class="grupo">Céu</p>
     <div class="cacas" id="ceus" role="group" aria-label="Céu">
@@ -367,7 +452,7 @@ h1 {
     <div class="carga" aria-hidden="true"><span id="carga-barra"></span></div>
     <p class="nota" id="carga-texto" aria-live="polite">Carregando o F-16D…</p>
     <button class="principal" id="decolar" type="button">Decolar</button>
-    <dl class="comandos">
+    <dl class="comandos so-teclado">
       <dt><kbd>↓</kbd><kbd>↑</kbd></dt><dd>Puxar / empurrar o manche (nariz sobe / desce)</dd>
       <dt><kbd>←</kbd><kbd>→</kbd></dt><dd>Inclinar as asas. Para curvar, incline e puxe</dd>
       <dt><kbd>A</kbd><kbd>D</kbd></dt><dd>Leme: vira o nariz de lado</dd>
@@ -375,13 +460,16 @@ h1 {
       <dt><kbd>Z</kbd></dt><dd>Metralhadora (tiros infinitos)</dd>
       <dt><kbd>Espaço</kbd></dt><dd>Míssil guiado (precisa de alvo travado)</dd>
       <dt><kbd>X</kbd></dt><dd>Foguete, sem guia</dd>
+      <dt><kbd>F</kbd></dt><dd>Flares: enganam os mísseis que vêm atrás</dd>
+      <dt><kbd>T</kbd></dt><dd>Segure para olhar para trás</dd>
       <dt><kbd>C</kbd></dt><dd>Trocar câmera</dd>
       <dt><kbd>I</kbd></dt><dd>Inverter ↑ ↓</dd>
       <dt><kbd>P</kbd></dt><dd>Pausar</dd>
       <dt><kbd>R</kbd></dt><dd>Recomeçar</dd>
     </dl>
-    <p class="nota">Precisa de teclado. Se as teclas pararem de responder, clique no jogo. <b id="versao-jogo">Versão 5</b></p>
-    <p class="creditos">Modelos 3D do Sketchfab, licença CC BY 4.0: <a href="https://sketchfab.com/3d-models/general-dynamics-f-16d-block-60-ea8edb08d79e4eafa9c794c581f88cf3" target="_blank" rel="noopener">F-16D Block 60</a> por Muhamad Mirza Arrafi · <a href="https://sketchfab.com/3d-models/f-14-tomcat-top-gun-gear-up-downloadable-9d2d0c87539046aa8c2198fcc47cdcf8" target="_blank" rel="noopener">F-14 Tomcat</a> por dwsd · <a href="https://sketchfab.com/3d-models/boeing-fa-18ef-super-hornet-f71e9fea01e24fea9b1b380161d21d38" target="_blank" rel="noopener">F/A-18E/F Super Hornet</a> por andertan. Céus do <a href="https://polyhaven.com/hdris/skies" target="_blank" rel="noopener">Poly Haven</a> (CC0): Kloofendal 48d Partly Cloudy, Kloppenheim 06 e Kloofendal Overcast, por Greg Zaal (com edição do céu por Jarod Guest). Sons do Freesound (CC0): <a href="https://freesound.org/people/qubodup/sounds/187734/" target="_blank" rel="noopener">Idle F-22 Jet Plane</a>, <a href="https://freesound.org/people/qubodup/sounds/854183/" target="_blank" rel="noopener">Autocannon Shot 1</a> e <a href="https://freesound.org/people/qubodup/sounds/184274/" target="_blank" rel="noopener">Launching Anti-Tank Missiles</a> por qubodup · <a href="https://freesound.org/people/TiesWijnen/sounds/413312/" target="_blank" rel="noopener">Afterburner</a> por TiesWijnen.</p>
+    <p class="nota so-toque">No celular, deite o aparelho. Lado esquerdo: encoste e arraste para pilotar (para baixo o nariz sobe). Lado direito: motor, tiro, míssil, foguete, flares e o botão de olhar para trás.</p>
+    <p class="nota"><span class="so-teclado">Precisa de teclado (ou jogue no celular). Se as teclas pararem de responder, clique no jogo.</span> <b id="versao-jogo">Versão 6</b></p>
+    <p class="creditos">Modelos 3D do Sketchfab, licença CC BY 4.0: <a href="https://sketchfab.com/3d-models/general-dynamics-f-16d-block-60-ea8edb08d79e4eafa9c794c581f88cf3" target="_blank" rel="noopener">F-16D Block 60</a> por Muhamad Mirza Arrafi · <a href="https://sketchfab.com/3d-models/f-14-tomcat-top-gun-gear-up-downloadable-9d2d0c87539046aa8c2198fcc47cdcf8" target="_blank" rel="noopener">F-14 Tomcat</a> por dwsd · <a href="https://sketchfab.com/3d-models/boeing-fa-18ef-super-hornet-f71e9fea01e24fea9b1b380161d21d38" target="_blank" rel="noopener">F/A-18E/F Super Hornet</a> por andertan. Céus do <a href="https://polyhaven.com/hdris/skies" target="_blank" rel="noopener">Poly Haven</a> (CC0): Kloofendal 48d Partly Cloudy, Kloppenheim 06 e Kloofendal Overcast, por Greg Zaal (com edição do céu por Jarod Guest). Sons do Freesound (CC0): <a href="https://freesound.org/people/qubodup/sounds/187734/" target="_blank" rel="noopener">Idle F-22 Jet Plane</a>, <a href="https://freesound.org/people/qubodup/sounds/854183/" target="_blank" rel="noopener">Autocannon Shot 1</a> e <a href="https://freesound.org/people/qubodup/sounds/442773/" target="_blank" rel="noopener">Big Water Splash</a> por qubodup · <a href="https://freesound.org/people/TiesWijnen/sounds/413312/" target="_blank" rel="noopener">Afterburner</a> por TiesWijnen · <a href="https://freesound.org/people/klangfabrik/sounds/249298/" target="_blank" rel="noopener">rpg launcher</a> por klangfabrik · <a href="https://freesound.org/people/Mozfoo/sounds/458377/" target="_blank" rel="noopener">Rocket Loop</a> por Mozfoo · <a href="https://freesound.org/people/northern87/sounds/88532/" target="_blank" rel="noopener">Woosh</a> por northern87 · <a href="https://freesound.org/people/kyles/sounds/450833/" target="_blank" rel="noopener">flare fire into sky</a> por kyles · <a href="https://freesound.org/people/derplayer/sounds/587194/" target="_blank" rel="noopener">explosion big 01</a> por derplayer · <a href="https://freesound.org/people/Robo9418/sounds/841831/" target="_blank" rel="noopener">Deep Explosion with Falling Debris</a> por Robo9418 · <a href="https://freesound.org/people/areniporgen/sounds/693421/" target="_blank" rel="noopener">CTS 7290</a> por areniporgen.</p>
   </div>
 </div>
 
@@ -445,7 +533,11 @@ h1 {
     mostrarErro('Este navegador não conseguiu ligar o 3D (WebGL). Tente o Chrome, o Edge ou o Firefox atualizados.');
     return;
   }
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  // Celular ou tablet: tela de toque como entrada principal. No celular o 3D fica mais leve.
+  const TOQUE = window.matchMedia('(pointer: coarse)').matches;
+  const MOVEL = TOQUE && Math.min(screen.width, screen.height) < 900;
+  if (TOQUE) document.body.classList.add('toque');
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, MOVEL ? 1.5 : 2));
   renderer.outputEncoding = THREE.sRGBEncoding;
 
   const reduzirMovimento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -758,6 +850,10 @@ h1 {
   const uniChao = THREE.UniformsUtils.merge([THREE.UniformsLib.fog]);
   uniChao.mapa = { value: criarTexturaChao() };
   uniChao.periodo = { value: PERIODO };
+  // asfalto (retângulos x0, z0, x1, z1: chão da cidade e pátio do aeroporto) e pista (centro x, z, comprimento,
+  // largura; corre de norte a sul), pintados no próprio chão para não piscar contra ele
+  uniChao.asfaltos = { value: [new THREE.Vector4(), new THREE.Vector4(), new THREE.Vector4()] };
+  uniChao.pista = { value: new THREE.Vector4() };
   const chao = new THREE.Mesh(
     new THREE.PlaneGeometry(40000, 40000),
     new THREE.ShaderMaterial({
@@ -776,14 +872,37 @@ h1 {
       fragmentShader: `
         uniform sampler2D mapa;
         uniform float periodo;
+        uniform vec4 asfaltos[3];
+        uniform vec4 pista;
         varying vec2 vMundo;
         #include <fog_pars_fragment>
+        float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+        // linha de largura l (m) em volta de 0, sem serrilhado
+        float linha(float d, float l) { float w = fwidth(d) + 0.001; return 1.0 - smoothstep(l * 0.5 - w, l * 0.5 + w, abs(d)); }
         void main() {
           vec3 cor = texture2D(mapa, vMundo / periodo).rgb;
           // manchas de luz bem grandes, para esconder a repetição da textura vista do alto
           float n = sin(vMundo.x * 0.00041 + 1.3 * sin(vMundo.y * 0.00023))
                   * sin(vMundo.y * 0.00033 + 0.9 * sin(vMundo.x * 0.00017));
           cor *= 0.93 + 0.09 * n;
+          for (int k = 0; k < 3; k++) {
+            vec4 a = asfaltos[k];
+            if (vMundo.x > a.x && vMundo.x < a.z && vMundo.y > a.y && vMundo.y < a.w)
+              cor = vec3(0.36, 0.365, 0.37) * (0.94 + 0.12 * hash(floor(vMundo * 0.5)));
+          }
+          if (pista.z > 0.0) {
+            vec2 d = vMundo - pista.xy;
+            float meio = pista.w * 0.5, ponta = pista.z * 0.5 - abs(d.y);
+            if (abs(d.x) < meio && ponta > 0.0) {
+              float tinta = linha(d.x, 0.9) * step(fract((d.y + 15.0) / 50.0), 0.6) * step(90.0, ponta);   // eixo tracejado
+              tinta = max(tinta, linha(abs(d.x) - (meio - 1.5), 0.9));                                     // bordas
+              float faixa = step(fract(abs(d.x) / 3.6), 0.5) * step(3.0, abs(d.x)) * step(abs(d.x), meio - 3.0);
+              tinta = max(tinta, faixa * step(6.0, ponta) * step(ponta, 56.0));                            // cabeceiras
+              float toque = step(fract(abs(d.x) / 2.2), 0.6) * step(abs(abs(d.x) - 9.0), 4.0);
+              tinta = max(tinta, toque * (step(abs(ponta - 160.0), 11.0) + step(abs(ponta - 310.0), 11.0)));  // zona de toque
+              cor = mix(vec3(0.22, 0.225, 0.23) * (0.95 + 0.1 * hash(floor(vMundo * 0.7))), vec3(0.95), tinta);
+            }
+          }
           gl_FragColor = vec4(cor, 1.0);
           #include <fog_fragment>
         }`,
@@ -838,10 +957,13 @@ h1 {
   const mArv = new THREE.Matrix4();
   const pArv = new THREE.Vector3();
   const eArv = new THREE.Vector3();
+  // lugares sem árvores nos campos (aeroporto, cidade, vilas): retângulos x0, z0, x1, z1
+  let semArvores = [];
   // Reposiciona as árvores em volta do avião e diz se ele bateu em alguma.
   function atualizarArvores(px, py, pz) {
     let i = 0;
     let bateu = false;
+    const perto = semArvores.filter((r) => px > r[0] - JAN_ARV && px < r[2] + JAN_ARV && pz > r[1] - JAN_ARV && pz < r[3] + JAN_ARV);
     for (let k = 0; k < COPIAS; k++) {
       const ox = (k & 1) * PERIODO;
       const oz = (k >> 1) * PERIODO;
@@ -852,7 +974,8 @@ h1 {
         const z = bz + JAN_ARV * Math.round((pz - bz) / JAN_ARV);
         const dx = x - px;
         const dz = z - pz;
-        const f = clamp((JAN_ARV / 2 - Math.max(Math.abs(dx), Math.abs(dz))) / FADE_ARV, 0, 1);
+        let f = clamp((JAN_ARV / 2 - Math.max(Math.abs(dx), Math.abs(dz))) / FADE_ARV, 0, 1);
+        if (perto.length && perto.some((r) => x > r[0] && x < r[2] && z > r[1] && z < r[3])) f = 0;
         const s = a.s * f;
         pArv.set(x, 0, z);
         eArv.set(s, s, s);
@@ -994,12 +1117,23 @@ h1 {
 
   // t em quadros -> posição dentro do quadro base (0..1), com espelho a cada quadro
   const dobra = (t) => { t -= 2 * Math.floor(t / 2); return t <= 1 ? t : 2 - t; };
-  function alturaFloresta(x, z) {
+  function alturaFlorestaBruta(x, z) {
     const n = flor.n, h = flor.alturas;
     const fx = dobra(x / flor.SX) * (n - 1), fz = dobra(z / flor.SZ) * (n - 1);
     const i = Math.min(n - 2, Math.floor(fx)), j = Math.min(n - 2, Math.floor(fz));
     const tx = fx - i, tz = fz - j, k = j * n + i;
     return (h[k] * (1 - tx) + h[k + 1] * tx) * (1 - tz) + (h[k + n] * (1 - tx) + h[k + n + 1] * tx) * tz;
+  }
+  // Clareiras: círculos sem árvores e com o chão aplainado (para a vila). A mesma conta está no shader.
+  const BORDA_CLAREIRA = 60;
+  flor.clareiras = [];                   // { x, z, r, h }
+  function alturaFloresta(x, z) {
+    let h = alturaFlorestaBruta(x, z);
+    for (const c of flor.clareiras) {
+      const t = clamp((Math.hypot(x - c.x, z - c.z) - c.r) / BORDA_CLAREIRA, 0, 1);
+      if (t < 1) h += (c.h - h) * (1 - t * t * (3 - 2 * t));
+    }
+    return h;
   }
 
   // Chão: duas grades que andam com a câmera (perto: fina; longe: grossa, com um buraco onde está a fina).
@@ -1012,12 +1146,23 @@ h1 {
     corCeu: { value: luzCeu.color }, corChaoLuz: { value: luzCeu.groundColor }, luzCeuF: { value: 1 },
     nevoaCor: { value: scene.fog.color }, nevoaPerto: { value: 1000 }, nevoaLonge: { value: 9000 },
     copaPerto: { value: 500 }, copaLonge: { value: 800 },
+    clareiras: { value: [new THREE.Vector4(), new THREE.Vector4(), new THREE.Vector4(), new THREE.Vector4()] },
   };
+  // névoa com a cor do céu logo abaixo do horizonte, na direção do olhar (chão, mar e ilhas)
+  const NEVOA_CEU = `
+    vec3 corDaNevoa(vec3 pos) {
+      if (temCeu < 0.5) return nevoaCor;
+      vec3 d = normalize(pos - cameraPosition);
+      float u = atan(d.z, d.x) * 0.15915494 + 0.5;
+      float v = asin(clamp(min(d.y, -0.01), -1.0, 1.0)) * 0.31830989 + 0.5;
+      return texture2D(mapaCeu, vec2(u, max((v - 1.0 + corte) / corte, 0.002))).rgb;
+    }`;
   const VERT_TERRENO = `
     uniform sampler2D alturas;
     uniform float n;
     uniform vec2 quadro;
     uniform float descer;
+    uniform vec4 clareiras[4];   // x, z, raio, altura (raio 0: sem clareira)
     varying vec3 vMundo;
     varying vec3 vNormal;
     float dobra(float t) { t -= 2.0 * floor(t * 0.5); return t <= 1.0 ? t : 2.0 - t; }
@@ -1031,7 +1176,12 @@ h1 {
       float b = texelFetch(alturas, c + ivec2(1, 0), 0).r;
       float d = texelFetch(alturas, c + ivec2(0, 1), 0).r;
       float e = texelFetch(alturas, c + ivec2(1, 1), 0).r;
-      return mix(mix(a, b, fx - i), mix(d, e, fx - i), fz - j);
+      float h = mix(mix(a, b, fx - i), mix(d, e, fx - i), fz - j);
+      for (int k = 0; k < 4; k++) {
+        vec4 cl = clareiras[k];
+        if (cl.z > 0.0) h = mix(h, cl.w, 1.0 - smoothstep(cl.z, cl.z + ${BORDA_CLAREIRA.toFixed(1)}, distance(p, cl.xy)));
+      }
+      return h;
     }
     void main() {
       vec4 mundo = modelMatrix * vec4(position, 1.0);
@@ -1063,8 +1213,10 @@ h1 {
     uniform float nevoaLonge;
     uniform float copaPerto;
     uniform float copaLonge;
+    uniform vec4 clareiras[4];
     varying vec3 vMundo;
     varying vec3 vNormal;
+    ${NEVOA_CEU}
     void main() {
       if (vMundo.x > buracoMin.x && vMundo.x < buracoMax.x && vMundo.z > buracoMin.y && vMundo.z < buracoMax.y) discard;
       vec2 uv = vec2(vMundo.x / quadro.x, 1.0 - vMundo.z / quadro.y);
@@ -1078,16 +1230,18 @@ h1 {
       vec3 luz = corSol * luzSol * max(dot(nr, solDir), 0.0) + mix(corChaoLuz, corCeu, nr.y * 0.5 + 0.5) * luzCeuF;
       vec3 chao = texture2D(mapaChao, uv).rgb * luz;
       vec3 copa = texture2D(mapaCopa, uv).rgb * (luz / max(luzCima, vec3(0.05)));
-      gl_FragColor = linearToOutputTexel(vec4(mix(chao, copa, smoothstep(copaPerto, copaLonge, dist)), 1.0));
-      // névoa com a cor do céu logo abaixo do horizonte, na direção do olhar
-      vec3 corNevoa = nevoaCor;
-      if (temCeu > 0.5) {
-        vec3 d = normalize(vMundo - cameraPosition);
-        float u = atan(d.z, d.x) * 0.15915494 + 0.5;
-        float v = asin(clamp(min(d.y, -0.01), -1.0, 1.0)) * 0.31830989 + 0.5;
-        corNevoa = texture2D(mapaCeu, vec2(u, max((v - 1.0 + corte) / corte, 0.002))).rgb;
+      // nas clareiras não há copas: só o chão
+      float semCopa = 0.0;
+      for (int k = 0; k < 4; k++) {
+        vec4 cl = clareiras[k];
+        if (cl.z > 0.0) semCopa = max(semCopa, 1.0 - smoothstep(cl.z - 10.0, cl.z + 25.0, distance(vMundo.xz, cl.xy)));
       }
-      gl_FragColor.rgb = mix(gl_FragColor.rgb, corNevoa, smoothstep(nevoaPerto, nevoaLonge, dist));
+      // manchas grandes de cor e luz, para esconder a repetição do quadro vista do alto
+      float n1 = sin(vMundo.x * 0.00041 + 1.3 * sin(vMundo.z * 0.00023)) * sin(vMundo.z * 0.00033 + 0.9 * sin(vMundo.x * 0.00017));
+      float n2 = sin(vMundo.x * 0.0011 + 2.1 * sin(vMundo.z * 0.0007)) * sin(vMundo.z * 0.0013 + 1.7 * sin(vMundo.x * 0.0009));
+      vec3 variacao = vec3(1.0) + vec3(0.06, 0.08, 0.04) * n1 + vec3(0.05, 0.06, 0.03) * n2;
+      gl_FragColor = linearToOutputTexel(vec4(mix(chao, copa, smoothstep(copaPerto, copaLonge, dist) * (1.0 - semCopa)) * variacao, 1.0));
+      gl_FragColor.rgb = mix(gl_FragColor.rgb, corDaNevoa(vMundo), smoothstep(nevoaPerto, nevoaLonge, dist));
     }`;
   function criarTerreno(lado, quads, descer) {
     const geo = new THREE.PlaneGeometry(lado, lado, quads, quads);
@@ -1200,6 +1354,7 @@ h1 {
       }
       flor.tipos.push({ malhas: ims, inst, alcance, cap, n: 0 });
     });
+    prepararImpostores();
     flor.pronta = true;
     flor.centro.set(1e9, 0, 1e9);
     luzMudou();
@@ -1222,6 +1377,8 @@ h1 {
     const fx = olharCam.x / hz, fz = olharCam.z / hz;
     flor.rumoMontado = Math.atan2(fx, fz);
     flor.cortou = cortar;
+    // clareiras que o círculo toca (quase sempre nenhuma)
+    const cls = flor.clareiras.filter((c) => Math.hypot(c.x - cx, c.z - cz) < R + c.r + 20);
     for (const t of flor.tipos) t.n = 0;
     for (let j = j0; j <= j1; j++) {
       for (let i = i0; i <= i1; i++) {
@@ -1239,6 +1396,7 @@ h1 {
               const dh = Math.sqrt(dx * dx + dz * dz);
               if (dh > 90 && dx * fx + dz * fz < COS_VISTA * dh) continue;
             }
+            if (cls.length && cls.some((c) => (x - c.x) ** 2 + (z - c.z) ** 2 < (c.r + 8) ** 2)) continue;
             pArvF.set(x, a.y, z);
             mArvF.compose(pArvF, a.q, a.s);
             mArvF.toArray(arr, t.n * 16);
@@ -1256,11 +1414,199 @@ h1 {
     }
     flor.centro.set(cx, cy, cz);
     flor.raioMontado = R;
+    montarImpostores(cx, cy, cz, cortar, fx, fz);
+  }
+
+  // ---------- árvores longe: "impostores" (fotos de lado das árvores) até uns 3 km à frente ----------
+  // Cada tipo de árvore é fotografado de lado uma vez. Um quadro de floresta inteiro vira uma malha só,
+  // com um cartão por árvore, e essa malha é repetida (espelhada como o chão) nos quadros em volta.
+  // O shader esconde os cartões das árvores que já estão em 3D (mesmo centro e raio) e os das clareiras,
+  // vira cada cartão para a câmera e rareia as árvores mais longe. Vistos de cima, os cartões somem aos
+  // poucos: ali a foto de cima do chão já mostra as copas.
+  const IMP_MIN = MOVEL ? 1400 : 2500, IMP_MAX = MOVEL ? 2600 : 6000;   // alcance, ajustado pela fluidez
+  const imp = { malha: null, raio: IMP_MAX, tipos: [] };
+  function prepararImpostores() {
+    const tipos = flor.tipos.filter((t) => t.alcance >= 1);
+    if (!tipos.length) return;
+    const CW = 256, CH = 512;
+    const rt = new THREE.WebGLRenderTarget(CW * tipos.length, CH, { minFilter: THREE.LinearMipmapLinearFilter, magFilter: THREE.LinearFilter, generateMipmaps: true });
+    const cena = new THREE.Scene();
+    cena.add(new THREE.AmbientLight(0xffffff, 1));
+    const corAnt = renderer.getClearColor(new THREE.Color()), alfaAnt = renderer.getClearAlpha();
+    renderer.setClearColor(0x1c2a14, 0);
+    renderer.setRenderTarget(rt);
+    renderer.clear();
+    const celulas = [];
+    tipos.forEach((t, k) => {
+      // a árvore na pose de uma de verdade (os modelos vêm deitados ou esticados; a matriz endireita)
+      const grupo = new THREE.Group();
+      for (const m of t.malhas) grupo.add(new THREE.Mesh(m.geometry, m.material));
+      grupo.quaternion.copy(t.inst[0].q);
+      grupo.scale.copy(t.inst[0].s);
+      cena.add(grupo);
+      grupo.updateMatrixWorld(true);
+      const b = new THREE.Box3().setFromObject(grupo);
+      const largura = Math.max(b.max.x - b.min.x, b.max.z - b.min.z) * 1.02, altura = (b.max.y - b.min.y) * 1.01;
+      const meia = Math.max(largura / 2, altura / 4);                       // célula de 1 x 2
+      const cx = (b.min.x + b.max.x) / 2, cz = (b.min.z + b.max.z) / 2;
+      const cam = new THREE.OrthographicCamera(-meia, meia, b.min.y + meia * 4, b.min.y, 0.1, 1000);
+      cam.position.set(cx, 0, cz + 500);
+      rt.viewport.set(k * CW, 0, CW, CH);
+      rt.scissor.set(k * CW, 0, CW, CH);
+      rt.scissorTest = true;
+      renderer.setRenderTarget(rt);
+      renderer.render(cena, cam);
+      cena.remove(grupo);
+      // o cartão mede 2*meia de largura por 4*meia de altura, com a base da árvore embaixo
+      celulas.push(new THREE.Vector4(k / tipos.length, 0, 1 / tipos.length, 1));
+      imp.tipos.push({ t, alturaCel: meia * 4 / (b.max.y - b.min.y) });
+    });
+    rt.scissorTest = false;
+    renderer.setRenderTarget(null);
+    renderer.setClearColor(corAnt, alfaAnt);
+
+    // a malha de um quadro: 4 vértices por árvore (centro da base, canto, tamanho, célula, sorteio)
+    const n = tipos.reduce((s, t) => s + t.inst.length, 0);
+    const centro = new Float32Array(n * 12), forma = new Float32Array(n * 12), tam = new Float32Array(n * 12);
+    const indices = new Uint32Array(n * 6);
+    const sorteio = mulberry32(31);
+    let v = 0, q = 0;
+    imp.tipos.forEach((it, k) => {
+      for (const a of it.t.inst) {
+        const alt = (a.topo - a.base) * it.alturaCel;             // altura do cartão (a célula tem folga em cima)
+        const larg = alt * 0.5;
+        const s = sorteio();
+        for (let c = 0; c < 4; c++) {
+          centro.set([a.cx, a.base, a.cz], v * 3);
+          forma.set([c & 1 ? 0.5 : -0.5, c & 2 ? 1 : 0, k], v * 3);
+          tam.set([larg, alt, s], v * 3);
+          v++;
+        }
+        const b0 = v - 4;
+        indices.set([b0, b0 + 1, b0 + 2, b0 + 2, b0 + 1, b0 + 3], q);
+        q += 6;
+      }
+    });
+    const geo = new THREE.InstancedBufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(centro, 3));   // só para o three saber quantos vértices há
+    geo.setAttribute('centro', new THREE.BufferAttribute(centro, 3));
+    geo.setAttribute('forma', new THREE.BufferAttribute(forma, 3));
+    geo.setAttribute('tam', new THREE.BufferAttribute(tam, 3));
+    geo.setIndex(new THREE.BufferAttribute(indices, 1));
+    const MAX_QUADROS = 1400;
+    const quadros = new THREE.InstancedBufferAttribute(new Float32Array(MAX_QUADROS * 4), 4).setUsage(THREE.DynamicDrawUsage);
+    geo.setAttribute('quadroInst', quadros);                            // x0, z0, espelhoX, espelhoZ
+    geo.instanceCount = 0;
+    while (celulas.length < 6) celulas.push(new THREE.Vector4());
+    const mat = new THREE.ShaderMaterial({
+      fog: true,
+      side: THREE.DoubleSide,
+      uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, {
+        mapa: { value: null }, luz: { value: new THREE.Color(1, 1, 1) },
+        centroArv: { value: new THREE.Vector3(1e9, 0, 1e9) }, raioIn: { value: 0 }, raioOut: { value: imp.raio },
+        celulas: { value: celulas }, quadroBase: { value: new THREE.Vector2(flor.SX, flor.SZ) },
+      }]),
+      vertexShader: `
+        attribute vec3 centro;
+        attribute vec3 forma;
+        attribute vec3 tam;
+        attribute vec4 quadroInst;
+        uniform vec3 centroArv;
+        uniform float raioIn;
+        uniform float raioOut;
+        uniform vec4 celulas[6];
+        uniform vec2 quadroBase;
+        uniform vec4 clareiras[4];
+        varying vec2 vUv;
+        varying float vFade;
+        varying float vVar;
+        #include <fog_pars_vertex>
+        void main() {
+          vec3 c = vec3(quadroInst.x + (quadroInst.z > 0.5 ? quadroBase.x - centro.x : centro.x), centro.y,
+                        quadroInst.y + (quadroInst.w > 0.5 ? quadroBase.y - centro.z : centro.z));
+          vec3 dc = c - centroArv;
+          vec3 aCam = cameraPosition - c;
+          float dCam = length(aCam);
+          float dens = 1.0 - 0.75 * smoothstep(raioOut * 0.3, raioOut, dCam);
+          bool fora = dot(dc, dc) < raioIn * raioIn || dCam > raioOut || tam.z > dens;
+          for (int k = 0; k < 4; k++) {
+            vec4 cl = clareiras[k];
+            if (cl.z > 0.0 && distance(c.xz, cl.xy) < cl.z + 8.0) fora = true;
+          }
+          if (fora) { gl_Position = vec4(0.0, 0.0, -2.0, 1.0); vUv = vec2(0.0); vFade = 0.0; vVar = 1.0; return; }
+          // menos árvores, um pouco maiores; perto do alcance elas afundam no chão aos poucos
+          float esc = inversesqrt(dens) * (1.0 - smoothstep(raioOut * 0.82, raioOut, dCam));
+          vVar = 1.0 + 0.08 * sin(c.x * 0.00041 + 1.3 * sin(c.z * 0.00023)) * sin(c.z * 0.00033 + 0.9 * sin(c.x * 0.00017));
+          vec2 h = aCam.xz;
+          float lh = length(h);
+          vec3 lado = lh > 0.01 ? vec3(h.y, 0.0, -h.x) / lh : vec3(1.0, 0.0, 0.0);
+          vec3 p = c + lado * forma.x * tam.x * esc + vec3(0.0, forma.y * tam.y * esc, 0.0);
+          vec4 r = celulas[int(forma.z + 0.5)];
+          vUv = vec2(r.x + (forma.x + 0.5) * r.z, r.y + forma.y * r.w);
+          vFade = 1.0 - smoothstep(0.45, 0.8, aCam.y / max(dCam, 1.0));
+          vec4 mvPosition = viewMatrix * vec4(p, 1.0);
+          gl_Position = projectionMatrix * mvPosition;
+          #include <fog_vertex>
+        }`,
+      fragmentShader: `
+        uniform sampler2D mapa;
+        uniform vec3 luz;
+        varying vec2 vUv;
+        varying float vFade;
+        varying float vVar;
+        #include <fog_pars_fragment>
+        void main() {
+          vec4 t = texture2D(mapa, vUv);
+          float ruido = fract(52.9829189 * fract(dot(gl_FragCoord.xy, vec2(0.06711056, 0.00583715))));
+          if (t.a < 0.4 || ruido > vFade) discard;
+          gl_FragColor = vec4(t.rgb * luz * vVar, 1.0);
+          #include <encodings_fragment>
+          #include <fog_fragment>
+        }`,
+    });
+    mat.uniforms.mapa.value = rt.texture;
+    mat.uniforms.clareiras = uniTer.clareiras;
+    imp.malha = new THREE.Mesh(geo, mat);
+    imp.malha.frustumCulled = false;
+    imp.quadros = quadros;
+    imp.max = MAX_QUADROS;
+    flor.grupo.add(imp.malha);
+  }
+  // Escolhe os quadros de floresta que entram (no anel entre as árvores 3D e o alcance, para o lado em que
+  // a câmera olha) e passa ao shader o mesmo centro e raio das árvores 3D.
+  function montarImpostores(cx, cy, cz, cortar, fx, fz) {
+    if (!imp.malha) return;
+    const u = imp.malha.material.uniforms;
+    u.centroArv.value.set(cx, cy, cz);
+    u.raioIn.value = flor.raio;
+    // olhando muito para baixo os cartões quase somem (e não dá para cortar pela direção): alcance menor
+    const R = cortar ? imp.raio : imp.raio * 0.5, SX = flor.SX, SZ = flor.SZ;
+    u.raioOut.value = R;
+    imp.raioMontado = imp.raio;
+    const meiaDiag = Math.hypot(SX, SZ) / 2;
+    const arr = imp.quadros.array;
+    let k = 0;
+    for (let j = Math.floor((cz - R) / SZ); j <= Math.floor((cz + R) / SZ); j++) {
+      for (let i = Math.floor((cx - R) / SX); i <= Math.floor((cx + R) / SX); i++) {
+        const qx = (i + 0.5) * SX - cx, qz = (j + 0.5) * SZ - cz;
+        const d = Math.hypot(qx, qz);
+        if (d - meiaDiag > R || d + meiaDiag < flor.raio * 0.8) continue;
+        if (cortar && d > meiaDiag * 1.5 && qx * fx + qz * fz < COS_VISTA * d - meiaDiag) continue;
+        if (k >= imp.max) break;
+        arr.set([i * SX, j * SZ, i & 1, j & 1], k * 4);
+        k++;
+      }
+    }
+    imp.quadros.updateRange.offset = 0;
+    imp.quadros.updateRange.count = k * 4;
+    imp.quadros.needsUpdate = true;
+    imp.malha.geometry.instanceCount = k;
   }
 
   // Bateu numa árvore? Olha as árvores do quadro base no ponto dobrado para dentro dele.
   function bateuArvoreFloresta(x, y, z) {
     if (!flor.pronta || y > flor.topoMax) return false;
+    for (const c of flor.clareiras) if ((x - c.x) ** 2 + (z - c.z) ** 2 < (c.r + 8) ** 2) return false;
     const lx = dobra(x / flor.SX) * flor.SX, lz = dobra(z / flor.SZ) * flor.SZ;
     for (const t of flor.tipos) {
       if (t.alcance < 1) continue;                 // plantas baixas não derrubam o caça
@@ -1287,9 +1633,15 @@ h1 {
       flor.tempo += dtReal;
       flor.quadros++;
       if (flor.tempo > 2) {
+        // lento: primeiro encolhe o alcance das árvores de longe, depois o das 3D; sobrando fôlego, o contrário
         const media = flor.tempo / flor.quadros;
-        if (media > 1 / 50) flor.raio = Math.max(RAIO_MIN, flor.raio * 0.85);
-        else if (media < 1 / 58) flor.raio = Math.min(RAIO_MAX, flor.raio * 1.05);
+        if (media > 1 / 50) {
+          if (imp.raio > IMP_MIN) imp.raio = Math.max(IMP_MIN, imp.raio * 0.8);
+          else flor.raio = Math.max(RAIO_MIN, flor.raio * 0.85);
+        } else if (media < 1 / 58) {
+          if (flor.raio < RAIO_MAX) flor.raio = Math.min(RAIO_MAX, flor.raio * 1.05);
+          else imp.raio = Math.min(IMP_MAX, imp.raio * 1.08);
+        }
         flor.tempo = 0;
         flor.quadros = 0;
       }
@@ -1300,7 +1652,7 @@ h1 {
     camera.getWorldDirection(olharCam);
     let giro = Math.abs(Math.atan2(olharCam.x, olharCam.z) - flor.rumoMontado);
     if (giro > Math.PI) giro = 2 * Math.PI - giro;
-    if (camera.position.distanceToSquared(flor.centro) > 900 || Math.abs(flor.raio - flor.raioMontado) > 40
+    if (camera.position.distanceToSquared(flor.centro) > 900 || Math.abs(flor.raio - flor.raioMontado) > 40 || imp.raioMontado !== imp.raio
         || (flor.cortou && giro > 0.14) || flor.cortou !== (Math.abs(olharCam.y) < 0.6)) {
       montarArvoresFloresta(cx, camera.position.y, cz);
     }
@@ -1396,37 +1748,412 @@ h1 {
     return t;
   })();
 
-  // Cenário na tela: 'campos' (o mapa desenhado de antes) ou 'floresta'. A floresta entra quando carrega.
+  // ---------- ilhas de verdade no meio do mar (relevo e foto de satélite) ----------
+  // O relevo é uma grade de alturas (linha 0 = norte, coluna 0 = oeste), com o centro da ilha na origem.
+  // Embaixo d'água o fundo desce aos poucos a partir da praia; fora da grade, mar fundo.
+  const FUNDO_MAR = -90;
+  const ilha = { id: null, carga: {}, alturas: null, nx: 2, nz: 2, W: 1, D: 1, x0: 0, z0: 0, grupo: new THREE.Group() };
+  ilha.grupo.visible = false;
+  scene.add(ilha.grupo);
+  function alturaIlha(x, z) {
+    const fx = (x - ilha.x0) / ilha.W * (ilha.nx - 1), fz = (z - ilha.z0) / ilha.D * (ilha.nz - 1);
+    if (!ilha.alturas || fx < 0 || fz < 0 || fx > ilha.nx - 1 || fz > ilha.nz - 1) return FUNDO_MAR;
+    const i = Math.min(ilha.nx - 2, Math.floor(fx)), j = Math.min(ilha.nz - 2, Math.floor(fz));
+    const tx = fx - i, tz = fz - j, k = j * ilha.nx + i, h = ilha.alturas, n = ilha.nx;
+    return (h[k] * (1 - tx) + h[k + 1] * tx) * (1 - tz) + (h[k + n] * (1 - tx) + h[k + n + 1] * tx) * tz;
+  }
+  const uniIlha = {
+    alturas: { value: null }, grade: { value: new THREE.Vector2(2, 2) }, extensao: { value: new THREE.Vector4(0, 0, 1, 1) },
+    satelite: { value: null }, tempo: { value: 0 },
+    mapaCeu: uniTer.mapaCeu, temCeu: uniTer.temCeu, corte: uniTer.corte,
+    solDir: uniTer.solDir, corSol: uniTer.corSol, luzSol: uniTer.luzSol,
+    corCeu: uniTer.corCeu, corChaoLuz: uniTer.corChaoLuz, luzCeuF: uniTer.luzCeuF,
+    nevoaCor: uniTer.nevoaCor, nevoaPerto: uniTer.nevoaPerto, nevoaLonge: uniTer.nevoaLonge,
+  };
+  const ALTURA_ILHA = `
+    uniform sampler2D alturas;
+    uniform vec2 grade;
+    uniform vec4 extensao;     // x0, z0, largura, profundidade (m)
+    float altura(vec2 p) {
+      vec2 f = (p - extensao.xy) / extensao.zw * (grade - 1.0);
+      if (f.x < 0.0 || f.y < 0.0 || f.x > grade.x - 1.0 || f.y > grade.y - 1.0) return ${FUNDO_MAR.toFixed(1)};
+      vec2 i = min(floor(f), grade - 2.0);
+      ivec2 c = ivec2(i);
+      vec2 t = f - i;
+      float a = texelFetch(alturas, c, 0).r, b = texelFetch(alturas, c + ivec2(1, 0), 0).r;
+      float d = texelFetch(alturas, c + ivec2(0, 1), 0).r, e = texelFetch(alturas, c + ivec2(1, 1), 0).r;
+      return mix(mix(a, b, t.x), mix(d, e, t.x), t.y);
+    }`;
+  const VERT_ILHA = `
+    uniform float descer;
+    varying vec3 vMundo;
+    varying vec3 vNormal;
+    ${ALTURA_ILHA}
+    void main() {
+      vec4 mundo = modelMatrix * vec4(position, 1.0);
+      float E = extensao.z / (grade.x - 1.0);
+      vNormal = normalize(vec3(altura(mundo.xz - vec2(E, 0.0)) - altura(mundo.xz + vec2(E, 0.0)), 2.0 * E,
+                               altura(mundo.xz - vec2(0.0, E)) - altura(mundo.xz + vec2(0.0, E))));
+      mundo.y = altura(mundo.xz) - descer;
+      vMundo = mundo.xyz;
+      gl_Position = projectionMatrix * viewMatrix * mundo;
+    }`;
+  const LUZ_E_NEVOA = `
+    uniform sampler2D mapaCeu;
+    uniform float temCeu;
+    uniform float corte;
+    uniform vec3 solDir;
+    uniform vec3 corSol;
+    uniform vec3 corCeu;
+    uniform vec3 corChaoLuz;
+    uniform vec3 nevoaCor;
+    uniform float luzSol;
+    uniform float luzCeuF;
+    uniform float nevoaPerto;
+    uniform float nevoaLonge;
+    ${NEVOA_CEU}
+    float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+    float ruido(vec2 p) {
+      vec2 i = floor(p), f = fract(p);
+      vec2 u = f * f * (3.0 - 2.0 * f);
+      return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), u.x), mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x), u.y);
+    }`;
+  const FRAG_ILHA = `
+    uniform sampler2D satelite;
+    uniform vec4 extensao;
+    uniform vec2 buracoMin;
+    uniform vec2 buracoMax;
+    varying vec3 vMundo;
+    varying vec3 vNormal;
+    ${LUZ_E_NEVOA}
+    void main() {
+      if (vMundo.x > buracoMin.x && vMundo.x < buracoMax.x && vMundo.z > buracoMin.y && vMundo.z < buracoMax.y) discard;
+      vec2 uv = (vMundo.xz - extensao.xy) / extensao.zw;
+      float dist = distance(vMundo, cameraPosition);
+      vec3 foto = (uv.x < 0.0 || uv.y < 0.0 || uv.x > 1.0 || uv.y > 1.0) ? vec3(0.01, 0.035, 0.05) : texture2D(satelite, vec2(uv.x, 1.0 - uv.y)).rgb;
+      // de perto a foto de satélite fica borrada: um pouco de granulado de pedra e mato
+      float perto = 1.0 - smoothstep(150.0, 1400.0, dist);
+      foto *= 1.0 + perto * ((ruido(vMundo.xz * 0.11) - 0.5) * 0.28 + (ruido(vMundo.xz * 0.9) - 0.5) * 0.16);
+      vec3 luz = corSol * luzSol * max(dot(vNormal, solDir), 0.0) + mix(corChaoLuz, corCeu, vNormal.y * 0.5 + 0.5) * luzCeuF;
+      vec3 luzPlana = corSol * luzSol * max(solDir.y, 0.0) + corCeu * luzCeuF;
+      gl_FragColor = linearToOutputTexel(vec4(foto * mix(luzPlana, luz, 0.75) * 0.95, 1.0));
+      gl_FragColor.rgb = mix(gl_FragColor.rgb, corDaNevoa(vMundo), smoothstep(nevoaPerto, nevoaLonge, dist));
+    }`;
+  // o mar: um plano que anda com a câmera, com ondas, reflexo do céu, brilho do sol e água rasa na praia
+  const FRAG_MAR = `
+    uniform float tempo;
+    varying vec3 vMundo;
+    ${ALTURA_ILHA}
+    ${LUZ_E_NEVOA}
+    // inclinação da água: ondulação comprida bem fraca e marolas de ruído em três tamanhos. Cada camada some
+    // quando fica menor que alguns pixels (pix = metros por pixel), para o mar não virar listras ao longe.
+    vec2 gradRuido(vec2 q) {
+      const float e = 0.35;
+      return vec2(ruido(q + vec2(e, 0.0)) - ruido(q - vec2(e, 0.0)), ruido(q + vec2(0.0, e)) - ruido(q - vec2(0.0, e))) / (2.0 * e);
+    }
+    vec2 ondas(vec2 p, float pix) {
+      vec2 g = vec2(0.0);
+      vec2 d1 = normalize(vec2(1.0, 0.35)), d2 = normalize(vec2(-0.4, 1.0));
+      g += d1 * cos(dot(p, d1) * 0.031 + tempo * 0.9) * 0.08 * (1.0 - smoothstep(9.0, 30.0, pix));
+      g += d2 * cos(dot(p, d2) * 0.058 + tempo * 1.3) * 0.06 * (1.0 - smoothstep(5.0, 16.0, pix));
+      g += gradRuido(p * 0.018 + vec2(tempo * 0.05, tempo * 0.03)) * 0.16 * (1.0 - smoothstep(14.0, 45.0, pix));
+      g += gradRuido(p * 0.07 + vec2(-tempo * 0.12, tempo * 0.09)) * 0.12 * (1.0 - smoothstep(3.5, 12.0, pix));
+      g += gradRuido(p * 0.26 + vec2(tempo * 0.3, -tempo * 0.22)) * 0.08 * (1.0 - smoothstep(1.0, 3.5, pix));
+      return g;
+    }
+    void main() {
+      float prof = -altura(vMundo.xz);
+      if (prof < 0.0) discard;
+      vec3 olhar = cameraPosition - vMundo;
+      float dist = length(olhar);
+      vec3 v = olhar / dist;
+      vec2 g = ondas(vMundo.xz, length(fwidth(vMundo.xz)));
+      vec3 n = normalize(vec3(-g.x, 1.0, -g.y));
+      vec3 r = reflect(-v, n);
+      r.y = abs(r.y);
+      vec3 ceuR = nevoaCor;
+      if (temCeu > 0.5) {
+        float u = atan(r.z, r.x) * 0.15915494 + 0.5;
+        float vv = asin(clamp(r.y, 0.0, 1.0)) * 0.31830989 + 0.5;
+        ceuR = texture2D(mapaCeu, vec2(u, max((vv - 1.0 + corte) / corte, 0.002))).rgb;
+      }
+      float fres = 0.02 + 0.98 * pow(1.0 - max(dot(n, v), 0.0), 5.0);
+      vec3 luz = corCeu * luzCeuF * 0.7 + corSol * luzSol * max(solDir.y, 0.0) * 0.45;
+      vec3 corAgua = mix(vec3(0.03, 0.2, 0.2), vec3(0.006, 0.03, 0.055), smoothstep(1.5, 25.0, prof)) * luz;
+      vec3 cor = mix(corAgua, ceuR, fres);
+      float s = max(dot(r, solDir), 0.0);
+      cor += corSol * luzSol * (pow(s, 700.0) * 5.0 + pow(s, 90.0) * 0.18) * (1.0 - smoothstep(4000.0, 20000.0, dist) * 0.7);
+      // espuma onde a onda bate na praia
+      float espuma = (1.0 - smoothstep(0.0, 1.2, prof)) * (0.55 + 0.45 * ruido(vMundo.xz * 0.12 + tempo * 0.4)) * (1.0 - smoothstep(800.0, 3500.0, dist));
+      cor = mix(cor, vec3(0.85) * luz, espuma * 0.7);
+      float alfa = mix(0.45, 1.0, smoothstep(0.0, 4.0, prof));
+      gl_FragColor = linearToOutputTexel(vec4(cor, 1.0));
+      gl_FragColor.rgb = mix(gl_FragColor.rgb, corDaNevoa(vMundo), smoothstep(nevoaPerto, nevoaLonge, dist));
+      gl_FragColor.a = max(alfa, smoothstep(nevoaPerto, nevoaLonge, dist));
+    }`;
+  function criarTerrenoIlha(lado, quads, descer) {
+    const geo = new THREE.PlaneGeometry(lado, lado, quads, quads);
+    geo.rotateX(-Math.PI / 2);
+    const m = new THREE.Mesh(geo, new THREE.ShaderMaterial({
+      uniforms: Object.assign({}, uniIlha, {
+        descer: { value: descer },
+        buracoMin: { value: new THREE.Vector2(1e9, 1e9) },
+        buracoMax: { value: new THREE.Vector2(-1e9, -1e9) },
+      }),
+      vertexShader: VERT_ILHA,
+      fragmentShader: FRAG_ILHA,
+    }));
+    m.frustumCulled = false;
+    m.userData.passo = lado / quads;
+    m.userData.lado = lado;
+    ilha.grupo.add(m);
+    return m;
+  }
+  // três grades: perto (7 m), meio (40 m) e longe (160 m), cada uma com um buraco onde está a mais fina
+  const gradesIlha = [criarTerrenoIlha(2240, 320, 0), criarTerrenoIlha(12800, 320, 2), criarTerrenoIlha(51200, 320, 6)];
+  const mar = (() => {
+    const geo = new THREE.PlaneGeometry(90000, 90000, 48, 48);
+    geo.rotateX(-Math.PI / 2);
+    const m = new THREE.Mesh(geo, new THREE.ShaderMaterial({
+      transparent: true,
+      uniforms: uniIlha,
+      vertexShader: 'varying vec3 vMundo; void main() { vec4 m = modelMatrix * vec4(position, 1.0); vMundo = m.xyz; gl_Position = projectionMatrix * viewMatrix * m; }',
+      fragmentShader: FRAG_MAR,
+    }));
+    m.frustumCulled = false;
+    m.renderOrder = 1;
+    ilha.grupo.add(m);
+    return m;
+  })();
+  function carregarIlha(id) {
+    if (ilha.carga[id]) return ilha.carga[id];
+    const c = CENARIOS[id];
+    ilha.carga[id] = Promise.all([
+      fetch(c.pasta + 'relevo.bin').then((r) => { if (!r.ok) throw new Error('relevo'); return r.arrayBuffer(); }),
+      carregarTextura(c.pasta + (MOVEL ? 'satelite_2k.jpg' : 'satelite.jpg'), true, false),
+    ]).then(([bin, tex]) => {
+      const cod = new Uint16Array(bin);
+      const alturas = new Float32Array(cod.length);
+      for (let i = 0; i < cod.length; i++) alturas[i] = cod[i] / 16 - 200;
+      const texAlt = new THREE.DataTexture(alturas, c.nx, c.nz, THREE.RedFormat, THREE.FloatType);
+      texAlt.needsUpdate = true;
+      tex.wrapS = tex.wrapT = THREE.ClampToEdgeWrapping;
+      return { alturas, texAlt, tex };
+    }).catch((e) => { ilha.carga[id] = null; throw e; });
+    return ilha.carga[id];
+  }
+  function montarIlha(id, dados) {
+    const c = CENARIOS[id];
+    Object.assign(ilha, { id, alturas: dados.alturas, nx: c.nx, nz: c.nz, W: c.largura, D: c.profundidade, x0: -c.largura / 2, z0: -c.profundidade / 2 });
+    uniIlha.alturas.value = dados.texAlt;
+    uniIlha.satelite.value = dados.tex;
+    uniIlha.grade.value.set(c.nx, c.nz);
+    uniIlha.extensao.value.set(ilha.x0, ilha.z0, ilha.W, ilha.D);
+  }
+  function atualizarIlha(dt) {
+    const cx = camera.position.x, cz = camera.position.z;
+    for (let k = 0; k < gradesIlha.length; k++) {
+      const m = gradesIlha[k], p = m.userData.passo;
+      m.position.set(Math.round(cx / p) * p, 0, Math.round(cz / p) * p);
+      if (k > 0) {
+        const f = gradesIlha[k - 1], meio = f.userData.lado / 2 - f.userData.passo * 2;
+        m.material.uniforms.buracoMin.value.set(f.position.x - meio, f.position.z - meio);
+        m.material.uniforms.buracoMax.value.set(f.position.x + meio, f.position.z + meio);
+      }
+    }
+    mar.position.set(cx, 0, cz);
+    uniIlha.tempo.value += dt;
+  }
+
+  // ---------- construções: vila, aeroporto e cidade (modelos glTF) ----------
+  // Cada modelo vem com um mapa das alturas das partes sólidas (vista de cima): é a colisão.
+  const construcoes = { grupo: new THREE.Group(), cache: {}, ativas: [], cenario: null };
+  scene.add(construcoes.grupo);
+  function carregarConstrucao(nome) {
+    if (construcoes.cache[nome]) return construcoes.cache[nome];
+    const base = 'cenarios/construcoes/' + nome;
+    construcoes.cache[nome] = Promise.all([
+      new Promise((resolver, rejeitar) => carregador.load(base + '.glb', resolver, undefined, rejeitar)),
+      fetch(base + '_alturas.json').then((r) => (r.ok ? r.json() : null)).catch(() => null),
+    ]).then(([gltf, col]) => {
+      if (col) {
+        const bin = atob(col.dados);
+        col.dados = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) col.dados[i] = bin.charCodeAt(i);
+      }
+      gltf.scene.traverse((o) => { if (o.isMesh) [].concat(o.material).forEach((m) => { m.envMapIntensity = 0.6; }); });
+      return { cena: gltf.scene, col };
+    }).catch((e) => { console.error('construção', nome, e); construcoes.cache[nome] = null; return null; });
+    return construcoes.cache[nome];
+  }
+  // Põe as construções do cenário no mundo (cada uma na altura do chão do seu centro).
+  function montarConstrucoes(id) {
+    const lista = CENARIOS[id].construcoes || [];
+    construcoes.cenario = id;
+    construcoes.grupo.clear();
+    construcoes.ativas = [];
+    return Promise.all(lista.map((p) => carregarConstrucao(p.nome))).then((modelos) => {
+      if (construcoes.cenario !== id) return;
+      lista.forEach((p, i) => {
+        const m = modelos[i];
+        if (!m) return;
+        const y = p.y !== undefined ? p.y : alturaChao(p.x, p.z);
+        const o = m.cena.clone();
+        o.position.set(p.x, y, p.z);
+        o.rotation.y = p.rumo || 0;
+        o.scale.setScalar(p.escala || 1);
+        construcoes.grupo.add(o);
+        if (!m.col) return;
+        const c = m.col, e = p.escala || 1;
+        const raio = Math.hypot(Math.max(-c.x0, c.x0 + c.nx * c.celula), Math.max(-c.z0, c.z0 + c.nz * c.celula)) * e;
+        construcoes.ativas.push({ col: c, x: p.x, y, z: p.z, cos: Math.cos(p.rumo || 0), sin: Math.sin(p.rumo || 0), esc: e, raio2: raio * raio });
+      });
+    });
+  }
+  // Altura do topo das construções no ponto (ou -Infinity se não há nada ali).
+  function alturaObstaculo(x, z) {
+    let h = -Infinity;
+    for (const a of construcoes.ativas) {
+      const dx = x - a.x, dz = z - a.z;
+      if (dx * dx + dz * dz > a.raio2) continue;
+      const c = a.col;
+      const lx = (dx * a.cos - dz * a.sin) / a.esc, lz = (dx * a.sin + dz * a.cos) / a.esc;
+      const ix = Math.floor((lx - c.x0) / c.celula), iz = Math.floor((lz - c.z0) / c.celula);
+      if (ix < 0 || iz < 0 || ix >= c.nx || iz >= c.nz) continue;
+      const v = c.dados[iz * c.nx + ix];
+      if (v) h = Math.max(h, a.y + v * c.alturaMax / 255 * a.esc);
+    }
+    return h;
+  }
+
+  // ---------- os cenários ----------
+  // tipo: 'floresta' (quadro de mata sem fim), 'campos' (textura desenhada) ou 'ilha' (relevo de verdade + mar).
+  // inicio: onde o voo começa (rumo em graus, 0 = norte). nevoa: quanto o ar é mais limpo que o normal.
+  // construcoes: modelo, centro (x, z) e rumo (rad). semArvores: retângulos x0, z0, x1, z1 sem as árvores dos campos.
+  // asfaltos e pista são pintados no chão dos campos.
+  const quarteiroes = [];
+  for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) quarteiroes.push({ nome: 'cidade', x: i * 430, z: -3400 + j * 372, rumo: (i + j) & 1 ? Math.PI : 0 });
+  const CENARIOS = {
+    floresta: {
+      nome: 'floresta', tipo: 'floresta',
+      construcoes: [{ nome: 'vila', x: 420, z: -2300, rumo: 0.6 }, { nome: 'vila', x: -1900, z: -5200, rumo: 2.2 }, { nome: 'vila', x: 2600, z: -7800, rumo: 4 }],
+      clareiras: [{ x: 420, z: -2300, r: 34 }, { x: -1900, z: -5200, r: 34 }, { x: 2600, z: -7800, r: 34 }],
+    },
+    campos: {
+      nome: 'campos', tipo: 'campos', inicio: { x: 0, y: 900, z: 1200, rumo: 0 },
+      construcoes: [{ nome: 'aeroporto', x: 1500, z: -4200, rumo: 0 }, { nome: 'vila', x: -1300, z: -2600, rumo: 1.1 }, { nome: 'vila', x: -600, z: -6400, rumo: 3.3 }],
+      pista: [1940, -4200, 3000, 45],
+      asfaltos: [[1615, -4420, 1925, -3980], [1615, -5640, 1925, -5560], [1615, -2840, 1925, -2760]],
+      semArvores: [[1360, -5800, 2000, -2600], [-1340, -2640, -1260, -2560], [-640, -6440, -560, -6360]],
+    },
+    cidade: {
+      nome: 'cidade', tipo: 'campos', inicio: { x: 0, y: 450, z: -600, rumo: 0 },
+      construcoes: quarteiroes,
+      asfaltos: [[-655, -3990, 655, -2810]],
+      semArvores: [[-700, -4040, 700, -2760]],
+    },
+    pico: {
+      nome: 'Ilha do Pico', tipo: 'ilha', pasta: 'cenarios/pico/', largura: 42986.8, profundidade: 22508.1, nx: 830, nz: 435,
+      inicio: { x: 0, y: 1200, z: 11000, rumo: 322 }, nevoa: 1.9, corChao: 0x1d3a4a,
+    },
+    caboverde: {
+      nome: 'Ilha do Fogo', tipo: 'ilha', pasta: 'cenarios/caboverde/', largura: 55382.2, profundidade: 34808.2, nx: 757, nz: 476,
+      inicio: { x: -2000, y: 1500, z: 6000, rumo: 63 }, nevoa: 1.9, corChao: 0x1d3a4a,
+    },
+  };
+  // Cenário na tela. Os que precisam de arquivos entram quando carregam; até lá, os campos.
   let cenarioEscolhido = 'floresta';
   let cenario = 'campos';
-  const alturaChao = (x, z) => (cenario === 'floresta' ? alturaFloresta(x, z) : 0);
+  const tipoCenario = () => CENARIOS[cenario].tipo;
+  const temMar = () => tipoCenario() === 'ilha';
+  function alturaChao(x, z) {
+    const t = tipoCenario();
+    return t === 'floresta' ? alturaFloresta(x, z) : t === 'ilha' ? alturaIlha(x, z) : 0;
+  }
+  // o que o avião, os tiros e os destroços encontram: chão, água ou o topo de uma construção
+  function superficie(x, z) {
+    let h = alturaChao(x, z);
+    if (temMar() && h < 0) h = 0;
+    return construcoes.ativas.length ? Math.max(h, alturaObstaculo(x, z)) : h;
+  }
+  const naAgua = (x, z) => temMar() && alturaChao(x, z) < 0 && !(alturaObstaculo(x, z) > 0);
+  // ponto de partida do cenário
+  function inicioCenario() {
+    const i = CENARIOS[cenario].inicio || INICIO;
+    return { x: i.x, y: i.y, z: i.z, rumo: i.rumo || 0 };
+  }
   function aplicarCenario(id) {
     cenario = id;
-    const f = id === 'floresta';
-    chao.visible = troncos.visible = copas.visible = !f;
+    const c = CENARIOS[id];
+    const f = c.tipo === 'floresta', ilhaSim = c.tipo === 'ilha';
+    chao.visible = troncos.visible = copas.visible = c.tipo === 'campos';
     flor.grupo.visible = f;
-    matChaoEnv.color.setHex(f ? 0x3d4a2a : 0x6b8a4e);
+    ilha.grupo.visible = ilhaSim;
+    if (ilhaSim && ilha.carga[id]) ilha.carga[id].then((d) => { if (cenario === id) montarIlha(id, d); });
+    // clareiras (só na floresta), com o chão aplainado na altura média do lugar
+    flor.clareiras = f && flor.pronta ? (c.clareiras || []).map((k) => {
+      let soma = 0, n = 0;
+      for (let a = 0; a < 12; a++) for (const r of [0, 0.5, 1]) { soma += alturaFlorestaBruta(k.x + Math.cos(a) * k.r * r, k.z + Math.sin(a) * k.r * r); n++; }
+      return { x: k.x, z: k.z, r: k.r, h: soma / n };
+    }) : [];
+    uniTer.clareiras.value.forEach((v, i) => { const k = flor.clareiras[i]; if (k) v.set(k.x, k.z, k.r, k.h); else v.set(0, 0, 0, 0); });
+    // nos campos: asfalto, pista e lugares sem árvores
+    uniChao.asfaltos.value.forEach((v, i) => { const a = (c.asfaltos || [])[i]; if (a) v.set(a[0], a[1], a[2], a[3]); else v.set(0, 0, 0, 0); });
+    if (c.pista) uniChao.pista.value.fromArray(c.pista); else uniChao.pista.value.set(0, 0, 0, 0);
+    semArvores = c.semArvores || [];
+    matChaoEnv.color.setHex(c.corChao || (f ? 0x3d4a2a : 0x6b8a4e));
+    camera.far = ilhaSim ? 60000 : 20000;
+    camera.updateProjectionMatrix();
+    aplicarNevoa();
     atualizarAmbiente();
     if (f) flor.centro.set(1e9, 0, 1e9);
+    montarConstrucoes(id);
+    if (estado === 'inicio') posicionarNoInicio();
+  }
+  function carregarCenario(id) {
+    const c = CENARIOS[id];
+    const partes = [];
+    if (c.tipo === 'floresta') partes.push(carregarFloresta());
+    if (c.tipo === 'ilha') partes.push(carregarIlha(id).then((d) => montarIlha(id, d)));
+    for (const p of c.construcoes || []) partes.push(carregarConstrucao(p.nome));
+    return Promise.all(partes);
   }
   function escolherCenario(id) {
+    if (!CENARIOS[id]) id = 'floresta';
     cenarioEscolhido = id;
     for (const b of document.querySelectorAll('.cenario')) b.setAttribute('aria-pressed', String(b.dataset.cenario === id));
     salvarPreferencias();
-    if (id !== 'floresta') { aplicarCenario('campos'); return Promise.resolve(); }
-    return carregarFloresta().then(() => { if (cenarioEscolhido === 'floresta') aplicarCenario('floresta'); });
+    if (CENARIOS[id].tipo === 'campos' && !(CENARIOS[id].construcoes || []).length) { aplicarCenario(id); return Promise.resolve(); }
+    if (cacaAtual) elCargaTexto.textContent = 'Carregando o cenário…';
+    return carregarCenario(id).then(() => {
+      if (cenarioEscolhido !== id) return;
+      aplicarCenario(id);
+      if (cacaAtual) elCargaTexto.textContent = cacaAtual.config.nome + ' pronto para decolar.';
+    });
   }
   $('cenarios').addEventListener('click', (e) => {
     const b = e.target.closest('[data-cenario]');
-    if (b) escolherCenario(b.dataset.cenario).catch(() => { elCargaTexto.textContent = 'Não deu para carregar a floresta. Confira a internet e tente de novo.'; });
+    if (b) escolherCenario(b.dataset.cenario).catch(() => { elCargaTexto.textContent = 'Não deu para carregar esse cenário. Confira a internet e tente de novo.'; });
   });
+  // névoa do céu escolhido; sobre o mar o ar é mais limpo e se enxerga mais longe
+  function aplicarNevoa() {
+    const c = CEUS[ceuEscolhido], k = CENARIOS[cenario].nevoa || 1;
+    scene.fog.near = c.nevoaPerto * k;
+    scene.fog.far = c.nevoaLonge * k;
+    uniTer.nevoaPerto.value = scene.fog.near;
+    uniTer.nevoaLonge.value = scene.fog.far;
+  }
 
   // Mudou o céu: refaz a foto de cima da floresta e o reflexo nos caças.
   function luzMudou() {
     uniTer.luzSol.value = sol.intensity;
     uniTer.luzCeuF.value = luzCeu.intensity;
-    uniTer.nevoaPerto.value = scene.fog.near;
-    uniTer.nevoaLonge.value = scene.fog.far;
+    aplicarNevoa();
+    if (imp.malha) {
+      // as fotos de lado das árvores recebem a luz média que as árvores 3D recebem
+      imp.malha.material.uniforms.luz.value.copy(luzCeu.color).multiplyScalar(luzCeu.intensity * 0.9)
+        .add(new THREE.Color().copy(sol.color).multiplyScalar(sol.intensity * Math.max(SOL_DIR.y, 0) * 0.55));
+    }
     assarCopa();
     atualizarAmbiente();
   }
@@ -1450,21 +2177,80 @@ h1 {
   const elCargaBarra = $('carga-barra');
   const elPrefixo = $('prefixo');
 
-  // chama de pós-combustão: cone com gradiente, somado à cena
-  const texChama = (() => {
-    const c = document.createElement('canvas');
-    c.width = 16; c.height = 256;
-    const g = c.getContext('2d');
-    const gr = g.createLinearGradient(0, 0, 0, 256);
-    gr.addColorStop(0, '#9fd8ff'); gr.addColorStop(0.1, '#ffb060'); gr.addColorStop(0.3, '#ff7a1a'); gr.addColorStop(0.65, '#7a2606'); gr.addColorStop(1, '#000000');
-    g.fillStyle = gr; g.fillRect(0, 0, 16, 256);
-    const t = new THREE.CanvasTexture(c);
-    t.flipY = false;
-    return t;
-  })();
-  const geoChama = new THREE.ConeGeometry(1, 1, 18, 1, true);
+  // Chama de pós-combustão: um cone aberto que soma luz. Núcleo claro perto do bocal, diamantes de choque,
+  // corpo laranja que tremula e a ponta que se apaga em vermelho. Com pouca pós-combustão fica azulada.
+  const geoChama = new THREE.CylinderGeometry(0.32, 1, 1, 28, 18, true);   // base = bocal, topo = ponta
   geoChama.rotateX(Math.PI / 2);
-  geoChama.translate(0, 0, 0.5);
+  geoChama.translate(0, 0, 0.5);                                           // bocal em z = 0, ponta em z = 1
+  const tempoChama = { value: 0 };
+  function criarMaterialChama(forca) {
+    return new THREE.ShaderMaterial({
+      transparent: true,
+      depthWrite: false,
+      side: THREE.DoubleSide,
+      blending: THREE.AdditiveBlending,
+      fog: true,
+      uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { forca: { value: forca } }]),
+      vertexShader: `
+        varying vec2 vUv;
+        varying float vFrente;
+        #include <fog_pars_vertex>
+        void main() {
+          vUv = uv;
+          vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+          vFrente = abs(dot(normalize(normalMatrix * normal), normalize(-mvPosition.xyz)));
+          gl_Position = projectionMatrix * mvPosition;
+          #include <fog_vertex>
+        }`,
+      fragmentShader: `
+        uniform float forca;
+        uniform float tempo;
+        varying vec2 vUv;
+        varying float vFrente;
+        #include <fog_pars_fragment>
+        float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+        float ruido(vec2 p) {
+          vec2 i = floor(p), f = fract(p);
+          vec2 u = f * f * (3.0 - 2.0 * f);
+          return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), u.x), mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x), u.y);
+        }
+        void main() {
+          float y = vUv.y;
+          float ang = vUv.x * 6.2832;
+          vec2 volta = vec2(cos(ang), sin(ang)) * 1.6;
+          float n = ruido(volta + vec2(0.0, y * 9.0 - tempo * 24.0));
+          float n2 = ruido(volta * 2.0 + vec2(5.0, y * 19.0 - tempo * 43.0));
+          float corpo = 1.0 - smoothstep(0.1, 1.0, y + (n - 0.5) * 0.3);
+          float nucleo = pow(vFrente, 2.2) * (1.0 - smoothstep(0.0, 0.5, y));
+          float diamantes = pow(0.5 + 0.5 * cos(y * 36.0 - 0.8), 10.0) * (1.0 - smoothstep(0.04, 0.5, y)) * vFrente;
+          vec3 azul = vec3(0.45, 0.62, 1.0), laranja = vec3(1.0, 0.5, 0.14), vermelho = vec3(0.75, 0.14, 0.04), branco = vec3(1.0, 0.93, 0.8);
+          vec3 cor = mix(mix(azul, laranja, smoothstep(0.25, 0.75, forca)), vermelho, smoothstep(0.25, 0.9, y));
+          cor = mix(cor, branco, clamp(nucleo * 1.3 + diamantes, 0.0, 1.0));
+          float a = (corpo * pow(vFrente, 0.8) * (0.6 + 0.4 * n2) + diamantes * 0.7) * forca;
+          a *= 1.0 - smoothstep(fogNear, fogFar, vFogDepth);
+          gl_FragColor = vec4(cor, clamp(a, 0.0, 1.0));
+        }`,
+    });
+  }
+  const matChamaJogador = criarMaterialChama(1);
+  matChamaJogador.uniforms.tempo = tempoChama;
+  function novaChama(material) {
+    if (!material.uniforms.tempo || material.uniforms.tempo !== tempoChama) material.uniforms.tempo = tempoChama;
+    const ch = new THREE.Mesh(geoChama, material);
+    ch.frustumCulled = false;
+    ch.renderOrder = 5;
+    return ch;
+  }
+  // a cada quadro: comprimento e força da chama pela pós-combustão (pc de 0 a 1)
+  function atualizarChamas(plumas, pc, agora, L) {
+    tempoChama.value = agora / 1000;
+    const tremor = 0.93 + 0.07 * Math.sin(agora * 0.037) * Math.sin(agora * 0.023 + 1);
+    matChamaJogador.uniforms.forca.value = 0.35 + 0.65 * pc;
+    for (const ch of plumas) {
+      ch.visible = pc > 0.01;
+      ch.scale.z = (0.8 + L * 0.42 * pc) * tremor;
+    }
+  }
 
   function montarCaca(id, gltf) {
     const cfg = CACAS[id];
@@ -1485,11 +2271,10 @@ h1 {
     });
     const plumas = [];
     for (const [x, y, zz] of cfg.bocais) {
-      const chama = new THREE.Mesh(geoChama, new THREE.MeshBasicMaterial({ map: texChama, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, opacity: 0.6 }));
+      const chama = novaChama(matChamaJogador);
       chama.position.set(x, y, zz);
       chama.scale.set(cfg.raioBocal, cfg.raioBocal, 1);
       chama.visible = false;
-      chama.frustumCulled = false;
       grupo.add(chama);
       plumas.push(chama);
     }
@@ -1586,10 +2371,26 @@ h1 {
     estol: false,
   };
   const ctrl = { arfagem: 0, rolagem: 0, guinada: 0 };   // comandos suavizados
-  let estado = 'inicio';            // inicio | voando | pausado | batido
+  let estado = 'inicio';            // inicio | voando | pausado | batido | fim
   let modoCamera = 'atras';         // atras | cabine
+  let olhandoTras = false;          // T (ou o botão na tela de toque) segurado: câmera traseira
   let inverter = false;
   let tempoBatida = 0;
+  let destruido = false;            // o caça explodiu: some da tela e a câmera fica olhando
+  const camBatida = new THREE.Vector3();
+  // controles de toque: manche virtual (-1..1), tiro e olhar para trás segurados
+  const toque = { arfagem: 0, rolagem: 0, atirando: false, tras: false };
+  function posicionarNoInicio() {
+    const i = inicioCenario();
+    aviao.pos.set(i.x, i.y, i.z);
+    aviao.quat.setFromAxisAngle(EIXO_Y, -THREE.MathUtils.degToRad(i.rumo));
+    aviao.vel = INICIO.vel;
+    aviao.motor = INICIO.motor;
+    aviao.estol = false;
+    ctrl.arfagem = ctrl.rolagem = ctrl.guinada = 0;
+    camQuat.copy(aviao.quat);
+    destruido = false;
+  }
 
   // ---------- teclado ----------
   const teclas = new Set();
@@ -1618,11 +2419,123 @@ h1 {
       case 'KeyH': elAjuda.hidden = !elAjuda.hidden; break;
       case 'Space': dispararMissil('guiado'); break;
       case 'KeyX': dispararMissil('foguete'); break;
+      case 'KeyF': soltarFlares(aviao); break;
     }
   });
   window.addEventListener('keyup', (e) => teclas.delete(e.code));
   window.addEventListener('blur', () => { teclas.clear(); pausar(); });
   document.addEventListener('visibilitychange', () => { if (document.hidden) pausar(); });
+
+  // ---------- toque (celular) ----------
+  // Manche: encoste em qualquer lugar do lado esquerdo e arraste; a base aparece onde o dedo encostou.
+  // Para baixo puxa o manche (nariz sobe), como nas setas. Motor: arraste na barra da direita.
+  const elToque = $('toque');
+  const elMancheArea = $('manche-area');
+  const elMancheBase = $('manche-base');
+  const elMancheBola = $('manche-bola');
+  const elMancheDica = $('manche-dica');
+  const elAcel = $('acelerador');
+  const elAcelNivel = $('acel-nivel');
+  const RAIO_MANCHE = 62;
+  let dedoManche = null, mancheX = 0, mancheY = 0;
+  const curva = (v) => Math.sign(v) * Math.pow(Math.max(0, Math.abs(v) - 0.06) / 0.94, 1.35);
+  // segura o dedo no elemento mesmo se ele escorregar para fora (se o navegador deixar)
+  const prender = (el, id) => { try { el.setPointerCapture(id); } catch (e) { /* sem captura */ } };
+  elMancheArea.addEventListener('pointerdown', (e) => {
+    if (dedoManche !== null) return;
+    e.preventDefault();
+    dedoManche = e.pointerId;
+    prender(elMancheArea, e.pointerId);
+    mancheX = e.clientX;
+    mancheY = e.clientY;
+    elMancheBase.style.left = mancheX + 'px';
+    elMancheBase.style.top = mancheY + 'px';
+    elMancheBola.style.transform = '';
+    elMancheBase.hidden = false;
+    elMancheDica.hidden = true;
+  });
+  elMancheArea.addEventListener('pointermove', (e) => {
+    if (e.pointerId !== dedoManche) return;
+    let dx = e.clientX - mancheX, dy = e.clientY - mancheY;
+    const d = Math.hypot(dx, dy);
+    if (d > RAIO_MANCHE) { dx *= RAIO_MANCHE / d; dy *= RAIO_MANCHE / d; }
+    elMancheBola.style.transform = 'translate(' + dx + 'px,' + dy + 'px)';
+    toque.rolagem = -curva(dx / RAIO_MANCHE);
+    toque.arfagem = curva(dy / RAIO_MANCHE);
+  });
+  const soltarManche = (e) => {
+    if (e.pointerId !== dedoManche) return;
+    dedoManche = null;
+    toque.rolagem = toque.arfagem = 0;
+    elMancheBase.hidden = true;
+  };
+  elMancheArea.addEventListener('pointerup', soltarManche);
+  elMancheArea.addEventListener('pointercancel', soltarManche);
+  let dedoAcel = null;
+  const moverAcel = (e) => {
+    const r = elAcel.firstElementChild.getBoundingClientRect();
+    aviao.motor = clamp(1 - (e.clientY - r.top) / r.height, 0, 1);
+  };
+  elAcel.addEventListener('pointerdown', (e) => { e.preventDefault(); dedoAcel = e.pointerId; prender(elAcel, e.pointerId); moverAcel(e); });
+  elAcel.addEventListener('pointermove', (e) => { if (e.pointerId === dedoAcel) moverAcel(e); });
+  elAcel.addEventListener('pointerup', (e) => { if (e.pointerId === dedoAcel) dedoAcel = null; });
+  elAcel.addEventListener('pointercancel', (e) => { if (e.pointerId === dedoAcel) dedoAcel = null; });
+  function acaoToque(acao, apertou) {
+    switch (acao) {
+      case 'tiro': toque.atirando = apertou; break;
+      case 'tras': toque.tras = apertou; break;
+      case 'missil': if (apertou) dispararMissil('guiado'); break;
+      case 'foguete': if (apertou) dispararMissil('foguete'); break;
+      case 'flare': if (apertou) soltarFlares(aviao); break;
+      case 'camera': if (apertou) trocarCamera(); break;
+      case 'pausa': if (apertou) pausar(); break;
+    }
+  }
+  for (const b of elToque.querySelectorAll('[data-acao]')) {
+    b.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      b.classList.add('apertado');
+      acaoToque(b.dataset.acao, true);
+      prender(b, e.pointerId);
+    });
+    const soltar = () => {
+      if (!b.classList.contains('apertado')) return;
+      b.classList.remove('apertado');
+      acaoToque(b.dataset.acao, false);
+    };
+    b.addEventListener('pointerup', soltar);
+    b.addEventListener('pointercancel', soltar);
+    b.addEventListener('lostpointercapture', soltar);
+    b.addEventListener('contextmenu', (e) => e.preventDefault());
+  }
+  // celular em pé: o jogo só se joga deitado, então pausa (o aviso de girar cobre a tela)
+  const emPe = window.matchMedia('(orientation: portrait)');
+  const checarPosicao = () => { if (TOQUE && emPe.matches) pausar(); };
+  if (emPe.addEventListener) emPe.addEventListener('change', checarPosicao); else if (emPe.addListener) emPe.addListener(checarPosicao);
+  window.addEventListener('resize', checarPosicao);
+  // a barra do motor acompanha o motor (W/S também mexem nele)
+  const elTGuiados = $('t-guiados'), elTFoguetes = $('t-foguetes'), elTFlares = $('t-flares');
+  function atualizarToque() {
+    if (TOQUE && emPe.matches && estado === 'voando') pausar();
+    if (elToque.hidden) return;
+    const m = Math.round(aviao.motor * 100);
+    if (cache.acel !== m) {
+      cache.acel = m;
+      elAcelNivel.style.height = m + '%';
+      elAcelNivel.classList.toggle('pc', aviao.motor > 0.82);
+    }
+    // no celular a munição aparece nos próprios botões
+    escrever(elTGuiados, 'tGuiados', String(armas.guiados));
+    escrever(elTFoguetes, 'tFoguetes', String(armas.foguetes));
+    escrever(elTFlares, 'tFlares', modo === 'sobrevivencia' ? String(armas.flares) : '∞');
+  }
+  function soltarToques() {
+    toque.atirando = toque.tras = false;
+    toque.arfagem = toque.rolagem = 0;
+    dedoManche = dedoAcel = null;
+    elMancheBase.hidden = true;
+    for (const b of elToque.querySelectorAll('.apertado')) b.classList.remove('apertado');
+  }
 
   // ---------- telas e mensagens ----------
   const elHud = $('hud');
@@ -1644,20 +2557,25 @@ h1 {
       if (estado !== 'inicio' || !cacaAtual || cacaAtual.id !== cacaEscolhido) return;
       $('inicio').hidden = true;
       elHud.hidden = false;
+      posicionarNoInicio();
       estado = 'voando';
-      if (modo === 'sobrevivencia') { iniciarSobrevivencia(); mensagem('Z atira, Espaço lança míssil guiado, X lança foguete', 5); }
-      else { limparCombate(); mensagem('Voo livre, sem inimigos (Z atira, X foguete). Para combater, escolha Sobrevivência na tela inicial', 6); }
+      const armasTxt = TOQUE ? 'Tiro, Míssil e Foguete ficam à direita; Flares enganam os mísseis' : 'Z atira, Espaço lança míssil guiado, X foguete, F solta flares';
+      if (modo === 'sobrevivencia') { iniciarSobrevivencia(); mensagem(armasTxt, 5); }
+      else { limparCombate(); mensagem('Voo livre, sem inimigos. Para combater, escolha Sobrevivência na tela inicial', 6); }
     };
     somCtx();
+    if (TOQUE) {
+      // no celular: tela cheia e deitado, quando o navegador deixa
+      try { const p = document.documentElement.requestFullscreen && document.documentElement.requestFullscreen({ navigationUI: 'hide' }); if (p) p.then(() => screen.orientation && screen.orientation.lock && screen.orientation.lock('landscape').catch(() => {})).catch(() => {}); } catch (e) { /* sem tela cheia */ }
+    }
     const cacaPronto = cacaAtual && cacaAtual.id === cacaEscolhido;
-    const cenarioPronto = cenarioEscolhido !== 'floresta' || cenario === 'floresta';
+    const cenarioPronto = cenario === cenarioEscolhido;
     if (cacaPronto && cenarioPronto) { partir(); return; }
     $('decolar').disabled = true;
-    if (!cenarioPronto && cacaPronto) elCargaTexto.textContent = 'Carregando a floresta…';
     Promise.all([
       cacaPronto ? null : (carregando || escolherCaca(cacaEscolhido)),
-      // se a floresta não carregar, voa nos campos
-      cenarioPronto ? null : escolherCenario('floresta').catch(() => aplicarCenario('campos')),
+      // se o cenário não carregar, voa nos campos
+      cenarioPronto ? null : escolherCenario(cenarioEscolhido).catch(() => aplicarCenario('campos')),
     ]).then(() => { $('decolar').disabled = false; partir(); });
   }
   function trocarCaca() {
@@ -1668,18 +2586,13 @@ h1 {
     $('fim').hidden = true;
     elHud.hidden = true;
     $('inicio').hidden = false;
-    aviao.pos.set(INICIO.x, INICIO.y, INICIO.z);
-    aviao.quat.identity();
-    aviao.vel = INICIO.vel;
-    aviao.motor = INICIO.motor;
-    aviao.estol = false;
-    ctrl.arfagem = ctrl.rolagem = ctrl.guinada = 0;
-    camQuat.copy(aviao.quat);
+    posicionarNoInicio();
   }
   function pausar() {
     if (estado !== 'voando') return;
     estado = 'pausado';
     teclas.clear();
+    soltarToques();
     elPausa.hidden = false;
   }
   function continuar() {
@@ -1687,23 +2600,20 @@ h1 {
     estado = 'voando';
     elPausa.hidden = true;
   }
+  // Bateu no chão, numa árvore, num prédio ou caiu no mar: o caça explode.
   function baterAviao() {
-    if (modo === 'sobrevivencia') { dano(100, 'chao'); return; }
+    const agua = naAgua(aviao.pos.x, aviao.pos.z) && aviao.pos.y < 3;
+    if (modo === 'sobrevivencia') { dano(100, agua ? 'agua' : 'chao'); return; }
     estado = 'batido';
-    tempoBatida = 2.2;
+    tempoBatida = 4;
     aviao.estol = false;
-    mensagem('Você bateu! Recomeçando…', 2.2);
+    destruirAviao(agua ? 'agua' : 'chao');
+    mensagem(agua ? 'Você caiu no mar! Recomeçando…' : 'Você bateu! Recomeçando…', 3.6);
   }
   function recomecar() {
     if (estado === 'inicio') return;
     if (modo === 'sobrevivencia' && (estado === 'fim' || jogo.integridade <= 0)) { iniciarSobrevivencia(); $('fim').hidden = true; }
-    aviao.pos.set(INICIO.x, INICIO.y, INICIO.z);
-    aviao.quat.identity();
-    aviao.vel = INICIO.vel;
-    aviao.motor = INICIO.motor;
-    aviao.estol = false;
-    ctrl.arfagem = ctrl.rolagem = ctrl.guinada = 0;
-    camQuat.copy(aviao.quat);
+    posicionarNoInicio();
     estado = 'voando';
     elPausa.hidden = true;
   }
@@ -1737,9 +2647,9 @@ h1 {
     let alvoGui = 0;
     if (comPiloto) {
       // seta para baixo puxa o manche (nariz sobe); seta para cima empurra (nariz desce)
-      alvoArf = (apertada('ArrowDown') ? 1 : 0) - (apertada('ArrowUp') ? 1 : 0);
+      alvoArf = clamp((apertada('ArrowDown') ? 1 : 0) - (apertada('ArrowUp') ? 1 : 0) + toque.arfagem, -1, 1);
       if (inverter) alvoArf = -alvoArf;
-      alvoRol = (apertada('ArrowLeft') ? 1 : 0) - (apertada('ArrowRight') ? 1 : 0);
+      alvoRol = clamp((apertada('ArrowLeft') ? 1 : 0) - (apertada('ArrowRight') ? 1 : 0) + toque.rolagem, -1, 1);
       alvoGui = (apertada('KeyA') ? 1 : 0) - (apertada('KeyD') ? 1 : 0);
       if (apertada('KeyW')) aviao.motor = Math.min(1, aviao.motor + 0.45 * dt);
       if (apertada('KeyS')) aviao.motor = Math.max(0, aviao.motor - 0.45 * dt);
@@ -1800,10 +2710,27 @@ h1 {
   const OFFSET_ATRAS = new THREE.Vector3(0, 3.3, 21.75);   // ajustados em usarCaca()
   const OFFSET_CABINE = new THREE.Vector3(0, 0.85, -3.4);
   const inclinaCam = new THREE.Quaternion().setFromAxisAngle(EIXO_X, -0.09);
+  // câmera traseira: na frente do nariz, virada para trás e um pouco para baixo
+  const meiaVolta = new THREE.Quaternion().setFromAxisAngle(EIXO_Y, Math.PI).multiply(new THREE.Quaternion().setFromAxisAngle(EIXO_X, -0.1));
   const offTmp = new THREE.Vector3();
 
   function atualizarCamera(dt) {
-    if (modoCamera === 'cabine') {
+    olhandoTras = (apertada('KeyT') || toque.tras) && estado === 'voando';
+    if (destruido) {
+      // o caça explodiu: a câmera se afasta devagar e fica olhando o fogo
+      offTmp.subVectors(camera.position, camBatida);
+      const d = offTmp.length() || 1;
+      offTmp.multiplyScalar(aproximar(d, 110, 0.8, dt) / d);
+      offTmp.y = aproximar(offTmp.y, 38, 0.8, dt);
+      camera.position.copy(camBatida).add(offTmp);
+      camera.lookAt(camBatida);
+    } else if (olhandoTras) {
+      camQuat.slerp(aviao.quat, 1 - Math.exp(-dt * 4.5));
+      const L = cacaAtual ? cacaAtual.config.comprimento : 15;
+      offTmp.set(0, 0.32 * L, -1.75 * L).applyQuaternion(camQuat);
+      camera.position.copy(aviao.pos).add(offTmp);
+      camera.quaternion.copy(camQuat).multiply(meiaVolta);
+    } else if (modoCamera === 'cabine') {
       camera.position.copy(OFFSET_CABINE).applyQuaternion(aviao.quat).add(aviao.pos);
       camera.quaternion.copy(aviao.quat);
     } else {
@@ -1812,8 +2739,15 @@ h1 {
       camera.position.copy(aviao.pos).add(offTmp);
       camera.quaternion.copy(camQuat).multiply(inclinaCam);
     }
-    camera.position.y = Math.max(camera.position.y, alturaChao(camera.position.x, camera.position.z) + 1.5);
-    aviaoModelo.visible = modoCamera !== 'cabine';
+    // sacudida das explosões perto
+    if (tremorCam > 0.002 && !reduzirMovimento) {
+      camera.position.x += (Math.random() - 0.5) * tremorCam * 2.2;
+      camera.position.y += (Math.random() - 0.5) * tremorCam * 2.2;
+      camera.position.z += (Math.random() - 0.5) * tremorCam * 2.2;
+    }
+    tremorCam *= Math.exp(-dt * 3.5);
+    camera.position.y = Math.max(camera.position.y, superficie(camera.position.x, camera.position.z) + 1.5);
+    aviaoModelo.visible = !destruido && (modoCamera !== 'cabine' || olhandoTras);
 
     // o campo de visão abre um pouco com a velocidade
     const fovAlvo = reduzirMovimento ? 62 : clamp(58 + aviao.vel * 0.03, 58, 74);
@@ -1859,7 +2793,7 @@ h1 {
   const misseis = [];
   const RECARGA_GUIADO = 20;               // segundos para voltar um míssil guiado
   const RECARGA_FOGUETE = 6;               // segundos para voltar um foguete
-  const armas = { guiados: 4, foguetes: 12, maxGuiados: 4, maxFoguetes: 12, recargaGuiado: 0, recargaFoguete: 0, cadencia: 0, lado: 1 };
+  const armas = { guiados: 4, foguetes: 12, flares: 5, maxGuiados: 4, maxFoguetes: 12, maxFlares: 5, recargaGuiado: 0, recargaFoguete: 0, recargaFlare: 0, cadencia: 0, lado: 1 };
   let alvoTravado = null;                  // inimigo com trava completa
   let candidato = null;                    // inimigo na mira, travando
   let tempoTrava = 0;
@@ -1872,7 +2806,9 @@ h1 {
   const elVidaNivel = $('vida-nivel');
   const elGuiados = $('guiados');
   const elFoguetes = $('foguetes');
+  const elFlares = $('flares');
   const elRestam = $('restam');
+  const elOlhandoTras = $('olhando-tras');
   const elMira = $('mira');
   const elSeta = $('seta-alvo');
   const elDano = $('dano');
@@ -1891,6 +2827,7 @@ h1 {
   const tmpB = new THREE.Vector3();
   const tmpC = new THREE.Vector3();
   const tmpD = new THREE.Vector3();
+  const velExp = new THREE.Vector3();
   const mTmp = new THREE.Matrix4();
   const qAlvo = new THREE.Quaternion();
   const qVis = new THREE.Quaternion();
@@ -1912,7 +2849,14 @@ h1 {
     motor: 'SONS/motor.mp3',
     posc: 'SONS/posc.mp3',
     tiro: 'SONS/metralhadora.mp3',
-    missil: 'SONS/missil.mp3',
+    missil: 'SONS/missil_lancamento.mp3',            // estouro, ronco do motor e o míssil indo embora
+    missilVoo: 'SONS/missil_voo.mp3',                // ronco do motor de um míssil, em repetição
+    missilPassando: 'SONS/missil_passando.mp3',
+    flare: 'SONS/flare.mp3',
+    explosaoAr: 'SONS/explosao_ar.mp3',
+    explosaoChao: 'SONS/explosao_chao.mp3',
+    explosaoPequena: 'SONS/explosao_pequena.mp3',
+    agua: 'SONS/agua.mp3',
     passando: 'SONS/AVIAO PASSANDO 1.mp3',          // passagem mais longe: pico do som aos 8,8 s
     rasante: 'SONS/PASSANDO LADO RAPIDO.mp3',        // passagem colada: começa aos 2,1 s, pico aos 3,5 s
     alerta: 'SONS/MISSEL CHEGANDO.mp3',              // bipes de míssil vindo, tocados em repetição
@@ -2006,7 +2950,7 @@ h1 {
     src.start();
   }
   const somTiro = () => { if (!tocar('tiro', 0.42, { taxa: 0.94 + Math.random() * 0.12 })) ruido(0.07, 1600, 1.2, 0.35); };
-  const somMissil = () => { if (!tocar('missil', 0.75)) ruido(0.6, 700, 0.7, 0.5, 'lowpass'); };
+  const somMissil = () => { if (!tocar('missil', 1, { taxa: 0.96 + Math.random() * 0.08 })) ruido(0.6, 700, 0.7, 0.5, 'lowpass'); };
   const somExplosao = (tam) => ruido(0.5 + tam * 0.3, 160, 0.6, 0.7, 'lowpass');
   const somAcerto = () => ruido(0.1, 2600, 2.5, 0.3);
 
@@ -2062,37 +3006,567 @@ h1 {
     t.malha.quaternion.setFromRotationMatrix(mTmp);
   }
 
-  // --- explosões: esferas que crescem e somem
-  const geoExplosao = new THREE.SphereGeometry(1, 14, 10);
-  const explosoes = [];
-  for (let i = 0; i < 64; i++) {
-    const m = new THREE.Mesh(geoExplosao, new THREE.MeshBasicMaterial({ color: 0xff8a2a, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending }));
+  // --- partículas: fumaça, poeira e respingos (mistura normal) e fogo, faíscas e clarões (somam luz).
+  // Cada sistema é uma malha só, com um quadro por partícula sempre de frente para a câmera.
+  const texFumaca = (() => {
+    const c = document.createElement('canvas');
+    c.width = c.height = 128;
+    const g = c.getContext('2d');
+    const r = mulberry32(21);
+    for (let i = 0; i < 30; i++) {
+      const a = r() * Math.PI * 2, d = Math.sqrt(r()) * 28;
+      const x = 64 + Math.cos(a) * d, y = 64 + Math.sin(a) * d, raio = 14 + r() * 24;
+      const v = Math.round(185 + r() * 70);
+      const gr = g.createRadialGradient(x, y, 0, x, y, raio);
+      gr.addColorStop(0, 'rgba(' + v + ',' + v + ',' + v + ',0.3)');
+      gr.addColorStop(1, 'rgba(' + v + ',' + v + ',' + v + ',0)');
+      g.fillStyle = gr;
+      g.fillRect(0, 0, 128, 128);
+    }
+    return new THREE.CanvasTexture(c);
+  })();
+  const texLuz = (() => {
+    const c = document.createElement('canvas');
+    c.width = c.height = 64;
+    const g = c.getContext('2d');
+    const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+    gr.addColorStop(0, 'rgba(255,255,255,1)');
+    gr.addColorStop(0.22, 'rgba(255,255,255,0.7)');
+    gr.addColorStop(0.55, 'rgba(255,255,255,0.16)');
+    gr.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = gr;
+    g.fillRect(0, 0, 64, 64);
+    return new THREE.CanvasTexture(c);
+  })();
+  function criarParticulas(max, aditivo) {
+    const base = new THREE.PlaneGeometry(1, 1);
+    const geo = new THREE.InstancedBufferGeometry();
+    geo.index = base.index;
+    geo.setAttribute('position', base.attributes.position);
+    geo.setAttribute('uv', base.attributes.uv);
+    const aPos = new THREE.InstancedBufferAttribute(new Float32Array(max * 4), 4).setUsage(THREE.DynamicDrawUsage);   // x, y, z, tamanho
+    const aCor = new THREE.InstancedBufferAttribute(new Float32Array(max * 4), 4).setUsage(THREE.DynamicDrawUsage);   // r, g, b, alfa
+    const aRot = new THREE.InstancedBufferAttribute(new Float32Array(max), 1).setUsage(THREE.DynamicDrawUsage);
+    geo.setAttribute('aPos', aPos);
+    geo.setAttribute('aCor', aCor);
+    geo.setAttribute('aRot', aRot);
+    geo.instanceCount = 0;
+    const mat = new THREE.ShaderMaterial({
+      transparent: true,
+      depthWrite: false,
+      fog: true,
+      blending: aditivo ? THREE.AdditiveBlending : THREE.NormalBlending,
+      defines: aditivo ? { ADITIVO: '' } : {},
+      uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { mapa: { value: null } }]),
+      vertexShader: `
+        attribute vec4 aPos;
+        attribute vec4 aCor;
+        attribute float aRot;
+        varying vec2 vUv;
+        varying vec4 vCor;
+        #include <fog_pars_vertex>
+        void main() {
+          vUv = uv;
+          vCor = aCor;
+          vec4 mvPosition = viewMatrix * vec4(aPos.xyz, 1.0);
+          float c = cos(aRot), s = sin(aRot);
+          mvPosition.xy += mat2(c, s, -s, c) * position.xy * aPos.w;
+          gl_Position = projectionMatrix * mvPosition;
+          #include <fog_vertex>
+        }`,
+      fragmentShader: `
+        uniform sampler2D mapa;
+        varying vec2 vUv;
+        varying vec4 vCor;
+        #include <fog_pars_fragment>
+        void main() {
+          vec4 t = texture2D(mapa, vUv);
+          gl_FragColor = vec4(vCor.rgb * t.rgb, t.a * vCor.a);
+          #ifdef ADITIVO
+            gl_FragColor.a *= 1.0 - smoothstep(fogNear, fogFar, vFogDepth);
+          #else
+            #include <fog_fragment>
+          #endif
+        }`,
+    });
+    mat.uniforms.mapa.value = aditivo ? texLuz : texFumaca;
+    const malha = new THREE.Mesh(geo, mat);
+    malha.frustumCulled = false;
+    malha.renderOrder = aditivo ? 3 : 2;
+    scene.add(malha);
+    return { geo, aPos, aCor, aRot, max, lista: [], ordenar: !aditivo };
+  }
+  const fumacas = criarParticulas(MOVEL ? 1000 : 2200, false);
+  const brilhos = criarParticulas(MOVEL ? 700 : 1400, true);
+  // p: x, y, z, vx, vy, vz, vida (s), tam0 -> tam1 (m), r, g, b, alfa, arrasto (1/s), grav (m/s², negativo sobe),
+  //    fogo (a cor vai do amarelo ao vermelho escuro)
+  function particula(sis, p) {
+    if (sis.lista.length >= sis.max) return;
+    p.t = 0;
+    p.rot = Math.random() * 6.283;
+    if (p.vrot === undefined) p.vrot = (Math.random() - 0.5) * 0.7;
+    p.vx = p.vx || 0; p.vy = p.vy || 0; p.vz = p.vz || 0;
+    p.arrasto = p.arrasto || 0;
+    p.grav = p.grav || 0;
+    sis.lista.push(p);
+  }
+  const camP = new THREE.Vector3();
+  function atualizarParticulas(sis, dt) {
+    const L = sis.lista;
+    let n = 0;
+    for (let i = 0; i < L.length; i++) {
+      const p = L[i];
+      p.t += dt;
+      if (p.t >= p.vida) continue;
+      const f = Math.exp(-p.arrasto * dt);
+      p.vx *= f; p.vz *= f;
+      p.vy = p.vy * f - p.grav * dt;
+      p.x += p.vx * dt; p.y += p.vy * dt; p.z += p.vz * dt;
+      p.rot += p.vrot * dt;
+      L[n++] = p;
+    }
+    L.length = n;
+    if (sis.ordenar && n > 1) {
+      camP.copy(camera.position);
+      for (const p of L) p.d = (p.x - camP.x) ** 2 + (p.y - camP.y) ** 2 + (p.z - camP.z) ** 2;
+      L.sort((a, b) => b.d - a.d);
+    }
+    const P = sis.aPos.array, C = sis.aCor.array, R = sis.aRot.array;
+    for (let i = 0; i < n; i++) {
+      const p = L[i], k = p.t / p.vida;
+      P[i * 4] = p.x; P[i * 4 + 1] = p.y; P[i * 4 + 2] = p.z;
+      P[i * 4 + 3] = p.tam0 + (p.tam1 - p.tam0) * (1 - (1 - k) * (1 - k));
+      let r = p.r, g = p.g, b = p.b;
+      if (p.fogo) {
+        // amarelo quase branco -> laranja -> vermelho escuro
+        r = 1; g = k < 0.35 ? 0.85 - k : 0.5 - (k - 0.35) * 0.6; b = k < 0.2 ? 0.55 - k * 2 : 0.12 * (1 - k);
+        const apaga = 1 - k * 0.6;
+        r *= apaga; g *= apaga; b *= apaga;
+      }
+      C[i * 4] = r; C[i * 4 + 1] = g; C[i * 4 + 2] = b;
+      C[i * 4 + 3] = p.alfa * Math.min(1, k * 10) * (1 - k);
+      R[i] = p.rot;
+    }
+    sis.geo.instanceCount = n;
+    for (const a of [sis.aPos, sis.aCor]) { a.updateRange.offset = 0; a.updateRange.count = n * 4; a.needsUpdate = true; }
+    sis.aRot.updateRange.offset = 0; sis.aRot.updateRange.count = n; sis.aRot.needsUpdate = true;
+  }
+  // atalhos: um sopro de fumaça e uma lambida de fogo
+  function fumaca(x, y, z, tam, vida, cinza, alfa, vx, vy, vz) {
+    particula(fumacas, { x, y, z, vx: vx || 0, vy: vy || 0, vz: vz || 0, vida, tam0: tam * 0.4, tam1: tam, r: cinza, g: cinza, b: cinza * 1.02, alfa, arrasto: 0.7, grav: -1.2 });
+  }
+  function fogo(x, y, z, tam, vida, vx, vy, vz) {
+    particula(brilhos, { x, y, z, vx: vx || 0, vy: vy || 0, vz: vz || 0, vida, tam0: tam, tam1: tam * 0.35, r: 1, g: 0.7, b: 0.3, alfa: 1, arrasto: 1.4, grav: -3, fogo: true });
+  }
+
+  // --- explosões grandes: as sequências de imagens (explosão renderizada quadro a quadro) num cartão
+  // em pé, de frente para a câmera. A âncora é o ponto da bola de fogo inicial.
+  const ATLAS_EXPLOSAO = [
+    { arquivo: 'efeitos/explosao_ar1', quadros: 60, colunas: 8, linhas: 8, ancora: [0.4652, 0.7054] },
+    { arquivo: 'efeitos/explosao_ar2', quadros: 45, colunas: 7, linhas: 7, ancora: [0.4823, 0.8462] },
+  ];
+  const luzExplosao = new THREE.Color(1, 1, 1);           // a fumaça escura pega a luz do céu
+  const VERT_EXPLOSAO = `
+    uniform vec2 ancora;
+    varying vec2 vUv;
+    #include <fog_pars_vertex>
+    void main() {
+      vUv = uv;
+      vec3 centro = (modelMatrix * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
+      float tam = length(modelMatrix[0].xyz);
+      vec3 olhar = normalize(cameraPosition - centro);
+      vec3 lado = cross(vec3(0.0, 1.0, 0.0), olhar);
+      lado = length(lado) < 0.05 ? vec3(1.0, 0.0, 0.0) : normalize(lado);
+      vec3 cima = cross(olhar, lado);
+      vec2 p = (uv - vec2(ancora.x, 1.0 - ancora.y)) * tam;
+      vec4 mvPosition = viewMatrix * vec4(centro + lado * p.x + cima * p.y, 1.0);
+      gl_Position = projectionMatrix * mvPosition;
+      #include <fog_vertex>
+    }`;
+  const FRAG_EXPLOSAO = `
+    uniform sampler2D mapa;
+    uniform vec2 grade;
+    uniform float quadro;
+    uniform float total;
+    uniform float alfa;
+    uniform vec3 luz;
+    varying vec2 vUv;
+    #include <fog_pars_fragment>
+    vec4 amostra(float q) {
+      float l = floor(q / grade.x);
+      vec2 uv = (vec2(q - l * grade.x, grade.y - 1.0 - l) + vUv) / grade;
+      vec4 t = texture2D(mapa, uv);
+      return vec4(t.rgb * t.a, t.a);
+    }
+    void main() {
+      float q0 = floor(quadro);
+      vec4 t = mix(amostra(q0), amostra(min(q0 + 1.0, total - 1.0)), quadro - q0);
+      vec3 cor = t.rgb / max(t.a, 0.001);
+      float brilho = max(cor.r, max(cor.g, cor.b));
+      cor *= mix(luz, vec3(1.0), smoothstep(0.3, 0.75, brilho));
+      float a = t.a * alfa;
+      vec4 saida = linearToOutputTexel(vec4(cor, 1.0));
+      float nev = smoothstep(fogNear, fogFar, vFogDepth);
+      saida.rgb = mix(saida.rgb, fogColor, nev);
+      // o fogo soma um pouco de luz ao fundo
+      gl_FragColor = vec4(saida.rgb * a, a * (1.0 - 0.4 * smoothstep(0.45, 0.9, brilho) * (1.0 - nev)));
+    }`;
+  const texExplosao = ATLAS_EXPLOSAO.map((a) => {
+    const t = new THREE.TextureLoader().load(a.arquivo + (MOVEL ? '_peq' : '') + '.webp');
+    t.encoding = THREE.sRGBEncoding;
+    return t;
+  });
+  const geoCartao = new THREE.PlaneGeometry(1, 1);
+  const explosoesGrandes = [];
+  for (let i = 0; i < 10; i++) {
+    const mat = new THREE.ShaderMaterial({
+      transparent: true,
+      depthWrite: false,
+      fog: true,
+      blending: THREE.CustomBlending,
+      blendSrc: THREE.OneFactor,
+      blendDst: THREE.OneMinusSrcAlphaFactor,
+      uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, {
+        mapa: { value: null }, grade: { value: new THREE.Vector2(8, 8) }, quadro: { value: 0 }, total: { value: 60 },
+        alfa: { value: 1 }, luz: { value: luzExplosao }, ancora: { value: new THREE.Vector2(0.5, 0.5) },
+      }]),
+      vertexShader: VERT_EXPLOSAO,
+      fragmentShader: FRAG_EXPLOSAO,
+    });
+    mat.uniforms.luz.value = luzExplosao;
+    const m = new THREE.Mesh(geoCartao, mat);
     m.visible = false;
+    m.frustumCulled = false;
+    m.renderOrder = 4;
     scene.add(m);
-    explosoes.push({ malha: m, t: 0, dur: 1, tam: 1 });
+    explosoesGrandes.push({ malha: m, q: 0, fps: 15, atlas: null });
   }
-  function explodir(pos, tamanho, fumaca) {
-    const e = explosoes.find((x) => !x.malha.visible) || explosoes[0];
+  function explosaoCartao(pos, tipo, tam, fps) {
+    const e = explosoesGrandes.find((x) => !x.malha.visible) || explosoesGrandes.reduce((a, b) => (a.q > b.q ? a : b));
+    const a = ATLAS_EXPLOSAO[tipo];
+    const u = e.malha.material.uniforms;
+    u.mapa.value = texExplosao[tipo];
+    u.grade.value.set(a.colunas, a.linhas);
+    u.total.value = a.quadros;
+    u.ancora.value.fromArray(a.ancora);
+    e.atlas = a;
+    e.q = 0;
+    e.fps = fps || 15;
     e.malha.position.copy(pos);
-    e.t = 0;
-    e.dur = fumaca ? 1.1 : 0.5 + tamanho * 0.3;
-    e.fumaca = !!fumaca;
-    e.tam = tamanho;
-    e.malha.material.color.set(fumaca ? 0x9a9a9a : 0xff8a2a);
-    e.malha.material.blending = fumaca ? THREE.NormalBlending : THREE.AdditiveBlending;
+    e.malha.scale.setScalar(tam);
     e.malha.visible = true;
-    if (!fumaca && tamanho >= 0.5) somExplosao(tamanho);
   }
-  function atualizarExplosoes(dt) {
-    for (const e of explosoes) {
+  function atualizarExplosoesGrandes(dt) {
+    for (const e of explosoesGrandes) {
       if (!e.malha.visible) continue;
-      e.t += dt;
-      const f = e.t / e.dur;
-      if (f >= 1) { e.malha.visible = false; continue; }
-      e.malha.scale.setScalar(2 + f * 26 * e.tam);
-      e.malha.material.opacity = (1 - f) * (e.fumaca ? 0.3 : 0.85);
+      e.q += dt * e.fps;
+      const total = e.atlas.quadros;
+      if (e.q >= total - 1) { e.malha.visible = false; continue; }
+      const u = e.malha.material.uniforms;
+      u.quadro.value = e.q;
+      u.alfa.value = 1 - THREE.MathUtils.smoothstep(e.q / total, 0.72, 0.98);
     }
   }
+
+  // --- destroços: pedaços que voam, giram, quicam no chão e soltam fumaça (física simples)
+  const geoPedacos = [0, 1, 2].map((k) => {
+    const g = new THREE.IcosahedronGeometry(1, 0);
+    const r = mulberry32(40 + k), desvio = new Map();
+    const p = g.attributes.position;
+    for (let i = 0; i < p.count; i++) {
+      const chave = p.getX(i).toFixed(3) + p.getY(i).toFixed(3) + p.getZ(i).toFixed(3);
+      if (!desvio.has(chave)) desvio.set(chave, 0.6 + r() * 0.7);
+      const d = desvio.get(chave);
+      p.setXYZ(i, p.getX(i) * d * (1 + k * 0.4), p.getY(i) * d * (0.35 + k * 0.15), p.getZ(i) * d);
+    }
+    g.computeVertexNormals();
+    return g;
+  });
+  const matPedaco = new THREE.MeshStandardMaterial({ color: 0x34383c, roughness: 0.8, metalness: 0.35, flatShading: true });
+  const malhasPedaco = geoPedacos.map((g) => {
+    const m = new THREE.InstancedMesh(g, matPedaco, 48);
+    m.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    m.count = 0;
+    m.frustumCulled = false;
+    scene.add(m);
+    return m;
+  });
+  const pedacos = [];
+  const mPed = new THREE.Matrix4(), qPed = new THREE.Quaternion(), ePed = new THREE.Vector3();
+  function soltarPedacos(pos, vel, n, forca, tamMax, fogoSeg) {
+    for (let i = 0; i < n; i++) {
+      if (pedacos.length >= 140) break;
+      const a = Math.random() * Math.PI * 2, s = forca * (0.35 + Math.random() * 0.65);
+      const sobe = 0.25 + Math.random() * 0.75;
+      pedacos.push({
+        tipo: i % 3,
+        pos: pos.clone(),
+        vel: new THREE.Vector3(Math.cos(a) * s * (1 - sobe * 0.5) + vel.x, s * sobe + vel.y, Math.sin(a) * s * (1 - sobe * 0.5) + vel.z),
+        quat: new THREE.Quaternion().setFromEuler(new THREE.Euler(Math.random() * 6, Math.random() * 6, Math.random() * 6)),
+        eixo: new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize(),
+        giro: 3 + Math.random() * 9,
+        tam: tamMax * (0.25 + Math.random() * 0.75),
+        t: 0, vida: 9 + Math.random() * 5, fogo: fogoSeg * (0.4 + Math.random() * 0.6), solta: 0, parado: false,
+      });
+    }
+  }
+  function atualizarPedacos(dt) {
+    const cont = [0, 0, 0];
+    for (let i = pedacos.length - 1; i >= 0; i--) {
+      const p = pedacos[i];
+      p.t += dt;
+      if (p.t > p.vida) { pedacos.splice(i, 1); continue; }
+      if (!p.parado) {
+        p.vel.multiplyScalar(Math.exp(-0.12 * dt));
+        p.vel.y -= 9.8 * dt;
+        p.pos.addScaledVector(p.vel, dt);
+        qPed.setFromAxisAngle(p.eixo, p.giro * dt);
+        p.quat.premultiply(qPed);
+        const s = superficie(p.pos.x, p.pos.z);
+        if (p.pos.y < s + p.tam * 0.3) {
+          if (naAgua(p.pos.x, p.pos.z)) {
+            // caiu no mar: um respingo e some
+            for (let k = 0; k < 4; k++) fumaca(p.pos.x, 0.5, p.pos.z, 4 + p.tam * 2, 1.6, 0.95, 0.6, (Math.random() - 0.5) * 6, 6 + Math.random() * 8, (Math.random() - 0.5) * 6);
+            pedacos.splice(i, 1);
+            continue;
+          }
+          p.pos.y = s + p.tam * 0.3;
+          if (p.vel.y < -2) fumaca(p.pos.x, p.pos.y, p.pos.z, 3 + p.tam * 2, 1.8, 0.45, 0.45, 0, 1, 0);
+          p.vel.y = Math.abs(p.vel.y) * 0.3;
+          p.vel.x *= 0.55; p.vel.z *= 0.55;
+          p.giro *= 0.5;
+          if (p.vel.lengthSq() < 4) p.parado = true;
+        }
+      }
+      // queimando: fogo e fumaça escura atrás do pedaço
+      p.solta -= dt;
+      if (p.t < p.fogo && p.solta <= 0) {
+        p.solta = 0.045;
+        fogo(p.pos.x, p.pos.y, p.pos.z, 1.5 + p.tam * 1.2, 0.35 + Math.random() * 0.25);
+        fumaca(p.pos.x, p.pos.y, p.pos.z, 4 + p.tam * 3, 2.6, 0.16, 0.55);
+      } else if (p.t < p.fogo + 3 && p.solta <= 0) {
+        p.solta = 0.12;
+        fumaca(p.pos.x, p.pos.y, p.pos.z, 3 + p.tam * 2, 2.2, 0.3, 0.35);
+      }
+      // no fim da vida afunda no chão
+      const e = p.tam * clamp((p.vida - p.t) / 1.5, 0, 1);
+      const m = malhasPedaco[p.tipo];
+      ePed.set(e, e, e);
+      mPed.compose(p.pos, p.quat, ePed);
+      m.setMatrixAt(cont[p.tipo]++, mPed);
+    }
+    malhasPedaco.forEach((m, k) => { m.count = cont[k]; m.instanceMatrix.needsUpdate = true; });
+  }
+
+  // --- focos de fogo: o que sobra no chão depois de uma batida (chamas e uma coluna de fumaça preta)
+  const focos = [];
+  function atualizarFocos(dt) {
+    for (let i = focos.length - 1; i >= 0; i--) {
+      const f = focos[i];
+      f.t += dt;
+      const k = f.t / f.dur;
+      if (k >= 1) { focos.splice(i, 1); continue; }
+      f.af += dt * f.taxaFogo * (1 - k);
+      f.am += dt * f.taxaFumaca * (1 - k * 0.7);
+      while (f.af >= 1) {
+        f.af -= 1;
+        const a = Math.random() * 6.283, r = Math.random() * f.raio;
+        fogo(f.x + Math.cos(a) * r, f.y + Math.random() * 2, f.z + Math.sin(a) * r, (4 + Math.random() * 5) * f.esc, 0.5 + Math.random() * 0.5, 0, 4 + Math.random() * 5, 0);
+      }
+      while (f.am >= 1) {
+        f.am -= 1;
+        const a = Math.random() * 6.283, r = Math.random() * f.raio;
+        particula(fumacas, { x: f.x + Math.cos(a) * r, y: f.y + 3, z: f.z + Math.sin(a) * r, vx: VENTO + (Math.random() - 0.5) * 2, vy: 7 + Math.random() * 5, vz: (Math.random() - 0.5) * 2,
+          vida: 7 + Math.random() * 4, tam0: 6 * f.esc, tam1: (30 + Math.random() * 25) * f.esc, r: 0.08, g: 0.08, b: 0.085, alfa: 0.7, arrasto: 0.15, grav: -0.4 });
+      }
+    }
+  }
+
+  // --- sacudida da câmera nas explosões perto
+  let tremorCam = 0;
+  function sacudir(pos, forca, alcance) {
+    const d = pos.distanceTo(camera.position);
+    tremorCam = Math.max(tremorCam, forca * clamp(1 - d / alcance, 0, 1));
+  }
+  // som que vem de um ponto: mais baixo longe e do lado de onde vem
+  function somDe(nome, ganho, pos, alcance, taxa) {
+    const d = pos.distanceTo(camera.position);
+    const g = ganho * Math.pow(clamp(1 - d / alcance, 0, 1), 1.3);
+    if (g < 0.01) return null;
+    return tocar(nome, g, { pan: panDe(pos), taxa: taxa || 1 });
+  }
+
+  // Explosão de um caça no ar: bola de fogo, clarão, faíscas e destroços em chamas caindo.
+  function explosaoAr(pos, vel, escala) {
+    escala = escala || 1;
+    explosaoCartao(pos, Math.random() < 0.5 ? 0 : 1, 125 * escala, 16);
+    particula(brilhos, { x: pos.x, y: pos.y, z: pos.z, vida: 0.35, tam0: 70 * escala, tam1: 110 * escala, r: 1, g: 0.85, b: 0.6, alfa: 1 });
+    for (let i = 0; i < 26; i++) {
+      const a = Math.random() * 6.283, b = Math.random() * 3.14 - 1.57, s = 40 + Math.random() * 70;
+      particula(brilhos, { x: pos.x, y: pos.y, z: pos.z, vx: Math.cos(a) * Math.cos(b) * s + vel.x * 0.5, vy: Math.sin(b) * s + vel.y * 0.5, vz: Math.sin(a) * Math.cos(b) * s + vel.z * 0.5,
+        vida: 0.6 + Math.random() * 0.9, tam0: 2.2, tam1: 0.8, r: 1, g: 0.75, b: 0.4, alfa: 1, arrasto: 1.2, grav: 9.8 });
+    }
+    soltarPedacos(pos, tmpD.copy(vel).multiplyScalar(0.6), Math.round(12 * escala), 45, 1.6 * escala, 3.5);
+    sacudir(pos, 1.2 * escala, 900);
+    if (!somDe('explosaoAr', 1.1, pos, 5000)) somExplosao(1.5);
+  }
+  // Batida no chão (ou numa construção): explosão grande, poeira, faíscas, destroços quicando e um foco
+  // de fogo com fumaça preta que fica queimando um tempo.
+  function explosaoChao(pos, vel, escala) {
+    escala = escala || 1;
+    explosaoCartao(tmpD.set(pos.x, pos.y - 2, pos.z), 1, 240 * escala, 13);
+    explosaoCartao(tmpD.set(pos.x + (Math.random() - 0.5) * 20, pos.y + 8, pos.z + (Math.random() - 0.5) * 20), 0, 110 * escala, 18);
+    particula(brilhos, { x: pos.x, y: pos.y + 8, z: pos.z, vida: 0.4, tam0: 110 * escala, tam1: 160 * escala, r: 1, g: 0.8, b: 0.55, alfa: 1 });
+    for (let i = 0; i < 16; i++) {
+      const a = (i / 16) * 6.283 + Math.random() * 0.3, s = 25 + Math.random() * 25;
+      particula(fumacas, { x: pos.x, y: pos.y + 2, z: pos.z, vx: Math.cos(a) * s, vy: 2 + Math.random() * 4, vz: Math.sin(a) * s,
+        vida: 3.5 + Math.random() * 2, tam0: 10 * escala, tam1: 38 * escala, r: 0.42, g: 0.36, b: 0.3, alfa: 0.75, arrasto: 1.1, grav: -0.5 });
+    }
+    for (let i = 0; i < 40; i++) {
+      const a = Math.random() * 6.283, s = 30 + Math.random() * 60;
+      particula(brilhos, { x: pos.x, y: pos.y + 2, z: pos.z, vx: Math.cos(a) * s * 0.6, vy: 20 + Math.random() * 50, vz: Math.sin(a) * s * 0.6,
+        vida: 0.8 + Math.random() * 1.2, tam0: 2.5, tam1: 0.8, r: 1, g: 0.72, b: 0.35, alfa: 1, arrasto: 0.8, grav: 9.8 });
+    }
+    soltarPedacos(tmpD.set(pos.x, pos.y + 2, pos.z), tmpC.copy(vel).multiplyScalar(0.25).setY(0), Math.round(22 * escala), 38, 2 * escala, 4);
+    focos.push({ x: pos.x, y: pos.y, z: pos.z, t: 0, dur: 16, raio: 9 * escala, esc: escala, taxaFogo: 32, taxaFumaca: 7, af: 0, am: 0 });
+    sacudir(pos, 1.6 * escala, 1100);
+    if (!somDe('explosaoChao', 1.2, pos, 6000)) somExplosao(2);
+  }
+  // Caiu no mar: coluna de água, espuma e um pouco de fogo.
+  function respingo(pos, escala) {
+    escala = escala || 1;
+    for (let i = 0; i < 46; i++) {
+      const a = Math.random() * 6.283, r = Math.random();
+      particula(fumacas, { x: pos.x + Math.cos(a) * r * 6, y: 1, z: pos.z + Math.sin(a) * r * 6, vx: Math.cos(a) * (6 + r * 22), vy: 18 + Math.random() * 45 * (1 - r * 0.6), vz: Math.sin(a) * (6 + r * 22),
+        vida: 2.2 + Math.random() * 1.6, tam0: 5 * escala, tam1: (18 + Math.random() * 14) * escala, r: 0.95, g: 0.97, b: 1, alfa: 0.85, arrasto: 0.6, grav: 9.8 });
+    }
+    for (let i = 0; i < 12; i++) {
+      const a = Math.random() * 6.283, s = 15 + Math.random() * 15;
+      particula(fumacas, { x: pos.x, y: 1, z: pos.z, vx: Math.cos(a) * s, vy: 1, vz: Math.sin(a) * s, vida: 5, tam0: 12 * escala, tam1: 40 * escala, r: 0.92, g: 0.95, b: 0.97, alfa: 0.55, arrasto: 0.9 });
+    }
+    explosaoCartao(tmpD.set(pos.x, 3, pos.z), 0, 45 * escala, 18);
+    sacudir(pos, 1.2 * escala, 900);
+    if (!somDe('agua', 1.1, pos, 5000)) somExplosao(1.2);
+    somDe('explosaoPequena', 0.6, pos, 4000);
+  }
+  // Explosões pequenas (tiros que acertam, mísseis que estouram) e sopros de fumaça.
+  function explodir(pos, tamanho, soFumaca) {
+    if (soFumaca) { fumaca(pos.x, pos.y, pos.z, 6 + tamanho * 14, 2.2, 0.55, 0.5); return; }
+    particula(brilhos, { x: pos.x, y: pos.y, z: pos.z, vida: 0.22, tam0: 12 + tamanho * 30, tam1: 20 + tamanho * 40, r: 1, g: 0.8, b: 0.5, alfa: 1 });
+    const n = Math.round(4 + tamanho * 10);
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * 6.283, b = Math.random() * 3 - 1.5, s = 6 + Math.random() * 14 * (0.5 + tamanho);
+      fogo(pos.x, pos.y, pos.z, 3 + tamanho * 6, 0.35 + Math.random() * 0.3, Math.cos(a) * Math.cos(b) * s, Math.sin(b) * s, Math.sin(a) * Math.cos(b) * s);
+      fumaca(pos.x, pos.y, pos.z, 6 + tamanho * 16, 2.4, 0.22, 0.55, Math.cos(a) * s * 0.5, Math.sin(b) * s * 0.5, Math.sin(a) * s * 0.5);
+    }
+    if (tamanho >= 0.5) explosaoCartao(pos, 0, 22 + tamanho * 26, 20);
+    if (tamanho >= 0.5) { sacudir(pos, 0.5 * tamanho, 500); if (!somDe('explosaoPequena', 0.75, pos, 3500)) somExplosao(tamanho); }
+  }
+  function atualizarEfeitos(dt) {
+    atualizarExplosoesGrandes(dt);
+    atualizarPedacos(dt);
+    atualizarFocos(dt);
+    atualizarFlares(dt);
+    atualizarParticulas(fumacas, dt);
+    atualizarParticulas(brilhos, dt);
+  }
+  function limparEfeitos() {
+    for (const e of explosoesGrandes) e.malha.visible = false;
+    pedacos.length = 0;
+    focos.length = 0;
+    fumacas.lista.length = 0;
+    brilhos.lista.length = 0;
+    flares.length = 0;
+    salvas.length = 0;
+    for (const s of spritesFlare) s.visible = false;
+  }
+
+  // --- flares: chamarizes de calor soltos em salvas atrás do avião. Um míssil guiado que vê os flares
+  // tem boa chance de trocar o alvo por eles. Os inimigos também soltam flares contra os nossos mísseis.
+  const FLARES_POR_SALVA = 6;
+  const RECARGA_FLARE = 12;                // segundos para voltar uma salva
+  const flares = [];
+  const salvas = [];
+  const spritesFlare = [];
+  const matFlare = new THREE.SpriteMaterial({ map: texLuz, color: 0xfff1c4, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false });
+  for (let i = 0; i < 48; i++) {
+    const s = new THREE.Sprite(matFlare);
+    s.visible = false;
+    scene.add(s);
+    spritesFlare.push(s);
+  }
+  // dono: o avião do jogador ou um inimigo (os dois têm pos, quat e vel). Devolve a salva.
+  function soltarFlares(dono) {
+    const jogador = dono === aviao;
+    if (jogador) {
+      if (estado !== 'voando' || salvas.some((s) => s.dono === aviao && s.restantes > 0)) return null;
+      if (modo === 'sobrevivencia') {
+        if (armas.flares <= 0) { mensagem('Sem flares. Uma salva volta a cada ' + RECARGA_FLARE + ' s.'); return null; }
+        armas.flares--;
+      }
+    }
+    const s = { dono, restantes: FLARES_POR_SALVA, tempo: 0, lado: 1, flares: [] };
+    salvas.push(s);
+    if (!somDe('flare', jogador ? 1.6 : 1.1, dono.pos, 2500)) ruido(0.25, 900, 0.8, 0.35);
+    if (jogador) {
+      // cada míssil que persegue o jogador olha para os flares
+      let enganados = 0;
+      for (const m of misseis) {
+        if (m.inimigo && m.rastreando && m.pos.distanceTo(aviao.pos) < 4500 && Math.random() < 0.85) {
+          m.rastreando = false;
+          m.salvaIsca = s;
+          enganados++;
+        }
+      }
+      if (enganados) mensagem(enganados > 1 ? 'Os flares enganaram ' + enganados + ' mísseis!' : 'Os flares enganaram o míssil!', 2.4);
+    }
+    return s;
+  }
+  const fFl = new THREE.Vector3(), cFl = new THREE.Vector3(), dFl = new THREE.Vector3();
+  function criarFlare(s) {
+    const d = s.dono, L = d === aviao ? (cacaAtual ? cacaAtual.config.comprimento : 15) : d.config.comprimento;
+    fFl.set(0, 0, -1).applyQuaternion(d.quat);
+    cFl.set(0, 1, 0).applyQuaternion(d.quat);
+    dFl.set(1, 0, 0).applyQuaternion(d.quat);
+    s.lado = -s.lado;
+    const sprite = spritesFlare.find((x) => !x.visible);
+    if (!sprite) return;
+    const f = {
+      pos: d.pos.clone().addScaledVector(fFl, -L * 0.35).addScaledVector(cFl, -0.8).addScaledVector(dFl, s.lado),
+      vel: fFl.clone().multiplyScalar(d.vel * 0.92).addScaledVector(cFl, -(16 + Math.random() * 10)).addScaledVector(dFl, s.lado * (12 + Math.random() * 14)),
+      t: 0, vida: 3.2 + Math.random() * 0.8, sprite, solta: 0,
+    };
+    sprite.visible = true;
+    flares.push(f);
+    s.flares.push(f);
+  }
+  function atualizarFlares(dt) {
+    for (let i = salvas.length - 1; i >= 0; i--) {
+      const s = salvas[i];
+      s.tempo -= dt;
+      while (s.tempo <= 0 && s.restantes > 0) { criarFlare(s); s.restantes--; s.tempo += 0.08; }
+      if (!s.restantes && s.flares.every((f) => f.t >= f.vida)) salvas.splice(i, 1);
+    }
+    for (let i = flares.length - 1; i >= 0; i--) {
+      const f = flares[i];
+      f.t += dt;
+      if (f.t >= f.vida || f.pos.y < superficie(f.pos.x, f.pos.z)) { f.t = f.vida; f.sprite.visible = false; flares.splice(i, 1); continue; }
+      f.vel.multiplyScalar(Math.exp(-0.9 * dt));
+      f.vel.y -= 9.8 * dt;
+      f.pos.addScaledVector(f.vel, dt);
+      const k = f.t / f.vida;
+      f.sprite.position.copy(f.pos);
+      f.sprite.scale.setScalar((5 + Math.random() * 3) * (1 - k * 0.5));
+      f.solta -= dt;
+      if (f.solta <= 0) {
+        f.solta = 0.03;
+        particula(fumacas, { x: f.pos.x, y: f.pos.y, z: f.pos.z, vida: 2.6, tam0: 1.6, tam1: 8, r: 0.93, g: 0.93, b: 0.95, alfa: 0.5 * (1 - k), arrasto: 0.5, grav: -0.5 });
+        particula(brilhos, { x: f.pos.x, y: f.pos.y, z: f.pos.z, vida: 0.25, tam0: 9, tam1: 4, r: 1, g: 0.6, b: 0.25, alfa: 0.5 * (1 - k) });
+      }
+    }
+  }
+  // o flare mais novo de uma salva que ainda queima (o que o míssil enganado persegue)
+  const flareAtivo = (s) => { for (let i = s.flares.length - 1; i >= 0; i--) if (s.flares[i].t < s.flares[i].vida) return s.flares[i]; return null; };
 
   // --- mísseis
   const geoCorpoMissil = new THREE.CylinderGeometry(0.13, 0.13, 3, 10);
@@ -2104,7 +3578,7 @@ h1 {
   const matMissil = new THREE.MeshStandardMaterial({ color: 0xd8dde2, metalness: 0.3, roughness: 0.5 });
   const matMissilGuiado = new THREE.MeshStandardMaterial({ color: 0xb9c6d2, metalness: 0.3, roughness: 0.5 });
   const matMissilInimigo = new THREE.MeshStandardMaterial({ color: 0xc8503c, metalness: 0.3, roughness: 0.5 });
-  const matChamaMissil = new THREE.MeshBasicMaterial({ map: texChama, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, opacity: 0.8 });
+  const matChamaMissil = criarMaterialChama(1);
   function criarMissil(guiado, inimigo) {
     const g = new THREE.Group();
     const mat = inimigo ? matMissilInimigo : guiado ? matMissilGuiado : matMissil;
@@ -2116,9 +3590,9 @@ h1 {
       a.rotation.z = (i * Math.PI) / 2;
       g.add(a);
     }
-    const chama = new THREE.Mesh(geoChama, matChamaMissil);
+    const chama = novaChama(matChamaMissil);
     chama.position.z = 1.5;
-    chama.scale.set(0.22, 0.22, 3.5);
+    chama.scale.set(0.2, 0.2, 3.5);
     g.add(chama);
     g.frustumCulled = false;
     return { malha: g, pos: new THREE.Vector3(), ant: new THREE.Vector3(), quat: new THREE.Quaternion(), vel: 0, vida: 0, alvo: null, guiado, inimigo: !!inimigo, rastreando: !!inimigo, chama, fumaca: 0 };
@@ -2141,7 +3615,7 @@ h1 {
     scene.add(m.malha);
     misseis.push(m);
     const d = ini.pos.distanceTo(aviao.pos);
-    if (!tocar('missil', 0.5 * clamp(1.3 - d / 3000, 0.2, 1), { pan: panDe(ini.pos), taxa: 0.9 })) somMissil();
+    if (!tocar('missil', 0.55 * clamp(1.3 - d / 3000, 0.2, 1), { pan: panDe(ini.pos), taxa: 0.95 })) somMissil();
     mensagem('Míssil inimigo! Faça uma curva bem fechada para despistar', 3);
   }
   function dispararMissil(tipo) {
@@ -2172,17 +3646,46 @@ h1 {
     misseis.push(m);
     somMissil();
   }
+  // rastro do motor do míssil: brilho no bocal e fumaça branca que fica no ar
+  function rastroMissil(m, dt) {
+    tmpC.set(0, 0, 1).applyQuaternion(m.quat).multiplyScalar(1.9).add(m.pos);
+    m.fumaca -= dt;
+    while (m.fumaca <= 0) {
+      m.fumaca += 0.022;
+      particula(fumacas, { x: tmpC.x, y: tmpC.y, z: tmpC.z, vx: (Math.random() - 0.5) * 2, vy: (Math.random() - 0.5) * 2, vz: (Math.random() - 0.5) * 2,
+        vida: 2.4 + Math.random(), tam0: 1.2, tam1: 7 + Math.random() * 3, r: 0.9, g: 0.9, b: 0.92, alfa: 0.45, arrasto: 0.4, grav: -0.3 });
+    }
+    particula(brilhos, { x: tmpC.x, y: tmpC.y, z: tmpC.z, vida: 0.06, tam0: 4.5, tam1: 3, r: 1, g: 0.75, b: 0.45, alfa: 0.9 });
+  }
+  // vira o míssil para um ponto, no máximo "giro" rad/s
+  function apontarMissil(m, alvo, giro, dt) {
+    mTmp.lookAt(m.pos, alvo, EIXO_Y);
+    qAlvo.setFromRotationMatrix(mTmp);
+    m.quat.rotateTowards(qAlvo, giro * dt);
+  }
   function atualizarMisseis(dt) {
     for (let i = misseis.length - 1; i >= 0; i--) {
       const m = misseis[i];
-      if (m.inimigo) { if (atualizarMissilInimigo(m, dt)) misseis.splice(i, 1); continue; }
+      if (m.inimigo) { if (atualizarMissilInimigo(m, dt)) { pararSom(m.som, 0.3); misseis.splice(i, 1); } continue; }
       m.vel = Math.min(m.vel + 220 * dt, m.guiado ? 820 : 680);
       if (m.guiado && m.alvo && m.alvo.vivo) {
-        // mira um pouco à frente do alvo
-        tmpA.set(0, 0, -1).applyQuaternion(m.alvo.quat).multiplyScalar(m.alvo.vel * 0.4).add(m.alvo.pos);
-        mTmp.lookAt(m.pos, tmpA, EIXO_Y);
-        qAlvo.setFromRotationMatrix(mTmp);
-        m.quat.rotateTowards(qAlvo, 2.4 * dt);
+        // chegando perto, o inimigo pode soltar flares (mais vezes nos níveis altos)
+        if (!m.testouFlare && m.pos.distanceTo(m.alvo.pos) < 900) {
+          m.testouFlare = true;
+          if (Math.random() < Math.min(0.5, 0.12 + jogo.nivel * 0.04)) {
+            m.salvaIsca = soltarFlares(m.alvo);
+            m.alvo = null;
+            mensagem('O inimigo soltou flares e enganou o seu míssil!', 2.4);
+          }
+        }
+        if (m.alvo) {
+          // mira um pouco à frente do alvo
+          tmpA.set(0, 0, -1).applyQuaternion(m.alvo.quat).multiplyScalar(m.alvo.vel * 0.4).add(m.alvo.pos);
+          apontarMissil(m, tmpA, 2.4, dt);
+        }
+      } else if (m.salvaIsca) {
+        const f = flareAtivo(m.salvaIsca);
+        if (f) apontarMissil(m, f.pos, 2.4, dt); else if (!m.salvaIsca.restantes) m.salvaIsca = null;
       }
       tmpB.set(0, 0, -1).applyQuaternion(m.quat);
       m.ant.copy(m.pos);
@@ -2191,8 +3694,7 @@ h1 {
       m.malha.position.copy(m.pos);
       m.malha.quaternion.copy(m.quat);
       m.chama.scale.z = 3 + Math.random() * 1.5;
-      m.fumaca -= dt;
-      if (m.fumaca <= 0) { explodir(m.ant, 0.1, true); m.fumaca = 0.09; }
+      rastroMissil(m, dt);
       let acabou = false;
       for (const ini of inimigos) {
         if (!ini.vivo) continue;
@@ -2202,8 +3704,11 @@ h1 {
           break;
         }
       }
-      if (acabou || m.vida <= 0 || m.pos.y < alturaChao(m.pos.x, m.pos.z)) {
-        explodir(m.pos, acabou ? 1.3 : 0.6);
+      // enganado: estoura no flare
+      const isca = m.salvaIsca && flareAtivo(m.salvaIsca);
+      if (isca && isca.pos.distanceTo(m.pos) < 12) acabou = true;
+      if (acabou || m.vida <= 0 || m.pos.y < superficie(m.pos.x, m.pos.z)) {
+        explodir(m.pos, acabou ? 0.8 : 0.6);
         scene.remove(m.malha);
         misseis.splice(i, 1);
       }
@@ -2217,15 +3722,17 @@ h1 {
       // mira um pouco à frente do jogador
       frenteJog.set(0, 0, -1).applyQuaternion(aviao.quat);
       tmpA.copy(aviao.pos).addScaledVector(frenteJog, aviao.vel * 0.25);
-      mTmp.lookAt(m.pos, tmpA, EIXO_Y);
-      qAlvo.setFromRotationMatrix(mTmp);
-      m.quat.rotateTowards(qAlvo, GIRO_MISSIL_INIMIGO * dt);
+      apontarMissil(m, tmpA, GIRO_MISSIL_INIMIGO, dt);
       // o jogador ficou de lado ou para trás: o míssil perdeu a trava e segue reto
       tmpC.subVectors(aviao.pos, m.pos);
       if (estado !== 'voando' || tmpB.dot(tmpC.normalize()) < 0.25) {
         m.rastreando = false;
         if (estado === 'voando') mensagem('Míssil despistado!', 2);
       }
+    } else if (m.salvaIsca) {
+      // enganado pelos flares: vai atrás deles
+      const f = flareAtivo(m.salvaIsca);
+      if (f) apontarMissil(m, f.pos, GIRO_MISSIL_INIMIGO * 1.6, dt); else if (!m.salvaIsca.restantes) m.salvaIsca = null;
     }
     tmpB.set(0, 0, -1).applyQuaternion(m.quat);
     m.ant.copy(m.pos);
@@ -2234,12 +3741,24 @@ h1 {
     m.malha.position.copy(m.pos);
     m.malha.quaternion.copy(m.quat);
     m.chama.scale.z = 3 + Math.random() * 1.5;
-    m.fumaca -= dt;
-    if (m.fumaca <= 0) { explodir(m.ant, 0.1, true); m.fumaca = 0.09; }
-    const acertou = estado === 'voando' && distSegmento(m.ant, m.pos, aviao.pos) < 14;
+    rastroMissil(m, dt);
+    // ronco do motor do míssil: mais alto e mais agudo chegando perto
+    const d = m.pos.distanceTo(aviao.pos);
+    if (!m.som && somBuf.missilVoo && d < 2600 && estado === 'voando') m.som = tocar('missilVoo', 0, { repetir: true });
+    if (m.som) {
+      const t = audio.currentTime;
+      m.som.g.gain.setTargetAtTime(estado === 'voando' ? 0.85 * Math.pow(clamp(1 - d / 2600, 0, 1), 2) : 0, t, 0.08);
+      m.som.src.playbackRate.setTargetAtTime(0.9 + 0.35 * clamp(1 - d / 1500, 0, 1), t, 0.1);
+      if (m.som.pan) m.som.pan.pan.value = panDe(m.pos);
+    }
+    // passou raspando
+    if (!m.passou && d < 70 && estado === 'voando') { m.passou = true; somDe('missilPassando', 1, m.pos, 400); }
+    const isca = m.salvaIsca && flareAtivo(m.salvaIsca);
+    const noFlare = isca && isca.pos.distanceTo(m.pos) < 12;
+    const acertou = estado === 'voando' && !noFlare && distSegmento(m.ant, m.pos, aviao.pos) < 14;
     if (acertou) dano(30, 'missil');
-    if (acertou || m.vida <= 0 || m.pos.y < alturaChao(m.pos.x, m.pos.z)) {
-      explodir(m.pos, acertou ? 1.4 : 0.6);
+    if (acertou || noFlare || m.vida <= 0 || m.pos.y < superficie(m.pos.x, m.pos.z)) {
+      explodir(m.pos, acertou ? 1 : 0.6);
       scene.remove(m.malha);
       return true;
     }
@@ -2247,7 +3766,7 @@ h1 {
   }
 
   // --- inimigos
-  const matChamaInimigo = new THREE.MeshBasicMaterial({ map: texChama, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, opacity: 0.5 });
+  const matChamaInimigo = criarMaterialChama(0.75);
   function criarInimigo(nivel) {
     const ids = Object.keys(cacaCache);
     if (!ids.length) return;
@@ -2256,10 +3775,9 @@ h1 {
     const grupo = new THREE.Group();
     grupo.add(base.modelo.clone());
     for (const [x, y, zz] of base.config.bocais) {
-      const ch = new THREE.Mesh(geoChama, matChamaInimigo);
+      const ch = novaChama(matChamaInimigo);
       ch.position.set(x, y, zz);
-      ch.scale.set(base.config.raioBocal, base.config.raioBocal, 4);
-      ch.frustumCulled = false;
+      ch.scale.set(base.config.raioBocal, base.config.raioBocal, base.config.comprimento * 0.3);
       grupo.add(ch);
     }
     scene.add(grupo);
@@ -2305,7 +3823,7 @@ h1 {
     ini.vivo = false;
     ini.caindo = 2.6;
     jogo.abatidosNivel++;
-    explodir(ini.pos, 2.2);
+    explosaoAr(ini.pos, velExp.set(0, 0, -1).applyQuaternion(ini.quat).multiplyScalar(ini.vel), 1);
     // depois do fim do voo (um tiro ou míssil que ainda estava no ar) não soma mais pontos:
     // a pontuação fica igual à da tela de fim
     if (estado === 'voando') {
@@ -2328,15 +3846,24 @@ h1 {
       ini.pos.y -= (2.6 - ini.caindo) * 45 * dt;
       ini.grupo.position.copy(ini.pos);
       ini.grupo.quaternion.copy(ini.quat);
-      if (Math.random() < 0.3) explodir(ini.pos, 0.5, true);
+      // cai pegando fogo, com fumaça preta
+      fogo(ini.pos.x, ini.pos.y, ini.pos.z, 7 + Math.random() * 4, 0.45, (Math.random() - 0.5) * 8, (Math.random() - 0.5) * 8, (Math.random() - 0.5) * 8);
+      if (Math.random() < 0.6) fumaca(ini.pos.x, ini.pos.y, ini.pos.z, 16 + Math.random() * 10, 4, 0.12, 0.7);
       if (ini.som && ini.som.pan) ini.som.pan.pan.value = panDe(ini.pos);
-      if (ini.caindo <= 0 || ini.pos.y < alturaChao(ini.pos.x, ini.pos.z) + 3) { explodir(ini.pos, 1.5); removerInimigo(ini); }
+      const chao = superficie(ini.pos.x, ini.pos.z);
+      if (ini.caindo <= 0 || ini.pos.y < chao + 3) {
+        velExp.set(0, 0, -1).applyQuaternion(ini.quat).multiplyScalar(ini.vel);
+        if (ini.pos.y >= chao + 3) explosaoAr(ini.pos, velExp, 0.7);
+        else if (naAgua(ini.pos.x, ini.pos.z)) respingo(ini.pos, 0.9);
+        else explosaoChao(tmpA.set(ini.pos.x, chao, ini.pos.z), velExp, 0.85);
+        removerInimigo(ini);
+      }
       return;
     }
     tmpA.subVectors(aviao.pos, ini.pos);
     const dist = tmpA.length();
-    // voa sempre acima das árvores e dos morros
-    const piso = alturaChao(ini.pos.x, ini.pos.z) + (cenario === 'floresta' ? 110 : 60);
+    // voa sempre acima das árvores, dos morros e dos prédios
+    const piso = superficie(ini.pos.x, ini.pos.z) + (tipoCenario() === 'floresta' ? 110 : 70);
     ini.desvio -= dt;
     if (dist < 320 && ini.desvio <= 0) ini.desvio = 2.5;   // perto demais: passa reto um pouco
     if (ini.desvio <= 0) {
@@ -2416,15 +3943,25 @@ h1 {
     if (estado !== 'voando' || modo !== 'sobrevivencia') return;
     jogo.integridade = Math.max(0, jogo.integridade - quanto);
     flashDano = 1;
-    if (jogo.integridade <= 0) abatido(motivo === 'chao' ? 'Você bateu no chão.' : motivo === 'trombada' ? 'Trombada no ar.' : motivo === 'missil' ? 'Um míssil inimigo acertou você.' : 'O casco não aguentou os tiros.');
+    if (jogo.integridade <= 0) abatido(motivo === 'chao' ? 'Você bateu.' : motivo === 'agua' ? 'Você caiu no mar.' : motivo === 'trombada' ? 'Trombada no ar.' : motivo === 'missil' ? 'Um míssil inimigo acertou você.' : 'O casco não aguentou os tiros.', motivo);
   }
-  function abatido(texto) {
+  function abatido(texto, motivo) {
     estado = 'fim';
     teclas.clear();
     aviao.motor = 0;
     $('fim-texto').textContent = texto + ' Nível ' + jogo.nivel + ' · ' + jogo.pontos.toLocaleString('pt-BR') + ' pontos.';
     $('fim').hidden = false;
-    explodir(aviao.pos, 2.5);
+    destruirAviao(motivo);
+  }
+  // O caça do jogador explode: no chão, na água ou no ar (abatido). A câmera fica olhando a explosão.
+  function destruirAviao(motivo) {
+    velExp.set(0, 0, -1).applyQuaternion(aviao.quat).multiplyScalar(aviao.vel);
+    const chao = superficie(aviao.pos.x, aviao.pos.z);
+    if (motivo === 'agua') respingo(aviao.pos, 1.1);
+    else if (motivo === 'chao') explosaoChao(tmpA.set(aviao.pos.x, Math.max(chao, aviao.pos.y - 3), aviao.pos.z), velExp, 1.1);
+    else explosaoAr(aviao.pos, velExp, 1.1);
+    camBatida.copy(aviao.pos);
+    destruido = true;
   }
 
   function atualizarTiros(dt) {
@@ -2444,7 +3981,12 @@ h1 {
         dano(4, 'tiro');
         bateu = true;
       }
-      if (bateu || t.vida <= 0 || t.pos.y < alturaChao(t.pos.x, t.pos.z)) { t.vida = 0; t.malha.visible = false; t.brilho.visible = false; }
+      if (!bateu && t.pos.y < superficie(t.pos.x, t.pos.z)) {
+        // tiro que bate no chão ou num prédio levanta poeira (na água, um esguicho)
+        bateu = true;
+        if (Math.random() < 0.35) fumaca(t.pos.x, t.pos.y + 1, t.pos.z, 5, 1.2, naAgua(t.pos.x, t.pos.z) ? 0.95 : 0.5, 0.6, 0, 4, 0);
+      }
+      if (bateu || t.vida <= 0) { t.vida = 0; t.malha.visible = false; t.brilho.visible = false; }
     }
   }
 
@@ -2457,10 +3999,10 @@ h1 {
   }
   function limparCombate() {
     for (const ini of inimigos.slice()) removerInimigo(ini);
-    for (const m of misseis) scene.remove(m.malha);
+    for (const m of misseis) { scene.remove(m.malha); pararSom(m.som, 0.2); }
     misseis.length = 0;
     for (const t of tiros) { t.vida = 0; t.malha.visible = false; t.brilho.visible = false; }
-    for (const e of explosoes) e.malha.visible = false;
+    limparEfeitos();
     alvoTravado = candidato = null;
     tempoTrava = 0;
   }
@@ -2471,13 +4013,12 @@ h1 {
     jogo.integridade = 100;
     jogo.totalNivel = 0;
     jogo.tempoProximo = 0;
-    Object.assign(armas, { guiados: 4, foguetes: 12, recargaGuiado: 0, recargaFoguete: 0 });
+    Object.assign(armas, { guiados: 4, foguetes: 12, flares: armas.maxFlares, recargaGuiado: 0, recargaFoguete: 0, recargaFlare: 0 });
     for (const id of Object.keys(CACAS)) carregarCaca(id).catch(() => null);   // mais modelos para os inimigos
     novoNivel();
   }
 
   function atualizarCombate(dt) {
-    atualizarExplosoes(dt);
     atualizarTiros(dt);
     atualizarMisseis(dt);
     for (const ini of inimigos.slice()) atualizarInimigo(ini, dt);
@@ -2497,11 +4038,12 @@ h1 {
     // recarga das armas
     if (armas.guiados < armas.maxGuiados) { armas.recargaGuiado += dt; if (armas.recargaGuiado >= RECARGA_GUIADO) { armas.recargaGuiado = 0; armas.guiados++; } }
     if (armas.foguetes < armas.maxFoguetes) { armas.recargaFoguete += dt; if (armas.recargaFoguete >= RECARGA_FOGUETE) { armas.recargaFoguete = 0; armas.foguetes++; } }
+    if (armas.flares < armas.maxFlares) { armas.recargaFlare += dt; if (armas.recargaFlare >= RECARGA_FLARE) { armas.recargaFlare = 0; armas.flares++; } }
 
-    // metralhadora: segurar espaço
+    // metralhadora: segurar Z (ou o botão de tiro na tela de toque)
     frenteJog.set(0, 0, -1).applyQuaternion(aviao.quat);
     armas.cadencia -= dt;
-    if (apertada('KeyZ') && armas.cadencia <= 0) {
+    if ((apertada('KeyZ') || toque.atirando) && armas.cadencia <= 0) {
       armas.cadencia = 0.075;
       armas.lado = -armas.lado;
       // canhões nas raízes das asas, um de cada lado, convergindo na mira
@@ -2544,7 +4086,10 @@ h1 {
     camera.updateMatrixWorld();
     frenteJog.set(0, 0, -1).applyQuaternion(aviao.quat);
     const m = naTela(tmpA.copy(aviao.pos).addScaledVector(frenteJog, 1500));
-    elMira.hidden = !voando || m.atras;
+    elMira.hidden = !voando || m.atras || olhandoTras;
+    elOlhandoTras.hidden = !(olhandoTras && voando);
+    elToque.hidden = !(TOQUE && voando);
+    document.body.classList.toggle('voando', voando);
     if (!elMira.hidden) { elMira.style.left = m.x + 'px'; elMira.style.top = m.y + 'px'; }
 
     let k = 0, maisPerto = null, menorDist = Infinity;
@@ -2589,6 +4134,7 @@ h1 {
       if (cache.vidaBarra !== vida) { cache.vidaBarra = vida; elVidaNivel.style.transform = 'scaleX(' + vida / 100 + ')'; elVidaNivel.classList.toggle('baixa', vida <= 35); }
       escrever(elGuiados, 'guiados', armas.guiados + '/' + armas.maxGuiados);
       escrever(elFoguetes, 'foguetes', armas.foguetes + '/' + armas.maxFoguetes);
+      escrever(elFlares, 'flares', armas.flares + '/' + armas.maxFlares);
       escrever(elRestam, 'restam', String(inimigos.filter((i) => i.vivo).length + jogo.fila));
     }
     if (flashDano > 0) { flashDano = Math.max(0, flashDano - 0.04); elDano.style.opacity = flashDano * 0.55; }
@@ -2639,6 +4185,9 @@ h1 {
   let ultimo = 0;
   function quadro(agora) {
     requestAnimationFrame(quadro);
+    passoJogo(agora);
+  }
+  function passoJogo(agora) {
     const dtReal = Math.max(0, (agora - ultimo) / 1000);
     const dt = Math.min(0.05, dtReal);
     ultimo = agora;
@@ -2648,44 +4197,41 @@ h1 {
     else if (estado === 'batido') {
       tempoBatida -= dt;
       if (tempoBatida <= 0) recomecar();
-    } else if (estado === 'fim') {
-      simular(dt, false);
-      aviao.pos.y = Math.max(aviao.pos.y, alturaChao(aviao.pos.x, aviao.pos.z) + 2);
+    }
+    if (estado === 'inicio') {
+      // atrás da tela de início o caça não bate: sobe se chegar perto do chão
+      aviao.pos.y = Math.max(aviao.pos.y, superficie(aviao.pos.x, aviao.pos.z) + 250);
     }
 
-    const chaoAqui = alturaChao(aviao.pos.x, aviao.pos.z);
-    const bateuArvore = cenario === 'floresta'
+    const chaoAqui = superficie(aviao.pos.x, aviao.pos.z);
+    const bateuArvore = tipoCenario() === 'floresta'
       ? bateuArvoreFloresta(aviao.pos.x, aviao.pos.y, aviao.pos.z)
-      : atualizarArvores(aviao.pos.x, aviao.pos.y, aviao.pos.z);
+      : tipoCenario() === 'campos' && atualizarArvores(aviao.pos.x, aviao.pos.y, aviao.pos.z);
     if (estado === 'voando' && (aviao.pos.y < chaoAqui + 1.4 || bateuArvore)) baterAviao();
     if (estado !== 'pausado' && estado !== 'inicio') atualizarCombate(dt);
+    if (estado !== 'pausado') atualizarEfeitos(dt);
 
     atualizarNuvens(estado === 'pausado' ? 0 : dt, aviao.pos.x, aviao.pos.z);
     chao.position.set(aviao.pos.x, 0, aviao.pos.z);
 
-    const opacidade = clamp(0.55 * (1 - (aviao.pos.y - chaoAqui) / 140), 0, 0.55);
+    const opacidade = destruido ? 0 : clamp(0.55 * (1 - (aviao.pos.y - chaoAqui) / 140), 0, 0.55);
     sombra.visible = opacidade > 0.01;
     sombra.material.opacity = opacidade;
     sombra.position.set(aviao.pos.x, chaoAqui + 0.4, aviao.pos.z);
 
     // pós-combustão acima de 82% de motor: a chama cresce e tremula
     const pc = clamp((aviao.motor - 0.82) / 0.18, 0, 1);
-    const tremor = 0.9 + 0.1 * Math.sin(agora * 0.037) * Math.sin(agora * 0.023 + 1);
-    if (cacaAtual) {
-      for (const ch of cacaAtual.plumas) {
-        ch.visible = estado !== 'batido' && pc > 0.01;
-        ch.scale.z = (0.8 + cacaAtual.config.comprimento * 0.42 * pc) * tremor;
-        ch.material.opacity = 0.35 + 0.35 * pc;
-      }
-    }
+    if (cacaAtual) atualizarChamas(cacaAtual.plumas, destruido ? 0 : pc, agora, cacaAtual.config.comprimento);
 
     aviaoModelo.position.copy(aviao.pos);
     aviaoModelo.quaternion.copy(aviao.quat);
     atualizarCamera(dt);
-    if (cenario === 'floresta') atualizarFloresta(dtReal);
+    if (tipoCenario() === 'floresta') atualizarFloresta(dtReal);
+    if (tipoCenario() === 'ilha') atualizarIlha(estado === 'pausado' ? 0 : dt);
     ceu.position.copy(camera.position);
     atualizarInstrumentos();
     desenharHUDCombate();
+    atualizarToque();
     atualizarSonsVoo();
 
     if (tempoMsg > 0) {
@@ -2722,7 +4268,7 @@ h1 {
       if (CACAS[dados.caca]) cacaEscolhido = dados.caca;
       const pref = lerPreferencias();
       const cen = dados.cenario || pref.cenario;
-      if (cen === 'floresta' || cen === 'campos') cenarioEscolhido = cen;
+      if (CENARIOS[cen]) cenarioEscolhido = cen;
       const ce = dados.ceu || pref.ceu;
       if (CEUS[ce]) ceuEscolhido = ce;
       if (dados.voando) {
@@ -2737,7 +4283,7 @@ h1 {
     camQuat.copy(aviao.quat);
     escolherCaca(cacaEscolhido);
     escolherCeu(ceuEscolhido);
-    escolherCenario(cenarioEscolhido).catch(() => { elCargaTexto.textContent = 'Não deu para carregar a floresta. Confira a internet e tente de novo.'; });
+    escolherCenario(cenarioEscolhido).catch(() => { elCargaTexto.textContent = 'Não deu para carregar o cenário. Confira a internet e tente de novo.'; });
     redimensionar();
     ultimo = performance.now();
     requestAnimationFrame(quadro);
@@ -2747,9 +4293,50 @@ h1 {
     // tempo de desenho de um quadro (ms), medido esperando a placa de vídeo terminar
     medirDesenho: (n) => { const gl = renderer.getContext(); renderer.render(scene, camera); gl.finish(); const t0 = performance.now(); for (let i = 0; i < n; i++) renderer.render(scene, camera); gl.finish(); return +((performance.now() - t0) / n).toFixed(2); },
     triangulos: () => renderer.info.render.triangles,
+    superficie: (x, z) => superficie(x, z),
+    efeitos: () => ({ fumaca: fumacas.lista.length, brilho: brilhos.lista.length, pedacos: pedacos.length, focos: focos.length, flares: flares.length, explosoes: explosoesGrandes.filter((e) => e.malha.visible).length }),
+    impostores: () => (imp.malha ? { quadros: imp.malha.geometry.instanceCount, raio: imp.raio, raioIn: Math.round(imp.malha.material.uniforms.raioIn.value) } : null),
+    construcoes: () => construcoes.ativas.map((a) => ({ x: a.x, y: a.y, z: a.z })),
     alerta: () => ({ hud: !elAlertaMissil.hidden, som: !!sonsVoo.alerta, motor: !!sonsVoo.motor, posc: !!sonsVoo.posc, perseguindo: misseisContraMim() }),
     // inclinação das asas e do nariz, em graus
     atitude: () => { const d = new THREE.Vector3(1, 0, 0).applyQuaternion(aviao.quat), c = new THREE.Vector3(0, 1, 0).applyQuaternion(aviao.quat), f = new THREE.Vector3(0, 0, -1).applyQuaternion(aviao.quat); return { asas: Math.round(THREE.MathUtils.radToDeg(Math.atan2(d.y, c.y))), nariz: Math.round(THREE.MathUtils.radToDeg(Math.asin(f.y))) }; } };
+
+  // Atalhos para conferir os efeitos durante o desenvolvimento (só existem rodando no próprio computador)
+  if (['localhost', '127.0.0.1'].includes(location.hostname)) window.__vooTeste = {
+    ir: (x, y, z, rumo) => { aviao.pos.set(x, y, z); if (rumo !== undefined) aviao.quat.setFromAxisAngle(EIXO_Y, -THREE.MathUtils.degToRad(rumo)); camQuat.copy(aviao.quat); },
+    aFrente: (d) => { frente.set(0, 0, -1).applyQuaternion(aviao.quat); return aviao.pos.clone().addScaledVector(frente, d); },
+    explosaoAr: (d) => explosaoAr(window.__vooTeste.aFrente(d || 300), new THREE.Vector3(), 1),
+    construcoes: () => construcoes.ativas.length,
+    grupoConstrucoes: () => construcoes.grupo.children.map((o) => { const b = new THREE.Box3().setFromObject(o); let n = 0; o.traverse((x) => { if (x.isMesh) n++; }); return { pos: o.position.toArray().map(Math.round), malhas: n, min: b.min.toArray().map(Math.round), max: b.max.toArray().map(Math.round), vis: o.visible, noCena: !!o.parent && o.parent.parent === scene }; }),
+    cartao: (d, tipo, tam, fps) => explosaoCartao(window.__vooTeste.aFrente(d || 400), tipo, tam || 100, fps || 13),
+    infoCartoes: () => explosoesGrandes.filter((e) => e.malha.visible).map((e) => ({ q: +e.q.toFixed(1), alfa: +e.malha.material.uniforms.alfa.value.toFixed(2), tam: e.malha.scale.x, pos: e.malha.position.toArray().map(Math.round), tex: !!(e.malha.material.uniforms.mapa.value && e.malha.material.uniforms.mapa.value.image) })),
+    explosaoChao: (d) => { const p = window.__vooTeste.aFrente(d || 500); p.y = superficie(p.x, p.z); explosaoChao(p, new THREE.Vector3(), 1); },
+    respingo: (d) => { const p = window.__vooTeste.aFrente(d || 500); respingo(p, 1); },
+    flares: () => soltarFlares(aviao),
+    missilInimigo: () => { if (!inimigos.length) criarInimigo(1); if (inimigos[0]) lancarMissilInimigo(inimigos[0]); return misseis.length; },
+    motor: (m) => { aviao.motor = m; },
+    decolar: () => { iniciar(); return estado; },
+    continuar: () => { continuar(); return estado; },
+    tras: (v) => { toque.tras = v; },
+    misseisInfo: () => misseis.map((m) => ({ inimigo: m.inimigo, rastreando: m.rastreando, isca: !!m.salvaIsca, d: Math.round(m.pos.distanceTo(aviao.pos)) })),
+    mensagem: () => elMsg.textContent,
+    modo: (m) => { modo = m; },
+    cenario: (id) => escolherCenario(id),
+    // avança o jogo sem depender da tela estar à vista e tira uma foto (salva pelo servidor de teste)
+    avancar: (seg, fps) => { fps = fps || 60; for (let i = 0; i < seg * fps; i++) passoJogo(ultimo + 1000 / fps); return estado; },
+    // avança os efeitos com o avião parado no mesmo lugar
+    esperar: (seg) => { const p = aviao.pos.clone(), q = aviao.quat.clone(); for (let i = 0; i < seg * 60; i++) { passoJogo(ultimo + 1000 / 60); aviao.pos.copy(p); aviao.quat.copy(q); aviao.vel = 200; } return estado; },
+    foto: (nome, larg) => {
+      larg = larg || 960;
+      renderer.setSize(larg, Math.round(larg * 0.5625), false);
+      camera.aspect = 16 / 9;
+      camera.updateProjectionMatrix();
+      renderer.render(scene, camera);
+      const url = canvas.toDataURL('image/jpeg', 0.82);
+      redimensionar();
+      return fetch('/__foto?nome=' + encodeURIComponent(nome || 'foto'), { method: 'POST', body: url }).then((r) => r.status);
+    },
+  };
 
   window.claude?.hot?.ready ? window.claude.hot.ready(comecar) : comecar(window.claude?.hot?.data ?? {});
 })();
