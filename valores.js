@@ -7,7 +7,7 @@ window.VOO_TABELA = (() => {
   const CHAVE = 'voo-ajustes';
   const MODOS = [
     { id: 'sobrevivencia', nome: 'Sobrevivência', niveis: 15 },
-    { id: 'equipe', nome: 'Mata-mata 500a0×00a05', niveis: 1 },
+    { id: 'equipe', nome: 'Mata-mata 5 × 5', niveis: 1 },
     { id: 'livre', nome: 'Voo livre', niveis: 1 },
   ];
   const COMBATE = ['sobrevivencia', 'equipe'];
