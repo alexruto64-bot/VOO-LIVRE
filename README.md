@@ -162,7 +162,7 @@ As fotos ficam em `ceu/`, cortadas do topo até um pouco abaixo do horizonte, em
 
 ## Armas
 
-- **Metralhadora** (Z): tiros infinitos, 13 por segundo. Atirando, a câmera dá um zoom de 50%. Fique atrás de um
+- **Metralhadora** (Z): tiros infinitos, 13 por segundo, que saem 3.420 km/h mais rápidos que o caça. Atirando, a câmera dá um zoom de 50%. Fique atrás de um
   inimigo, a até 2.500 m, com a cruz da mira em cima dele por 1,25 segundo: o anel laranja se fecha, a mira trava e o caça
   segue o inimigo sozinho.
 - **Míssil guiado** (Espaço): 4 por vez. Só lança com alvo travado: o inimigo precisa ficar 1,2 segundo dentro do círculo

@@ -61,6 +61,7 @@ window.VOO_TABELA = (() => {
     ] },
     { id: 'tiro', titulo: 'Tiro', itens: [
       v('tirosPorSegundo', 'Tiros por segundo', '', 13.3, 1, 40),
+      v('tiroVel', 'Velocidade do tiro', 'km/h', 3420, 500, 12000, 'É somada à velocidade do caça que atira'),
       soCombate(v('danoTiro', 'Dano por tiro', '%', 1.5, 0.1, 50)),
       v('tiroVoo', 'Tempo de voo dos tiros', 's', 3.2, 0.5, 10),
       v('zoomTiro', 'Zoom ao atirar', '%', 50, 0, 150),

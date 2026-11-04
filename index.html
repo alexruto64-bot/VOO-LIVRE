@@ -665,7 +665,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     <div class="capa-carga" id="capa-carga"><div class="carga" aria-hidden="true"><span id="capa-barra"></span></div><p id="capa-texto">Carregando…</p></div>
     <p class="capa-comecar"><span class="so-teclado">Aperte qualquer tecla</span><span class="so-toque">Toque para começar</span></p>
   </div>
-  <p class="capa-versao">Versão 7.6</p>
+  <p class="capa-versao">Versão 7.7</p>
 </div>
 
 <div class="capa-arte fundo-menu" id="fundo-menu" hidden aria-hidden="true"></div>
@@ -686,7 +686,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     <div class="menu-rodape">
       <p class="menu-recorde" id="menu-recorde" hidden></p>
       <p class="menu-versao" id="menu-ajustes" hidden>Com valores mudados na tabela de ajustes</p>
-      <p class="menu-versao">Versão 7.6</p>
+      <p class="menu-versao">Versão 7.7</p>
     </div>
   </div>
 </div>
@@ -905,7 +905,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
 
 <script src="js/three.min.js"></script>
 <script src="js/GLTFLoader.js"></script>
-<script src="valores.js?v=7.6.1"></script>
+<script src="valores.js?v=7.7"></script>
 <script>
 (() => {
   'use strict';
@@ -924,6 +924,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
   // quanto o manche gira o caça (rad/s): até a velocidade normal e na máxima
   let GIRO_ARFAGEM, GIRO_ARFAGEM_MAX, GIRO_ROLAGEM, GIRO_ROLAGEM_MAX;
   let CADENCIA, DANO_TIRO, DANO_GUIADO, DANO_FOGUETE;   // segundos entre dois tiros da metralhadora e o dano de cada arma
+  let VEL_TIRO;                            // m/s: somada à velocidade de quem atira
   let TEMPO_TRAVA;                         // metralhadora: segundos atrás do inimigo, com a mira em cima dele, para a mira travar
   // míssil guiado: o inimigo precisa ficar um tempo dentro do círculo tracejado, até uma distância. raio: o do círculo, em
   // partes da altura da tela (a largura em cm é a de uma tela de 7 cm de altura); com um inimigo dentro, ele cresce (raioComAlvo)
@@ -959,6 +960,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     GIRO_ROLAGEM_MAX = V.rolagemMaxima * RAD;
     CADENCIA = 1 / V.tirosPorSegundo;
     DANO_TIRO = V.danoTiro;
+    VEL_TIRO = V.tiroVel / 3.6;
     DANO_GUIADO = V.missilDano;
     DANO_FOGUETE = V.fogueteDano;
     TEMPO_TRAVA = V.miraTempo;
@@ -4786,7 +4788,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     if (!t) return;
     t.pos.copy(pos);
     t.ant.copy(pos);
-    t.vel.copy(dir).multiplyScalar(velBase + 950);
+    t.vel.copy(dir).multiplyScalar(velBase + VEL_TIRO);
     t.vel.x += (Math.random() - 0.5) * espalhar;
     t.vel.y += (Math.random() - 0.5) * espalhar;
     t.vel.z += (Math.random() - 0.5) * espalhar;
@@ -5873,7 +5875,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       dist = iPara.length();
       iPara.divideScalar(dist || 1);
       // mira onde o alvo vai estar quando os tiros chegarem (os mais hábeis fazem a conta melhor)
-      const t = Math.min(2, dist / (ini.vel + 950)) * ini.dif.lead;
+      const t = Math.min(2, dist / (ini.vel + VEL_TIRO)) * ini.dif.lead;
       iMira.set(0, 0, -1).applyQuaternion(alvo.quat).multiplyScalar(alvo.vel * t).add(alvo.pos);
       // alvo em curva sai da reta: a mudança da velocidade dele dá quanto (os mais hábeis contam com isso)
       iTmp.set(0, 0, -1).applyQuaternion(alvo.quat).multiplyScalar(alvo.vel);
@@ -6459,7 +6461,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
   }
   // onde os tiros encontram um caça: um pouco à frente dele, conforme a distância
   function pontoDeTiro(ini, destino) {
-    return destino.set(0, 0, -1).applyQuaternion(ini.quat).multiplyScalar(ini.vel * ini.pos.distanceTo(aviao.pos) / (aviao.vel + 950)).add(ini.pos);
+    return destino.set(0, 0, -1).applyQuaternion(ini.quat).multiplyScalar(ini.vel * ini.pos.distanceTo(aviao.pos) / (aviao.vel + VEL_TIRO)).add(ini.pos);
   }
   // bipe curto (trava completa)
   function bipe(freq, dur, ganho, atraso) {
@@ -6823,7 +6825,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
 
   // tudo o que o jogo carrega neste aparelho (a página e o manifesto o próprio service worker já guarda)
   function arquivosDoJogo() {
-    const l = ['js/three.min.js', 'js/GLTFLoader.js', 'valores.js?v=7.6.1', 'icones/icone-192.png', 'icones/icone-512.png'];
+    const l = ['js/three.min.js', 'js/GLTFLoader.js', 'valores.js?v=7.7', 'icones/icone-192.png', 'icones/icone-512.png'];
     for (const id in CACAS) l.push(CACAS[id].arquivo, 'modelos/' + id + '.jpg');
     for (const n of ['floresta.json', 'floresta.glb', 'chao.jpg', 'chao_relevo.jpg', 'arvores.webp', 'casca.jpg']) l.push('cenarios/floresta/' + n);
     for (const id in CENARIOS) {
