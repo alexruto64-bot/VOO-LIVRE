@@ -46,7 +46,7 @@ Os arquivos ficam em `modelos/` (formato glTF binário, `.glb`) e são carregado
 
 **Fogo dos motores:** refeito com a receita do material de fogo do F-16C no Blender: uma bola de fogo amassada saindo
 do bocal, com ruído que muda o tempo todo, laranja-avermelhada e quase branca onde é mais densa, e um brilho em volta.
-Aparece fraca a partir de 55% de motor e cresce na pós-combustão (acima de 82%). Inimigos e mísseis usam o mesmo fogo.
+Aparece fraca na velocidade normal e cresce quando você acelera. Inimigos e mísseis usam o mesmo fogo.
 
 ## Cenários
 
@@ -141,27 +141,37 @@ As fotos ficam em `ceu/`, cortadas do topo até um pouco abaixo do horizonte, em
 - Um caça que bate no chão ou num prédio dá os pontos que faltavam para quem o atacou por último ou, se ninguém, para
   quem ele perseguia: fugir rente aos obstáculos derruba quem vem atrás.
 - **Mísseis inimigos:** um caça do computador que fica 2 s atrás de você, com você na frente do nariz, lança um míssil
-  guiado. Toca um bipe e aparece o aviso MÍSSIL. O míssil é um pouco mais lento que o caça a toda e curva menos: uma
-  curva bem fechada no último segundo faz ele passar direto, e os flares enganam.
+  guiado. Toca um bipe e aparece o aviso MÍSSIL, com a distância. O míssil voa a uns 3.400 km/h, mais que o caça a toda,
+  e curva menos: uma curva bem fechada no último segundo faz ele passar direto, acelerar em linha reta ganha tempo e os
+  flares enganam, com as regras abaixo.
 
 ## Armas
 
-- **Metralhadora** (Z): tiros infinitos, 13 por segundo. Fique atrás de um inimigo com a mira em cima dele por 2
-  segundos: o anel laranja em volta da mira se fecha, a mira trava e o caça ajuda a seguir o inimigo.
-- **Míssil guiado** (Espaço): 4 por vez. Precisa de alvo travado: aponte o nariz para um inimigo (até uns 25° para o lado
-  e 5 km) e em menos de 1 segundo a caixa dele fica vermelha e redonda. Trava de longe, sem precisar estar atrás dele.
-  Um míssil novo volta a cada 20 s.
+- **Metralhadora** (Z): tiros infinitos, 13 por segundo. Atirando, a câmera dá um zoom de 30%. Fique atrás de um
+  inimigo, a até 1.667 m, com a cruz da mira em cima dele por 2 segundos: o anel laranja se fecha, a mira trava e o caça
+  segue o inimigo sozinho.
+- **Míssil guiado** (Espaço): 4 por vez. Só lança com alvo travado: o inimigo precisa ficar 1,5 segundo dentro do círculo
+  tracejado (uns 14° em volta da cruz), a até 5 km. Aí o círculo e a caixa dele ficam vermelhos. Se ele sair do círculo,
+  a trava cai. Um míssil novo volta a cada 20 s.
 - **Foguete** (X): 12 por vez, voa reto. Um foguete novo volta a cada 6 s.
-- **Flares** (F): solta uma salva de 6 chamarizes de calor atrás do avião. Cada míssil que vem atrás de você tem 85% de
-  chance de ir atrás dos flares e estourar neles. São 5 salvas; uma nova volta a cada 12 s. Os inimigos também soltam
+- **Flares** (F): solta uma salva de 6 chamarizes de calor atrás do avião. Só funcionam com o míssil a menos de 1,5 km:
+  cada míssil perto tem 45% de chance de ir atrás deles com o caça em linha reta e 80% em curva fechada (manche mais que
+  meio puxado). Entre duas salvas há 3 s de espera. São 5 salvas; uma nova volta a cada 12 s. Os inimigos também soltam
   flares contra os seus mísseis (mais nos níveis altos).
 
-Na tela: a mira (um círculo pequeno com cruz) mostra para onde o nariz aponta. Ela é azul e fica vermelha quando há um
-inimigo embaixo dela, para acertar a metralhadora. As caixas azuis marcam os inimigos com a distância e a vida; com o
-míssil travado, a caixa fica vermelha e redonda. Com a mira travada (2 s atrás do inimigo, o anel laranja fechado), o
-caça ajuda a metralhadora: o nariz segue o inimigo, até uns 30° por segundo; as curvas fortes ainda são suas. Se o
-inimigo escapa demais da mira ou fica de lado, a trava solta e é preciso segui-lo de novo. A seta na borda aponta para o
-inimigo mais perto quando ele está fora da tela.
+No mata-mata, quem cai volta na base com todas as armas e o tanque cheios.
+
+Na tela: a mira é uma cruz pequena que mostra para onde o nariz aponta e fica vermelha quando há um inimigo embaixo dela.
+Em volta dela fica o círculo tracejado do míssil: verde, laranja travando e vermelho travado. À esquerda do círculo fica
+a velocidade; à direita, a gasolina. As caixas azuis marcam os inimigos com a distância e a vida; com o míssil travado, a
+caixa fica vermelha e redonda. Com a mira travada (2 s atrás do inimigo, o anel laranja fechado), a assistência leva o
+nariz até o ponto onde os tiros vão encontrar o inimigo, até 86° por segundo. Para sair, puxe o manche para o lado
+contrário. A trava também solta se o nariz desvia mais de 17° desse ponto, se o inimigo fica de lado ou passa de 1.917 m.
+A seta na borda aponta para o inimigo mais perto quando ele está fora da tela.
+
+**Radar:** no canto de cima, à esquerda, nos combates. Você é o triângulo branco no centro, com a frente do caça para
+cima; vermelho é inimigo, verde é companheiro, e cada triângulo aponta para onde aquele caça voa. O círculo de dentro
+marca 5 km, o alcance do míssil; quem está a mais de 10 km fica na borda, mais apagado.
 
 ## Explosões
 
@@ -176,8 +186,8 @@ inimigo mais perto quando ele está fora da tela.
 
 Os sons ficam em `SONS/`.
 
-- **Motor:** ronco de turbina em repetição, mais agudo e mais alto com o motor e a velocidade. Acima de 82% entra o
-  ronco da pós-combustão.
+- **Motor:** ronco de turbina em repetição, mais agudo e mais alto com a velocidade. Acelerando, entra o ronco da
+  pós-combustão.
 - **Armas:** disparo do canhão (os tiros dos inimigos também soam, mais longe e do lado de onde vêm), lançamento de
   míssil (estouro, ronco do motor e o míssil indo embora) e flares.
 - **Míssil inimigo:** o ronco do motor dele fica mais alto e mais agudo conforme chega perto, e passa zunindo quando
@@ -217,7 +227,7 @@ editadas para tocar em loop e com o volume igualado:
 | ↓ ↑       | Puxar / empurrar o manche (nariz sobe / desce) |
 | ← →       | Inclinar as asas. Para curvar, incline e puxe |
 | A D       | Leme: vira o nariz de lado                  |
-| W S       | Mais motor / menos motor                    |
+| W S       | Segure: W acelera (gasta gasolina), S freia |
 | Z         | Metralhadora                                |
 | Espaço    | Míssil guiado                               |
 | X         | Foguete                                     |
@@ -235,12 +245,13 @@ O jogo é só na horizontal: com o celular em pé ele pausa e pede para deitar o
 
 - **Lado esquerdo:** encoste e arraste para pilotar. O manche aparece onde o dedo encostou; para baixo o nariz sobe,
   para os lados inclina as asas.
-- **Lado direito:** a barra do motor (arraste para cima e para baixo) e os botões de tiro (segure), míssil, foguete e
-  flares, com a quantidade que sobra de cada um.
+- **Lado direito:** os botões de acelerar e frear (segure, um em cima do outro), tiro (segure), míssil, foguete e flares,
+  com a quantidade que sobra de cada um.
 - **Em cima:** olhar para trás (segure), trocar câmera e pausar.
 
 Os botões têm ícones (as quantidades de míssil, foguete e flares aparecem embaixo de cada um). As mensagens e os avisos
-aparecem embaixo do avião, à esquerda dos botões, para não tapar a vista. Não há painel de velocidade e altitude.
+aparecem embaixo do avião, à esquerda dos botões, para não tapar a vista. A velocidade e a gasolina ficam dos lados do
+círculo da mira.
 
 No celular os gráficos começam no médio (texturas menores, menos árvores e um alcance menor das texturas do chão), para
 rodar liso; dá para trocar em Configurações. Os caças do computador, de longe (mais de 700 m), viram uma silhueta
@@ -261,16 +272,20 @@ resto vem da cópia guardada, e o que o jogo carregar com internet também fica 
 
 ## Como o voo funciona
 
-- **Velocidade:** o motor empurra e o ar segura. Só no motor o caça chega a uns 1.100 km/h; com pós-combustão
-  (acima de 82%) passa de 1.900 km/h. Subir gasta velocidade, mergulhar ganha.
+- **Velocidade:** sem acelerar nem frear, o caça fica nos 1.500 km/h (subindo perde um pouco, mergulhando ganha).
+  Acelerar (W ou o botão de cima) leva a 2.500 km/h em uns 4,5 s. Frear (S ou o botão de baixo) não gasta nada: o caça cai
+  rápido até 250 km/h e, segurando, fica nisso.
+- **Gasolina:** o tanque cheio dura 15 s de acelerador apertado. Solto, ele enche 5% por segundo (20 s do zero ao cheio),
+  então dá para usar um pouco mesmo sem esperar encher. Se acabar com o botão apertado, é preciso soltar para acelerar de
+  novo com o que voltou.
 - **Curva:** como num caça de verdade, inclinar as asas sozinho não vira. Incline (← →) e puxe o manche (↓): quanto
-  mais inclinado, mais a puxada vira o nariz. O manche (↑ ↓) gira o nariz rápido (o dobro da versão 4), e em alta
-  velocidade a curva continua mais larga.
+  mais inclinado, mais a puxada vira o nariz. O manche (↑ ↓) gira o nariz uns 46° por segundo até 1.500 km/h (mais rápido
+  se estiver devagar); daí até 2.500 km/h o caça vai ficando pesado, até 18° por segundo.
 - **Sem piloto automático:** o caça fica na posição em que você deixou. Inclinado, de faca ou de cabeça para baixo, ele
   continua assim até você mexer de novo; as asas não voltam sozinhas ao nível.
-- **Estol:** abaixo de 216 km/h as asas perdem sustentação. O nariz cai e aparece o aviso ESTOL até o caça ganhar
-  velocidade de novo.
-- **Teto:** acima de 12.000 m o ar fica rarefeito e o motor perde força.
+- **Estol:** abaixo de 270 km/h as asas perdem sustentação. O nariz cai aos poucos, o caça afunda e aparece o aviso
+  ESTOL até ganhar velocidade de novo. Segurando o freio até os 250 km/h, ele estola: é só soltar o freio e baixar o nariz.
+- **Teto:** acima de 12.000 m o ar fica rarefeito e o caça perde velocidade.
 - **Batida:** bater no chão, numa árvore, numa construção ou na água explode o caça (ou faz o respingo). No voo livre o
   voo recomeça sozinho; na sobrevivência, acaba o voo; no mata-mata, você volta na base da equipe.
 
