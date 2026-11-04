@@ -11,9 +11,11 @@ sem internet.
 
 ## Menu e configurações
 
-O jogo abre na capa: uma cena do próprio jogo (um F-14 em pós-combustão entre os prédios da cidade ao entardecer, com um
-caça inimigo explodindo na frente do sol), em `texturas/capa.jpg` (`capa_peq.jpg` em telas pequenas). Um toque ou uma
-tecla leva ao menu principal, com o caça voando atrás e a câmera passeando em volta dele:
+O jogo abre na capa: uma arte feita por inteligência artificial, com uma cidade à beira-mar e o céu laranja do pôr do sol,
+em `texturas/capa_cidade.jpg` (`capa_cidade_peq.jpg` em telas pequenas). Foi gerada com o
+[FLUX.1 schnell](https://huggingface.co/black-forest-labs/FLUX.1-schnell), da Black Forest Labs (licença Apache 2.0), e
+o céu foi esquentado depois. Um toque ou uma tecla leva ao menu principal, com a mesma arte atrás. Na tela Jogar aparecem
+o caça e o cenário escolhidos, com a câmera passeando em volta dele:
 
 - **Jogar:** modo, caça, cenário (com miniaturas, `cenarios/*_mini.jpg`) e céu, e o botão Decolar. As escolhas ficam
   guardadas no navegador.
@@ -121,10 +123,10 @@ As fotos ficam em `ceu/`, cortadas do topo até um pouco abaixo do horizonte, em
 ## Modos
 
 - **Voo livre:** só você, o caça e o céu.
-- **Sobrevivência:** só você contra ondas de caças inimigos, até acabar a vida. O nível 1 tem 2 caças lentos, que
-  curvam pouco, atiram mal e não lançam mísseis; cada nível traz um caça a mais (até 8), mais rápidos, que curvam mais
-  apertado, atiram melhor, antecipam para onde você vai, fogem de quem está atrás deles e soltam flares. Mísseis
-  guiados só a partir do nível 3. Ao passar de nível o casco ganha um conserto de 25%.
+- **Sobrevivência:** só você contra ondas de caças inimigos, até acabar a vida. Os caças são iguais ao seu; o que muda é o
+  piloto. No nível 1 são 2 caças com pilotos fracos, que usam 60% da curva, atiram pouco e demoram a lançar mísseis; cada
+  nível traz um caça a mais (até 8), com pilotos que curvam mais apertado, atiram melhor, antecipam para onde você vai,
+  fogem de quem está atrás deles e usam mais os flares. Ao passar de nível o casco ganha um conserto de 25%.
 - **Mata-mata 5 × 5:** a sua equipe (você e mais 4 caças do computador, a equipe 1) contra outra de 5, por 5 minutos.
   Cada equipe nasce de um lado do mapa; quem cai volta na base da equipe uns segundos depois. Ganha a equipe com mais
   pontos (a soma dos pontos dos pilotos). No fim aparece o placar das duas equipes, do melhor para o pior; os 3
@@ -140,10 +142,10 @@ As fotos ficam em `ceu/`, cortadas do topo até um pouco abaixo do horizonte, em
   sozinho, sem ninguém mais ter acertado nele, ganha mais 30 pontos.
 - Um caça que bate no chão ou num prédio dá os pontos que faltavam para quem o atacou por último ou, se ninguém, para
   quem ele perseguia: fugir rente aos obstáculos derruba quem vem atrás.
-- **Mísseis inimigos:** um caça do computador que fica 2 s atrás de você, com você na frente do nariz, lança um míssil
-  guiado. Toca um bipe e aparece o aviso MÍSSIL, com a distância. O míssil voa a uns 3.400 km/h, mais que o caça a toda,
-  e curva menos: uma curva bem fechada no último segundo faz ele passar direto, acelerar em linha reta ganha tempo e os
-  flares enganam, com as regras abaixo.
+- **Caças do computador:** são iguais ao seu: mesma velocidade, gasolina, curva, travas, armas e munição. Um caça do
+  computador que deixa você 1,5 s dentro do círculo dele, a até 5 km, lança um míssil guiado. Toca um bipe e aparece o
+  aviso MÍSSIL, com a distância. Uma curva bem fechada no último segundo faz o míssil passar direto, e os flares enganam,
+  com as regras abaixo. Os caças do computador também lançam foguetes e, atrás de você, travam a mira como você trava.
 
 ## Armas
 
@@ -152,12 +154,13 @@ As fotos ficam em `ceu/`, cortadas do topo até um pouco abaixo do horizonte, em
   segue o inimigo sozinho.
 - **Míssil guiado** (Espaço): 4 por vez. Só lança com alvo travado: o inimigo precisa ficar 1,5 segundo dentro do círculo
   tracejado (uns 14° em volta da cruz), a até 5 km. Aí o círculo e a caixa dele ficam vermelhos. Se ele sair do círculo,
-  a trava cai. Um míssil novo volta a cada 20 s.
-- **Foguete** (X): 12 por vez, voa reto. Um foguete novo volta a cada 6 s.
+  a trava cai. Voa a 4.000 km/h e curva 115° por segundo; se o alvo sai da frente dele, perde a trava e segue reto. Um míssil
+  novo volta a cada 20 s.
+- **Foguete** (X): 12 por vez, voa reto, a 4.000 km/h. Um foguete novo volta a cada 6 s.
 - **Flares** (F): solta uma salva de 6 chamarizes de calor atrás do avião. Só funcionam com o míssil a menos de 1,5 km:
   cada míssil perto tem 45% de chance de ir atrás deles com o caça em linha reta e 80% em curva fechada (manche mais que
-  meio puxado). Entre duas salvas há 3 s de espera. São 5 salvas; uma nova volta a cada 12 s. Os inimigos também soltam
-  flares contra os seus mísseis (mais nos níveis altos).
+  meio puxado). Entre duas salvas há 3 s de espera. São 3 salvas e elas não voltam sozinhas: acabando, só quando você cair
+  e renascer no mata-mata (na sobrevivência, no próximo voo). Os inimigos seguem as mesmas regras.
 
 No mata-mata, quem cai volta na base com todas as armas e o tanque cheios.
 
