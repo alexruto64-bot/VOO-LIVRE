@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tabela de ajustes · Voo Livre</title>
+<meta name="description" content="Todos os valores do Voo Livre, separados por jogo, por nível e por categoria.">
+<meta name="theme-color" content="#0a0f17">
+<link rel="icon" href="icones/icone-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=B612:wght@400;700&family=B612+Mono:wght@400;700&family=Teko:wght@500;600;700&display=swap">
+<style>
+/* Tabela de ajustes: mesma cara da capa do jogo, feita para usar no celular */
+:root {
+  --fundo: #0a0f17;
+  --cartao: #151e2b;
+  --cartao-claro: #1d2938;
+  --borda: rgba(255, 196, 128, 0.16);
+  --linha: rgba(255, 255, 255, 0.07);
+  --texto: #f3f1ec;
+  --suave: #a9b3bf;
+  --laranja: #ffab45;
+  --tinta-laranja: #1b1006;
+  --ciano: #74e0ff;
+  --campo: rgba(5, 10, 17, 0.72);
+  --erro: #ff9a86;
+  --fonte-rotulo: "B612", "Segoe UI", system-ui, sans-serif;
+  --fonte-numero: "B612 Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --fonte-titulo: "Teko", "Arial Narrow", Impact, sans-serif;
+  --largura: 880px;
+  --lado: max(14px, env(safe-area-inset-left, 0px));
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--fundo); color: var(--texto); font: 400 15px/1.45 var(--fonte-rotulo); padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--ciano); outline-offset: 2px; }
+.dentro { width: min(var(--largura), 100%); margin-left: auto; margin-right: auto; padding-left: var(--lado); padding-right: var(--lado); }
+
+.topo { position: relative; min-height: clamp(170px, 30vw, 300px); display: flex; align-items: flex-end; overflow: hidden; }
+.topo::before { content: ""; position: absolute; inset: 0; background: url("texturas/capa_cidade_peq.jpg") 70% 40% / cover no-repeat; }
+.topo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, var(--fundo) 0%, rgba(10, 15, 23, 0.62) 42%, rgba(10, 15, 23, 0.12) 100%), linear-gradient(90deg, rgba(10, 15, 23, 0.72) 0%, rgba(10, 15, 23, 0) 62%); }
+.topo .dentro { position: relative; z-index: 1; padding-bottom: 8px; }
+.jogo-nome { margin: 0; font: 600 20px/1 var(--fonte-titulo); letter-spacing: 0.3em; text-transform: uppercase; color: var(--laranja); }
+h1 { margin: 2px 0 4px; font: 700 clamp(42px, 9vw, 66px)/0.95 var(--fonte-titulo); letter-spacing: 0.01em; text-transform: uppercase; text-wrap: balance; }
+.sub { margin: 0; max-width: 58ch; color: #d8dde3; text-wrap: pretty; }
+
+.jogos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding-top: 12px; }
+.aba { min-height: 58px; padding: 6px 8px; border: 1px solid var(--borda); border-radius: 8px; background: var(--cartao); font: 600 clamp(19px, 4.4vw, 26px)/1 var(--fonte-titulo); letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer; }
+.aba:hover { border-color: var(--laranja); }
+.aba[aria-pressed="true"] { border-color: var(--laranja); background: var(--laranja); color: var(--tinta-laranja); }
+
+.niveis { margin-top: 12px; }
+.titulo-nivel { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; margin: 0 0 8px; }
+.titulo-nivel h2 { margin: 0; font: 600 28px/1 var(--fonte-titulo); letter-spacing: 0.06em; text-transform: uppercase; color: var(--laranja); }
+.titulo-nivel p { margin: 0; font-size: 13px; color: var(--suave); }
+.lista-niveis { display: grid; grid-template-columns: repeat(15, 1fr); gap: 5px; }
+.nivel { position: relative; min-height: 44px; padding: 0; border: 1px solid var(--linha); border-radius: 7px; background: var(--cartao); font: 700 16px/1 var(--fonte-numero); cursor: pointer; }
+.nivel:hover { border-color: var(--laranja); }
+.nivel[aria-pressed="true"] { border-color: var(--laranja); background: var(--laranja); color: var(--tinta-laranja); }
+.nivel.mudou::after { content: ""; position: absolute; top: 5px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: var(--laranja); }
+.nivel.mudou[aria-pressed="true"]::after { background: var(--tinta-laranja); }
+.alcance { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 10px; }
+.alcance span { font-size: 13px; color: var(--suave); }
+.opcao { min-height: 40px; padding: 0 12px; border: 1px solid var(--linha); border-radius: 7px; background: transparent; font-size: 13.5px; cursor: pointer; }
+.opcao:hover { border-color: var(--laranja); }
+.opcao[aria-pressed="true"] { border-color: var(--laranja); color: var(--laranja); font-weight: 700; }
+
+.faixa-categorias { position: sticky; top: 0; z-index: 2; margin-top: 12px; background: rgba(10, 15, 23, 0.94); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border-bottom: 1px solid var(--linha); }
+.categorias { display: flex; flex-wrap: wrap; gap: 6px; padding-top: 8px; padding-bottom: 8px; }
+.categoria { flex: none; display: inline-flex; align-items: center; gap: 7px; min-height: 42px; padding: 0 13px; border: 1px solid var(--linha); border-radius: 21px; background: var(--cartao); font: 600 20px/1 var(--fonte-titulo); letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap; cursor: pointer; }
+.categoria:hover { border-color: var(--laranja); }
+.categoria[aria-pressed="true"] { border-color: var(--ciano); background: var(--ciano); color: #06222c; }
+.categoria b { display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 10px; background: var(--laranja); color: var(--tinta-laranja); font: 700 12px/1 var(--fonte-numero); }
+
+main { padding-top: 12px; }
+.grupo { background: var(--cartao); border: 1px solid var(--borda); border-radius: 10px; overflow: hidden; }
+.grupo h2 { margin: 0; padding: 12px 16px 8px; font: 600 30px/1 var(--fonte-titulo); letter-spacing: 0.06em; text-transform: uppercase; color: var(--laranja); }
+.onde { margin: 0; padding: 0 16px 10px; font-size: 13px; color: var(--suave); }
+.grupo h3 { margin: 0; padding: 12px 16px 6px; border-top: 1px solid var(--linha); background: var(--cartao-claro); font: 600 19px/1 var(--fonte-titulo); letter-spacing: 0.07em; text-transform: uppercase; color: var(--ciano); }
+.linha { display: grid; grid-template-columns: 1fr auto; gap: 4px 14px; align-items: center; padding: 10px 16px; border-top: 1px solid var(--linha); }
+.linha label { font-weight: 700; line-height: 1.25; cursor: pointer; }
+.detalhe { display: block; margin-top: 2px; font-weight: 400; font-size: 12.5px; color: var(--suave); }
+.campo { display: flex; align-items: center; gap: 6px; }
+.campo input { width: 104px; height: 44px; padding: 0 10px; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 7px; background: var(--campo); color: var(--texto); font: 700 17px/1 var(--fonte-rotulo); font-variant-numeric: tabular-nums; text-align: right; }
+.campo input:focus { outline: 2px solid var(--ciano); outline-offset: 1px; border-color: transparent; }
+.uni { width: 42px; font: 400 12.5px/1 var(--fonte-numero); color: var(--suave); }
+.desfazer { width: 44px; height: 44px; padding: 0; border: 1px solid transparent; border-radius: 7px; background: transparent; color: var(--laranja); font-size: 21px; line-height: 1; cursor: pointer; visibility: hidden; }
+.desfazer:hover { border-color: var(--borda); }
+.linha.mudou { background: linear-gradient(90deg, rgba(255, 171, 69, 0.14), rgba(255, 171, 69, 0)); box-shadow: inset 3px 0 0 var(--laranja); }
+.linha.mudou .campo input { border-color: var(--laranja); color: var(--laranja); }
+.linha.mudou .desfazer { visibility: visible; }
+.aviso { grid-column: 1 / -1; margin: 0; font-size: 13px; color: var(--erro); }
+
+.rodape { margin-top: 0; padding-top: 14px; font-size: 13px; color: var(--suave); }
+.barra { position: fixed; left: 0; right: 0; bottom: 0; z-index: 3; background: var(--fundo); border-top: 1px solid var(--borda); padding-top: 10px; padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px)); }
+.barra-dentro { display: grid; grid-template-columns: 1fr auto auto auto; gap: 8px; align-items: center; }
+.estado { margin: 0; font-size: 13px; line-height: 1.25; color: var(--suave); }
+.estado b { color: var(--laranja); }
+.bt { display: inline-flex; align-items: center; justify-content: center; height: 46px; padding: 0 16px; border: 1px solid rgba(255, 255, 255, 0.24); border-radius: 7px; background: transparent; color: var(--texto); font: 600 20px/1 var(--fonte-titulo); letter-spacing: 0.06em; text-transform: uppercase; text-decoration: none; white-space: nowrap; cursor: pointer; }
+.bt:hover { border-color: var(--laranja); }
+.bt.principal { border-color: transparent; background: var(--laranja); color: var(--tinta-laranja); }
+.bt:disabled { opacity: 0.45; cursor: default; }
+.copia { grid-column: 1 / -1; width: 100%; height: 130px; padding: 10px; border: 1px solid var(--borda); border-radius: 7px; background: var(--campo); color: var(--texto); font: 400 13px/1.4 var(--fonte-numero); }
+
+@media (max-width: 760px) {
+  .lista-niveis { grid-template-columns: repeat(8, 1fr); }
+  .alcance span:first-child { width: 100%; }
+  .opcao { flex: 1; padding: 0 4px; font-size: 12.5px; }
+  .longo { display: none; }
+  /* uma fila só, que corre para o lado: fixa no alto, não pode tomar a tela */
+  .categorias { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .categorias::-webkit-scrollbar { display: none; }
+  .barra-dentro { grid-template-columns: 1fr 1fr 1.3fr; }
+  .estado { grid-column: 1 / -1; }
+  .bt { padding: 0 6px; font-size: 18px; }
+  body { padding-bottom: calc(126px + env(safe-area-inset-bottom, 0px)); }
+}
+@media (max-width: 460px) {
+  .topo { min-height: 120px; }
+  .sub { display: none; }
+  .aba { padding: 6px 3px; font-size: 17px; letter-spacing: 0.03em; }
+  .campo input { width: 88px; padding: 0 8px; }
+  .uni { width: 34px; }
+  .desfazer { width: 32px; }
+  .linha { padding: 10px 10px 10px 14px; column-gap: 8px; }
+}
+/* celular deitado: a altura é pouca */
+@media (max-height: 480px) {
+  .topo { min-height: 84px; }
+  .jogo-nome, .sub { display: none; }
+  h1 { font-size: 38px; }
+  .lista-niveis { grid-template-columns: repeat(15, 1fr); }
+  .faixa-categorias { position: static; }
+  .barra-dentro { grid-template-columns: 1fr auto auto auto; }
+  .estado { grid-column: auto; }
+  .bt { height: 40px; padding: 0 12px; }
+  body { padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px)); }
+}
+@media (prefers-reduced-motion: no-preference) { .linha { transition: background 0.2s; } }
+</style>
+</head>
+<body>
+
+<header class="topo">
+  <div class="dentro">
+    <p class="jogo-nome">Voo Livre</p>
+    <h1>Tabela de ajustes</h1>
+    <p class="sub">Escolha o jogo e a categoria, mude os valores e abra o jogo: o próximo voo já usa o que estiver aqui.</p>
+  </div>
+</header>
+
+<nav class="jogos dentro" id="jogos" aria-label="Páginas de cada jogo"></nav>
+
+<section class="niveis dentro" id="niveis" aria-label="Níveis da sobrevivência" hidden>
+  <div class="titulo-nivel">
+    <h2 id="nome-nivel">Nível 1</h2>
+    <p>Cada nível tem todos os valores. Depois do 15, o jogo segue com os do 15.</p>
+  </div>
+  <div class="lista-niveis" id="lista-niveis"></div>
+  <div class="alcance" id="alcance" role="group" aria-label="Onde a mudança vale">
+    <span>Mudar em:</span>
+    <button class="opcao" type="button" data-alcance="nivel">Só neste nível</button>
+    <button class="opcao" type="button" data-alcance="adiante">Deste em diante</button>
+    <button class="opcao" type="button" data-alcance="todos">Todos os níveis</button>
+  </div>
+</section>
+
+<div class="faixa-categorias">
+  <nav class="categorias dentro" id="categorias" aria-label="Categorias"></nav>
+</div>
+
+<main class="dentro" id="conteudo"></main>
+<p class="rodape dentro">O próximo voo já usa o que estiver aqui. As mudanças ficam só neste aparelho. Para um valor valer para todos os jogadores, toque em Copiar valores e mande o texto para o Claude colocar no jogo.</p>
+
+<footer class="barra">
+  <div class="barra-dentro dentro">
+    <p class="estado" id="estado" aria-live="polite"></p>
+    <button class="bt" id="copiar" type="button" aria-label="Copiar valores"><span>Copiar<span class="longo"> valores</span></span></button>
+    <button class="bt" id="padrao" type="button" aria-label="Voltar ao padrão"><span><span class="longo">Voltar ao </span>padrão</span></button>
+    <a class="bt principal" href="./">Abrir o jogo</a>
+    <textarea class="copia" id="copia" hidden readonly aria-label="Valores mudados"></textarea>
+  </div>
+</footer>
+
+<script src="valores.js?v=7.6"></script>
+<script>
+(() => {
+  'use strict';
+  const T = VOO_TABELA;
+  const $ = (id) => document.getElementById(id);
+  const num = (x) => x.toLocaleString('pt-BR', { maximumFractionDigits: 2 });
+  const comUni = (x, i) => num(x) + (i.uni ? ' ' + i.uni : '');
+  const noCampo = (x) => String(x).replace('.', ',');
+  // aceita 1,5 e 1.5; 2.500 é dois mil e quinhentos
+  function lerNumero(texto) {
+    const t = texto.trim();
+    if (!t) return NaN;
+    return Number(/^\d{1,3}(\.\d{3})+$/.test(t) ? t.replace(/\./g, '') : t.replace(',', '.'));
+  }
+  const ajustes = T.ler();                 // { jogo: { nível: { id: valor } } }
+  let modo = T.MODOS[0].id, nivel = 1, categoria = 'caca', alcance = 'nivel';
+  let linhas = [];                         // as linhas da categoria aberta
+  let salvou = true;
+  const guardar = () => { salvou = T.salvar(ajustes); };
+
+  const dadosDoModo = () => T.MODOS.find((m) => m.id === modo);
+  const contar = (m, n) => Object.keys(ajustes[m][n]).length;
+  // os níveis que uma mudança atinge
+  function niveisDaMudanca() {
+    const total = dadosDoModo().niveis;
+    if (total === 1 || alcance === 'nivel') return [nivel];
+    const r = [];
+    for (let n = alcance === 'todos' ? 1 : nivel; n <= total; n++) r.push(n);
+    return r;
+  }
+  function gravar(i, x) {
+    for (const n of niveisDaMudanca()) {
+      if (x === T.padraoDe(i, modo, n)) delete ajustes[modo][n][i.id];
+      else ajustes[modo][n][i.id] = x;
+    }
+    guardar();
+  }
+
+  function criarLinha(i) {
+    const linha = document.createElement('div');
+    linha.className = 'linha';
+    const texto = document.createElement('label');
+    texto.htmlFor = i.id;
+    texto.textContent = i.nome;
+    const detalhe = document.createElement('span');
+    detalhe.className = 'detalhe';
+    texto.append(detalhe);
+    const campo = document.createElement('div');
+    campo.className = 'campo';
+    const entrada = document.createElement('input');
+    entrada.id = i.id;
+    entrada.type = 'text';
+    entrada.inputMode = 'decimal';
+    entrada.autocomplete = 'off';
+    entrada.enterKeyHint = 'done';
+    const uni = document.createElement('span');
+    uni.className = 'uni';
+    uni.textContent = i.uni;
+    const desfazer = document.createElement('button');
+    desfazer.className = 'desfazer';
+    desfazer.type = 'button';
+    desfazer.textContent = '↺';
+    desfazer.title = 'Voltar ao padrão';
+    desfazer.setAttribute('aria-label', 'Voltar ' + i.nome + ' ao padrão');
+    campo.append(entrada, uni, desfazer);
+    const aviso = document.createElement('p');
+    aviso.className = 'aviso';
+    aviso.hidden = true;
+    linha.append(texto, campo, aviso);
+    const atual = () => (i.id in ajustes[modo][nivel] ? ajustes[modo][nivel][i.id] : T.padraoDe(i, modo, nivel));
+    entrada.value = noCampo(atual());
+    detalhe.textContent = 'Padrão: ' + comUni(T.padraoDe(i, modo, nivel), i) + (i.nota ? ' · ' + i.nota : '');
+    entrada.addEventListener('input', () => {
+      const x = lerNumero(entrada.value);
+      if (x >= i.min && x <= i.max) gravar(i, x);
+      atualizar();
+    });
+    // ao sair do campo, o que estiver fora dos limites volta para dentro deles
+    entrada.addEventListener('change', () => {
+      const x = lerNumero(entrada.value);
+      if (Number.isFinite(x)) gravar(i, Math.min(i.max, Math.max(i.min, x)));
+      entrada.value = noCampo(atual());
+      atualizar();
+    });
+    entrada.addEventListener('keydown', (e) => { if (e.key === 'Enter') entrada.blur(); });
+    desfazer.addEventListener('click', () => {
+      for (const n of niveisDaMudanca()) delete ajustes[modo][n][i.id];
+      guardar();
+      entrada.value = noCampo(atual());
+      atualizar();
+      entrada.focus();
+    });
+    linhas.push({ i, linha, entrada, aviso });
+    return linha;
+  }
+
+  // mostra o que mudou e avisa o que não vale
+  function atualizar() {
+    const usados = T.valores(modo, nivel);
+    for (const { i, linha, entrada, aviso } of linhas) {
+      const x = lerNumero(entrada.value);
+      const fora = !(x >= i.min && x <= i.max);
+      const trocado = !fora && usados[i.id] !== x;
+      linha.classList.toggle('mudou', i.id in ajustes[modo][nivel]);
+      aviso.hidden = !fora && !trocado;
+      aviso.textContent = fora ? 'Use um valor de ' + num(i.min) + ' a ' + comUni(i.max, i) + '.' : trocado ? 'Assim não funciona: o jogo vai usar ' + comUni(usados[i.id], i) + '.' : '';
+    }
+    for (const b of $('categorias').children) {
+      const g = T.gruposDe(modo).find((x) => x.id === b.dataset.categoria);
+      const n = g.itens.filter((i) => i.id in ajustes[modo][nivel]).length;
+      const marca = b.querySelector('b');
+      marca.hidden = !n;
+      marca.textContent = n;
+    }
+    for (const b of $('lista-niveis').children) b.classList.toggle('mudou', contar('sobrevivencia', +b.dataset.nivel) > 0);
+    const aqui = contar(modo, nivel);
+    const total = T.MODOS.reduce((s, m) => s + Object.keys(ajustes[m.id]).reduce((t, n) => t + contar(m.id, n), 0), 0);
+    const onde = dadosDoModo().niveis > 1 ? 'neste nível' : 'neste jogo';
+    $('estado').innerHTML = !salvou ? 'Este navegador não deixou guardar.' : !total ? 'Tudo no padrão do jogo.'
+      : '<b>' + aqui + (aqui === 1 ? ' valor mudado' : ' valores mudados') + '</b> ' + onde + ' · ' + total + ' na tabela toda, ' + (total === 1 ? 'guardado' : 'guardados') + ' neste aparelho.';
+    $('copiar').disabled = !total;
+    $('padrao').disabled = !niveisDaMudanca().some((n) => contar(modo, n));
+    $('copia').hidden = true;
+  }
+
+  function desenhar() {
+    const dados = dadosDoModo(), grupos = T.gruposDe(modo);
+    if (!grupos.some((g) => g.id === categoria)) categoria = grupos[0].id;
+    for (const b of $('jogos').children) b.setAttribute('aria-pressed', String(b.dataset.modo === modo));
+    $('niveis').hidden = dados.niveis === 1;
+    $('nome-nivel').textContent = 'Nível ' + nivel;
+    for (const b of $('lista-niveis').children) b.setAttribute('aria-pressed', String(+b.dataset.nivel === nivel));
+    for (const b of $('alcance').querySelectorAll('[data-alcance]')) b.setAttribute('aria-pressed', String(b.dataset.alcance === alcance));
+    $('categorias').replaceChildren(...grupos.map((g) => {
+      const b = document.createElement('button');
+      b.className = 'categoria';
+      b.type = 'button';
+      b.dataset.categoria = g.id;
+      b.setAttribute('aria-pressed', String(g.id === categoria));
+      const nome = document.createElement('span');
+      nome.textContent = g.titulo;
+      const marca = document.createElement('b');
+      marca.hidden = true;
+      b.append(nome, marca);
+      return b;
+    }));
+    const g = grupos.find((x) => x.id === categoria);
+    const sec = document.createElement('section');
+    sec.className = 'grupo';
+    const h = document.createElement('h2');
+    h.textContent = g.titulo;
+    sec.append(h);
+    if (g.nota) {
+      const p = document.createElement('p');
+      p.className = 'onde';
+      p.textContent = g.nota;
+      sec.append(p);
+    }
+    linhas = [];
+    for (const i of g.itens) {
+      if (typeof i === 'string') {
+        const t = document.createElement('h3');
+        t.textContent = i;
+        sec.append(t);
+      } else sec.append(criarLinha(i));
+    }
+    $('conteudo').replaceChildren(sec);
+    const lista = $('categorias'), aberta = lista.querySelector('[aria-pressed="true"]');
+    lista.scrollLeft = aberta.offsetLeft - (lista.clientWidth - aberta.offsetWidth) / 2;
+    history.replaceState(null, '', '#' + modo + (dados.niveis > 1 ? '/' + nivel : ''));
+    atualizar();
+  }
+
+  for (const m of T.MODOS) {
+    const b = document.createElement('button');
+    b.className = 'aba';
+    b.type = 'button';
+    b.dataset.modo = m.id;
+    b.textContent = m.nome;
+    $('jogos').append(b);
+  }
+  const maxNiveis = T.MODOS[0].niveis;
+  for (let n = 1; n <= maxNiveis; n++) {
+    const b = document.createElement('button');
+    b.className = 'nivel';
+    b.type = 'button';
+    b.dataset.nivel = n;
+    b.textContent = n;
+    b.setAttribute('aria-label', 'Nível ' + n);
+    $('lista-niveis').append(b);
+  }
+  // o endereço guarda a página: ajustes.html#equipe ou ajustes.html#sobrevivencia/3
+  function lerEndereco() {
+    const [m, n] = location.hash.slice(1).split('/');
+    if (T.MODOS.some((x) => x.id === m)) modo = m;
+    if (+n >= 1 && +n <= maxNiveis) nivel = Math.round(+n);
+    if (dadosDoModo().niveis === 1) nivel = 1;
+  }
+  lerEndereco();
+  window.addEventListener('hashchange', () => { lerEndereco(); desenhar(); });
+  // a tabela aberta em outra aba: acompanha o que foi mudado lá
+  window.addEventListener('storage', (e) => {
+    if (e.key !== T.CHAVE) return;
+    Object.assign(ajustes, T.ler());
+    desenhar();
+  });
+  $('jogos').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-modo]');
+    if (!b) return;
+    modo = b.dataset.modo;
+    nivel = 1;
+    desenhar();
+  });
+  $('lista-niveis').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-nivel]');
+    if (!b) return;
+    nivel = +b.dataset.nivel;
+    desenhar();
+  });
+  $('alcance').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-alcance]');
+    if (!b) return;
+    alcance = b.dataset.alcance;
+    desenhar();
+  });
+  $('categorias').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-categoria]');
+    if (!b) return;
+    categoria = b.dataset.categoria;
+    desenhar();
+  });
+  // volta ao padrão só o que está aberto: o jogo, ou os níveis escolhidos em "Mudar em"
+  $('padrao').addEventListener('click', () => {
+    const ns = niveisDaMudanca();
+    const nome = dadosDoModo().niveis === 1 ? 'o ' + dadosDoModo().nome : ns.length === 1 ? 'o nível ' + ns[0] : ns.length === maxNiveis ? 'todos os níveis' : 'os níveis ' + ns[0] + ' a ' + ns[ns.length - 1];
+    if (!confirm('Voltar ' + nome + ' ao padrão?')) return;
+    for (const n of ns) ajustes[modo][n] = {};
+    guardar();
+    desenhar();
+  });
+  // 1 a 3, 7
+  function faixas(ns) {
+    const partes = [];
+    for (let k = 0; k < ns.length;) {
+      let f = k;
+      while (f + 1 < ns.length && ns[f + 1] === ns[f] + 1) f++;
+      partes.push(f === k ? String(ns[k]) : ns[k] + ' a ' + ns[f]);
+      k = f + 1;
+    }
+    return partes.join(', ');
+  }
+  // o que foi mudado em toda a tabela, juntando os níveis com o mesmo valor
+  function textoDasMudancas() {
+    const saida = [];
+    for (const m of T.MODOS) {
+      for (const g of T.gruposDe(m.id)) {
+        for (const i of g.itens) {
+          if (typeof i === 'string') continue;
+          const porValor = new Map();
+          for (let n = 1; n <= m.niveis; n++) {
+            const x = ajustes[m.id][n][i.id];
+            if (x === undefined) continue;
+            if (!porValor.has(x)) porValor.set(x, []);
+            porValor.get(x).push(n);
+          }
+          for (const [x, ns] of porValor) saida.push([m.nome, m.niveis > 1 ? (ns.length > 1 ? 'Níveis ' : 'Nível ') + faixas(ns) : '', g.titulo, i.nome + ': ' + comUni(x, i)].filter(Boolean).join(' · '));
+        }
+      }
+    }
+    return saida.join('\n');
+  }
+  $('copiar').addEventListener('click', async () => {
+    const texto = textoDasMudancas();
+    const caixa = $('copia');
+    caixa.value = texto;
+    try {
+      await navigator.clipboard.writeText(texto);
+      $('estado').textContent = 'Copiado. É só colar na conversa com o Claude.';
+    } catch (e) {
+      // sem acesso à área de transferência: mostra o texto para copiar à mão
+      caixa.hidden = false;
+      caixa.focus();
+      caixa.select();
+      $('estado').textContent = 'Copie o texto da caixa.';
+    }
+  });
+  desenhar();
+})();
+</script>
+</body>
+</html>

@@ -251,7 +251,7 @@ h1 {
 .mira { position: fixed; left: 0; top: 0; z-index: 3; width: 0; height: 0; color: #b6f7c1; pointer-events: none; will-change: transform; }
 .mira > * { position: absolute; margin: 0; }
 .mira svg { display: block; overflow: visible; }
-.mira-cruz { left: -10px; top: -10px; width: 20px; height: 20px; filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.9)); }
+.mira-cruz { left: calc(var(--cruz) / -2); top: calc(var(--cruz) / -2); width: var(--cruz); height: var(--cruz); filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.9)); }
 .mira.na-mira .mira-cruz { color: #ff3b30; }
 /* anel laranja em volta da cruz: enche em 1,25 s atrás do inimigo e fica fechado com a mira travada (metralhadora) */
 .mira-anel { left: -20px; top: -20px; width: 40px; height: 40px; filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.9)); }
@@ -260,8 +260,8 @@ h1 {
 .mira-circulo { filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.8)); transition: transform 0.18s ease-out; }
 .mira.travando .mira-circulo { color: #ffb547; }
 .mira.travado .mira-circulo { color: #ff3b30; }
-/* com um inimigo dentro, o círculo cresce (de raio 0,2 para 0,25 da altura da tela) */
-.mira.travando .mira-circulo, .mira.travado .mira-circulo { transform: scale(1.25); }
+/* com um inimigo dentro, o círculo cresce */
+.mira.travando .mira-circulo, .mira.travado .mira-circulo { transform: scale(var(--escala-circulo)); }
 .mira.sem-circulo .mira-circulo { display: none; }
 .hud-vel { right: calc(var(--raio-circulo, 140px) + 14px); top: 0; transform: translateY(-50%); text-align: right; white-space: nowrap; font: 700 17px/1 var(--fonte-numero); font-variant-numeric: tabular-nums; text-shadow: 0 0 3px #000, 0 0 1px #000; }
 .hud-vel small { display: block; margin-top: 3px; font: 700 10px/1 var(--fonte-rotulo); letter-spacing: 0.1em; }
@@ -271,14 +271,15 @@ h1 {
 .hud-gas.baixa { color: var(--ambar); }
 .hud-gas.vazia { color: #ff5a46; animation: piscar 0.5s steps(2, jump-none) infinite; }
 /* Caças na tela: inimigo azul; travando, azul com a barra enchendo; travado (míssil pronto), vermelho; companheiro, verde */
-.alvo { position: fixed; z-index: 2; width: 31px; height: 31px; margin: -17.5px 0 0 -17.5px; border: 2px solid rgba(69, 180, 255, 0.95); pointer-events: none; font: 700 11px/1 var(--fonte-numero); color: #7cc8ff; }
+/* os tamanhos vêm da tabela de ajustes; a borda de 2 px faz parte deles */
+.alvo { position: fixed; z-index: 2; width: calc(var(--q-l) - 4px); height: calc(var(--q-a) - 4px); margin: calc(var(--q-a) / -2) 0 0 calc(var(--q-l) / -2); border: 2px solid rgba(69, 180, 255, 0.95); pointer-events: none; font: 700 11px/1 var(--fonte-numero); color: #7cc8ff; }
 .alvo span { position: absolute; left: 50%; top: 100%; transform: translateX(-50%); margin-top: 5px; white-space: nowrap; text-shadow: 0 0 4px #000, 0 0 2px #000; }
 .alvo i { position: absolute; left: -2px; bottom: -9px; height: 4px; width: 0; background: #45b4ff; border-radius: 2px; }
 .alvo.travando { border-style: dashed; }
-.alvo.longe { width: 10px; height: 10px; margin: -7px 0 0 -7px; }
+.alvo.longe { width: calc(var(--ql-l) - 4px); height: calc(var(--ql-a) - 4px); margin: calc(var(--ql-a) / -2) 0 0 calc(var(--ql-l) / -2); }
 .alvo.travado { border-color: #ff3b30; color: #ff7a70; border-radius: 50%; box-shadow: 0 0 8px rgba(255, 59, 48, 0.6); }
 .alvo.travado i { display: none; }
-.alvo.aliado { width: 14px; height: 14px; margin: -9px 0 0 -9px; border-color: rgba(124, 255, 138, 0.9); color: #9dffa8; transform: rotate(45deg); }
+.alvo.aliado { width: calc(var(--qv-l) - 4px); height: calc(var(--qv-a) - 4px); margin: calc(var(--qv-a) / -2) 0 0 calc(var(--qv-l) / -2); border-color: rgba(124, 255, 138, 0.9); color: #9dffa8; transform: rotate(45deg); }
 .alvo.aliado span { transform: translateX(-50%) rotate(-45deg); margin-top: 10px; transform-origin: 0 0; left: 100%; }
 /* barra de vida em cima do quadrado */
 .alvo em { position: absolute; left: 50%; bottom: 100%; width: 34px; height: 4px; margin: 0 0 4px -17px; background: rgba(5, 18, 31, 0.75); box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4); border-radius: 2px; overflow: hidden; }
@@ -355,6 +356,7 @@ body.toque { --radar: 116px; }
   background: transparent; color: var(--texto);
   font: 700 13px/1 var(--fonte-rotulo); letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer;
 }
+a.secundario { display: inline-block; text-decoration: none; }
 .secundario:hover { border-color: var(--ciano); }
 .secundario:focus-visible { outline: 3px solid var(--texto); outline-offset: 3px; }
 .principal:disabled, .secundario:disabled { opacity: 0.6; cursor: wait; }
@@ -663,7 +665,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     <div class="capa-carga" id="capa-carga"><div class="carga" aria-hidden="true"><span id="capa-barra"></span></div><p id="capa-texto">Carregando…</p></div>
     <p class="capa-comecar"><span class="so-teclado">Aperte qualquer tecla</span><span class="so-toque">Toque para começar</span></p>
   </div>
-  <p class="capa-versao">Versão 7.5</p>
+  <p class="capa-versao">Versão 7.6</p>
 </div>
 
 <div class="capa-arte fundo-menu" id="fundo-menu" hidden aria-hidden="true"></div>
@@ -683,7 +685,8 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     </nav>
     <div class="menu-rodape">
       <p class="menu-recorde" id="menu-recorde" hidden></p>
-      <p class="menu-versao">Versão 7.5</p>
+      <p class="menu-versao" id="menu-ajustes" hidden>Com valores mudados na tabela de ajustes</p>
+      <p class="menu-versao">Versão 7.6</p>
     </div>
   </div>
 </div>
@@ -765,6 +768,11 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
           <label class="chave"><input type="checkbox" id="cfg-inverter"><span>Inverter o manche: ↑ (ou arrastar para cima) puxa e o nariz sobe</span></label>
           <label class="chave"><input type="checkbox" id="cfg-tremor"><span>Câmera treme com as explosões perto</span></label>
         </div>
+      </section>
+      <section id="cfg-tabela">
+        <h3>Tabela de ajustes</h3>
+        <p class="nota">Todos os valores do jogo, separados por jogo, por nível e por categoria. O que você mudar lá vale neste aparelho.</p>
+        <div class="botoes"><a class="secundario" id="cfg-tabela-link" href="ajustes.html">Abrir a tabela</a></div>
       </section>
       <section class="offline" id="offline" hidden>
         <h3>Jogar sem internet</h3>
@@ -897,11 +905,92 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
 
 <script src="js/three.min.js"></script>
 <script src="js/GLTFLoader.js"></script>
+<script src="valores.js?v=7.6"></script>
 <script>
 (() => {
   'use strict';
 
   const $ = (id) => document.getElementById(id);
+  // Todos os valores de referência vêm de valores.js: os padrões, mais o que foi mudado na tabela de ajustes (ajustes.html).
+  // Cada jogo tem os seus e, na sobrevivência, cada nível tem os dele: usarValores troca todos de uma vez.
+  const RAD = Math.PI / 180;
+  const PX_POR_CM = 390 / 7;               // num celular comum, a tela deitada tem 390 px e 7 cm de altura
+  let V;
+  let VEL_PADRAO, VEL_MAXIMA, VEL_MINIMA;  // m/s: sem acelerar nem frear, acelerando e freando
+  let VEL_ESTOL;                           // m/s: abaixo disso as asas perdem sustentação (freando até o fim, o caça estola)
+  // m/s²: da velocidade normal à máxima, a freada (a tabela conta o tempo a partir de 1.500 km/h) e as voltas para a normal
+  let ACELERACAO, FREADA, VOLTA_FREIO, VOLTA_MAXIMA;
+  let TEMPO_GASOLINA, RECARGA_GASOLINA;    // segundos de acelerador apertado com o tanque cheio e para encher do zero, com ele solto
+  // quanto o manche gira o caça (rad/s): até a velocidade normal e na máxima
+  let GIRO_ARFAGEM, GIRO_ARFAGEM_MAX, GIRO_ROLAGEM, GIRO_ROLAGEM_MAX;
+  let CADENCIA, DANO_TIRO, DANO_GUIADO, DANO_FOGUETE;   // segundos entre dois tiros da metralhadora e o dano de cada arma
+  let TEMPO_TRAVA;                         // metralhadora: segundos atrás do inimigo, com a mira em cima dele, para a mira travar
+  // míssil guiado: o inimigo precisa ficar um tempo dentro do círculo tracejado, até uma distância. raio: o do círculo, em
+  // partes da altura da tela (a largura em cm é a de uma tela de 7 cm de altura); com um inimigo dentro, ele cresce (raioComAlvo)
+  let TRAVA_MISSIL;
+  let COS_CIRCULO, COS_CIRCULO_ALVO;       // o mesmo círculo para os caças do computador
+  let ALCANCE_TRAVA, SOLTA_TRAVA;          // metralhadora: até onde a mira trava (m) e onde ela solta (maior, senão a trava cai na hora)
+  // assistência de mira da metralhadora: maximo (rad/s), ganho (por segundo: quanto do desvio ela corrige) e solta
+  // (rad: desvio do nariz em que a trava cai)
+  let ASSISTENCIA;
+  let ASSISTENCIA_SUAVE;                   // assistência suave: com um inimigo dentro do círculo, sem precisar de trava
+  let ZOOM_TIRO;                           // zoom da câmera enquanto a metralhadora atira
+  let RECARGA_GUIADO, RECARGA_FOGUETE;     // segundos para voltar um míssil guiado e um foguete
+  let FLARE;
+  // Mísseis e foguetes são iguais para todos os caças. O guiado faz uma curva mais larga que a de um caça: uma curva bem
+  // fechada no último segundo faz ele passar direto.
+  let VEL_MISSIL, VEL_FOGUETE, ACEL_MISSIL, ACEL_FOGUETE, GIRO_MISSIL, VIDA_GUIADO, VIDA_FOGUETE;   // m/s, m/s², rad/s e segundos no ar
+  let ALCANCE_RADAR;
+  function usarValores(jogoDe, nivel) {
+    V = VOO_TABELA.valores(jogoDe, nivel);
+    VEL_PADRAO = V.velNormal / 3.6;
+    VEL_MAXIMA = V.velMaxima / 3.6;
+    VEL_MINIMA = V.velMinima / 3.6;
+    VEL_ESTOL = V.velEstol / 3.6;
+    ACELERACAO = (VEL_MAXIMA - VEL_PADRAO) / V.tempoMaxima;
+    FREADA = (1500 / 3.6 - VEL_MINIMA) / V.tempoFreada;
+    VOLTA_FREIO = (VEL_PADRAO - VEL_MINIMA) / V.tempoVoltaFreio;
+    VOLTA_MAXIMA = (VEL_MAXIMA - VEL_PADRAO) / V.tempoVoltaMaxima;
+    TEMPO_GASOLINA = V.gasolinaDura;
+    RECARGA_GASOLINA = V.gasolinaEnche;
+    GIRO_ARFAGEM = V.curvaNormal * RAD;
+    GIRO_ARFAGEM_MAX = V.curvaMaxima * RAD;
+    GIRO_ROLAGEM = V.rolagemNormal * RAD;
+    GIRO_ROLAGEM_MAX = V.rolagemMaxima * RAD;
+    CADENCIA = 1 / V.tirosPorSegundo;
+    DANO_TIRO = V.danoTiro;
+    DANO_GUIADO = V.missilDano;
+    DANO_FOGUETE = V.fogueteDano;
+    TEMPO_TRAVA = V.miraTempo;
+    TRAVA_MISSIL = { tempo: V.missilTempo, alcance: V.missilDistancia, raio: V.circuloVazio / 14, raioComAlvo: V.circuloComAlvo / 14 };
+    // o ângulo do círculo em volta do nariz, na abertura da câmera a uns 1.000 km/h
+    const cosCirculo = (r) => Math.cos(Math.atan(2 * r * Math.tan(32 * RAD)));
+    COS_CIRCULO = cosCirculo(TRAVA_MISSIL.raio);
+    COS_CIRCULO_ALVO = cosCirculo(TRAVA_MISSIL.raioComAlvo);
+    ALCANCE_TRAVA = V.miraDistancia;
+    SOLTA_TRAVA = V.miraSolta;
+    ASSISTENCIA = { maximo: V.assistForte * RAD, ganho: V.assistForteRapidez, solta: V.miraDesvio * RAD };
+    ASSISTENCIA_SUAVE = { maximo: V.assistSuave * RAD, ganho: V.assistSuaveRapidez, solta: 0.6 };
+    ZOOM_TIRO = 1 + V.zoomTiro / 100;
+    RECARGA_GUIADO = V.missilVolta;
+    RECARGA_FOGUETE = V.fogueteVolta;
+    FLARE = { alcance: V.flaresAlcance * 1000, chanceReto: V.flaresReto / 100, chanceCurva: V.flaresCurva / 100, espera: V.flaresEspera };
+    VEL_MISSIL = V.missilVel / 3.6;
+    VEL_FOGUETE = V.fogueteVel / 3.6;
+    // saem na velocidade de quem lança
+    ACEL_MISSIL = Math.max(VEL_MISSIL - VEL_PADRAO, 100) / V.missilTempoVel;
+    ACEL_FOGUETE = Math.max(VEL_FOGUETE - VEL_PADRAO, 100) / V.fogueteTempoVel;
+    GIRO_MISSIL = V.missilCurva * RAD;
+    VIDA_GUIADO = V.missilAr;
+    VIDA_FOGUETE = V.fogueteAr;
+    ALCANCE_RADAR = V.radarAlcance * 1000;
+    const estilo = document.documentElement.style;
+    for (const [nome, cm] of [['--cruz', V.cruz], ['--q-l', V.quadradoLargura], ['--q-a', V.quadradoAltura], ['--ql-l', V.quadradoLongeLargura], ['--ql-a', V.quadradoLongeAltura], ['--qv-l', V.quadradoVerdeLargura], ['--qv-a', V.quadradoVerdeAltura]]) {
+      estilo.setProperty(nome, cm * PX_POR_CM + 'px');
+    }
+    estilo.setProperty('--escala-circulo', V.circuloComAlvo / V.circuloVazio);
+  }
+  usarValores('sobrevivencia', 1);
 
   function mostrarErro(texto) {
     $('erro-msg').textContent = texto;
@@ -3686,17 +3775,6 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
 
   // ---------- estado do voo ----------
   const INICIO = { x: 0, y: 1500, z: 0, vel: 200, motor: 0.6 };
-  const VEL_PADRAO = 1000 / 3.6;    // m/s: a velocidade sem acelerar nem frear
-  const VEL_MAXIMA = 2500 / 3.6;    // acelerando
-  const VEL_MINIMA = 250 / 3.6;     // freando
-  const ACELERACAO = (VEL_MAXIMA - VEL_PADRAO) / 4.5;   // m/s²: da velocidade normal à máxima em 4,5 s
-  const FREADA = (1500 - 250) / 3.6 / 2;                // m/s²: de 1.500 a 250 km/h em 2 s
-  const VEL_ESTOL = 75;             // m/s (270 km/h): abaixo disso as asas perdem sustentação (freando até o fim, o caça estola)
-  const TEMPO_GASOLINA = 15;        // segundos de acelerador apertado com o tanque cheio
-  const RECARGA_GASOLINA = 20;      // segundos para encher do zero, com o acelerador solto
-  // quanto o manche gira o caça (rad/s): até a velocidade normal e a 2.500 km/h
-  const GIRO_ARFAGEM = 0.8, GIRO_ARFAGEM_MAX = 0.32;
-  const GIRO_ROLAGEM = 3.2, GIRO_ROLAGEM_MAX = 2.6;
   const aviao = {
     pos: new THREE.Vector3(INICIO.x, INICIO.y, INICIO.z),
     quat: new THREE.Quaternion(),
@@ -3890,10 +3968,11 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       mostrarTela(null);
       elHud.hidden = false;
       estado = 'voando';
+      trocarValores(modo, 1);
       posicionarNoInicio();
       const armasTxt = TOQUE ? 'Tiro, Míssil e Foguete ficam à direita; Flares enganam os mísseis' : 'Z atira, Espaço lança míssil guiado, X foguete, F solta flares';
       if (modo === 'sobrevivencia') { iniciarSobrevivencia(); mensagem(armasTxt, 5); }
-      else if (modo === 'equipe') { iniciarEquipe(); mensagem('Mata-mata 5 × 5: 5 minutos, ganha a equipe com mais pontos. ' + armasTxt, 6); }
+      else if (modo === 'equipe') { iniciarEquipe(); mensagem('Mata-mata 5 × 5: ' + String(V.duracaoPartida).replace('.', ',') + (V.duracaoPartida === 1 ? ' minuto' : ' minutos') + ', ganha a equipe com mais pontos. ' + armasTxt, 6); }
       else { limparCombate(); mensagem('Voo livre, sem inimigos. Para combater, escolha Sobrevivência ou Mata-mata na tela inicial', 6); }
     };
     somCtx();
@@ -3954,6 +4033,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     $('fim').hidden = true;
     elPausa.hidden = true;
     estado = 'voando';
+    trocarValores(modo, 1);
     posicionarNoInicio();
     if (modo === 'sobrevivencia') iniciarSobrevivencia();
     else if (modo === 'equipe') iniciarEquipe();
@@ -4038,6 +4118,10 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     mostrarTela(destino);
   }
   $('capa').addEventListener('click', entrarNoMenu);
+  // o aviso do menu acompanha a tabela de ajustes, mesmo aberta em outra aba (os valores novos valem no próximo voo)
+  const avisarAjustes = () => { $('menu-ajustes').hidden = !VOO_TABELA.temMudancas(); };
+  avisarAjustes();
+  window.addEventListener('storage', avisarAjustes);
   // no celular: tela cheia e deitado, quando o navegador deixa
   function telaCheia() {
     if (document.fullscreenElement) return;
@@ -4108,7 +4192,9 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
   const REGULAGENS = [['vol-geral', 'volGeral'], ['vol-musica', 'volMusica'], ['vol-efeitos', 'volEfeitos'], ['sensibilidade', 'sensibilidade']];
   let graficosEscolhido = GRAFICOS;
   function sincronizarConfig() {
-    const noMenu = estado === 'inicio';    // na pausa não dá para trocar os gráficos (o jogo recarrega)
+    const noMenu = estado === 'inicio';    // na pausa não dá para trocar os gráficos (o jogo recarrega) nem sair para a tabela
+    $('cfg-tabela').hidden = !noMenu;
+    $('cfg-tabela-link').href = 'ajustes.html#' + modo;
     for (const b of $('graficos').querySelectorAll('[data-graficos]')) {
       b.setAttribute('aria-pressed', String(b.dataset.graficos === graficosEscolhido));
       b.disabled = !noMenu;
@@ -4179,7 +4265,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     } else p.gasolina = Math.min(100, p.gasolina + 100 / RECARGA_GASOLINA * dt);
     const ar = clamp(1 - (p.pos.y - 12000) / 6000, 0.2, 1);   // ar rarefeito lá em cima
     const alvoVel = freando ? VEL_MINIMA : VEL_MINIMA + ((acelerando ? VEL_MAXIMA : normal - 40 * subida) - VEL_MINIMA) * ar;
-    const ritmo = (freando ? FREADA : acelerando ? ACELERACAO : p.vel < alvoVel ? 70 : 40) * dt;
+    const ritmo = (freando ? FREADA : acelerando ? ACELERACAO : p.vel < alvoVel ? VOLTA_FREIO : VOLTA_MAXIMA) * dt;
     p.vel = clamp(p.vel + clamp(alvoVel - p.vel, -ritmo, ritmo), 0, VEL_MAXIMA);
     return acelerando;
   }
@@ -4328,7 +4414,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       camera.fov = aproximar(camera.fov, fovAlvo, 2, dt);
       camera.updateProjectionMatrix();
     }
-    // atirando com a metralhadora, a câmera dá um zoom de 50%
+    // atirando com a metralhadora, a câmera dá um zoom
     const zoomAlvo = estado === 'voando' && !olhandoTras && (apertada('KeyZ') || toque.atirando) ? ZOOM_TIRO : 1;
     if (camera.zoom !== zoomAlvo) {
       camera.zoom = Math.abs(camera.zoom - zoomAlvo) < 0.002 ? zoomAlvo : aproximar(camera.zoom, zoomAlvo, 10, dt);
@@ -4351,25 +4437,8 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
   // acertando sem parar acaba com a vida em 5 s. Pontos: 1 por 1% de vida tirada de um adversário; quem derruba um
   // caça sozinho (sem ninguém mais ter acertado nele) ganha mais 30.
   let modo = 'sobrevivencia';              // livre | sobrevivencia | equipe
-  const CADENCIA = 0.075;                  // segundos entre dois tiros da metralhadora
-  const DANO_TIRO = 100 * CADENCIA / 5;    // 1,5% por tiro: 5 s de tiro certeiro derrubam
-  const DANO_GUIADO = 50, DANO_FOGUETE = 60, BONUS_SOZINHO = 30;
-  const TEMPO_TRAVA = 1.25;                // metralhadora: segundos atrás do inimigo, com a mira em cima dele, para a mira travar
-  // míssil guiado: o inimigo precisa ficar 1,2 s dentro do círculo tracejado, a até 5,5 km. raio: o do círculo, em partes da
-  // altura da tela; com um inimigo dentro, ele cresce (raioComAlvo). cone e coneComAlvo: o mesmo círculo para os caças do
-  // computador, em rad (uns 14° e 17,5° em volta do nariz)
-  const TRAVA_MISSIL = { tempo: 1.2, alcance: 5500, raio: 0.2, raioComAlvo: 0.25, cone: 0.248, coneComAlvo: 0.305 };
-  const COS_CIRCULO = Math.cos(TRAVA_MISSIL.cone), COS_CIRCULO_ALVO = Math.cos(TRAVA_MISSIL.coneComAlvo);
+  const BONUS_SOZINHO = 30;
   const ERRO_TRAVA = 0.06;                 // rad: os caças do computador travam a mira com o alvo a até 3,4° do nariz
-  const ALCANCE_TRAVA = 2500;              // metralhadora: até onde a mira trava (m)
-  const SOLTA_TRAVA = 3000;                // e a distância em que ela solta: tem de ser maior, senão a trava cai na hora
-  // assistência de mira da metralhadora: maximo (rad/s, 90°/s), ganho (por segundo: quanto do desvio ela corrige) e solta
-  // (rad, 17°: desvio do nariz em que a trava cai)
-  const ASSISTENCIA = { maximo: Math.PI / 2, ganho: 8, solta: 0.3 };
-  // assistência suave: com um inimigo dentro do círculo, sem precisar de trava (25°/s, mais fraca que o manche, que dá 46°/s)
-  const ASSISTENCIA_SUAVE = { maximo: 25 * Math.PI / 180, ganho: 2, solta: 0.6 };
-  const ZOOM_TIRO = 1.5;                   // zoom da câmera enquanto a metralhadora atira
-  const DURACAO_EQUIPE = 300;              // a partida do mata-mata dura 5 min
   const jogo = { nivel: 1, dif: null, abatidosNivel: 0, totalNivel: 0, fila: 0, tempoSpawn: 0, tempoProximo: 0, tempo: 0, acabou: false };
   // Ficha de cada participante: nome, equipe (0 = a do jogador) e placar. A do jogador é sempre a mesma; no mata-mata,
   // a de cada caça do computador continua de uma vida para a outra.
@@ -4378,12 +4447,19 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
   Object.assign(aviao, { time: 0, ficha: fichaJogador, vida: 100, danos: new Map(), raio: 7, invulneravel: 0, ultimoAtacante: null, tempoAtaque: 99 });
   const inimigos = [];                     // os caças do computador (no mata-mata, os da nossa equipe também)
   const misseis = [];
-  const RECARGA_GUIADO = 20;               // segundos para voltar um míssil guiado
-  const RECARGA_FOGUETE = 6;               // segundos para voltar um foguete
   const ESPALHA_TIRO = 3;                  // m/s: quanto os tiros da metralhadora se espalham
   // todos os caças saem com as mesmas armas
-  const novasArmas = () => ({ guiados: 4, foguetes: 12, flares: 3, maxGuiados: 4, maxFoguetes: 12, maxFlares: 3, recargaGuiado: 0, recargaFoguete: 0, esperaFlare: 0, cadencia: 0, lado: 1 });
+  const novasArmas = () => ({ guiados: V.missilQtd, foguetes: V.fogueteQtd, flares: V.flaresQtd, maxGuiados: V.missilQtd, maxFoguetes: V.fogueteQtd, maxFlares: V.flaresQtd, recargaGuiado: 0, recargaFoguete: 0, esperaFlare: 0, cadencia: 0, lado: 1 });
   const armas = novasArmas();
+  // troca os valores com o jogo aberto: ao decolar, ao recomeçar e ao passar de nível. Se o máximo de uma arma sobe, a diferença já entra
+  function trocarValores(jogoDe, nivel) {
+    usarValores(jogoDe, nivel);
+    medirCirculo();
+    for (const [qtd, max, novo] of [['guiados', 'maxGuiados', V.missilQtd], ['foguetes', 'maxFoguetes', V.fogueteQtd], ['flares', 'maxFlares', V.flaresQtd]]) {
+      armas[qtd] = Math.min(novo, armas[qtd] + Math.max(0, novo - armas[max]));
+      armas[max] = novo;
+    }
+  }
   // mísseis e foguetes voltam sozinhos; os flares, só ao renascer
   function recargaDasArmas(a, dt) {
     if (a.guiados < a.maxGuiados) { a.recargaGuiado += dt; if (a.recargaGuiado >= RECARGA_GUIADO) { a.recargaGuiado = 0; a.guiados++; } }
@@ -4714,7 +4790,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     t.vel.x += (Math.random() - 0.5) * espalhar;
     t.vel.y += (Math.random() - 0.5) * espalhar;
     t.vel.z += (Math.random() - 0.5) * espalhar;
-    t.vida = 3.2;
+    t.vida = V.tiroVoo;
     t.dono = dono;
     const nosso = dono.time === aviao.time;
     t.malha.material = nosso ? matTiro : matTiroInimigo;
@@ -5303,7 +5379,6 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
   // por eles. A regra é a mesma para todos os caças: só funcionam com o míssil perto, enganam bem mais quem está em curva
   // fechada e há uma espera entre as salvas. São 3 salvas por vida: elas não voltam sozinhas.
   const FLARES_POR_SALVA = 6;
-  const FLARE = { alcance: 2000, chanceReto: 0.45, chanceCurva: 0.8, espera: 3 };
   const flares = [];
   const salvas = [];
   const spritesFlare = [];
@@ -5343,7 +5418,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     if (jogador) {
       if (enganados) mensagem(enganados > 1 ? 'Os flares enganaram ' + enganados + ' mísseis!' : 'Os flares enganaram o míssil!', 2.4);
       else if (falhou) mensagem('O míssil não caiu nos flares: faça uma curva fechada', 2.4);
-      else if (cedo) mensagem('Cedo demais: os flares só funcionam com o míssil a menos de 2 km', 2.4);
+      else if (cedo) mensagem('Cedo demais: os flares só funcionam com o míssil a menos de ' + String(V.flaresAlcance).replace('.', ',') + ' km', 2.4);
     }
     return s;
   }
@@ -5423,12 +5498,6 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     g.frustumCulled = false;
     return { malha: g, pos: new THREE.Vector3(), ant: new THREE.Vector3(), quat: new THREE.Quaternion(), vel: 0, vida: 0, dono: null, time, alvo: null, guiado, rastreando: false, salvaIsca: null, testouFlare: false, chama, fumaca: 0, som: null, passou: false };
   }
-  // Mísseis e foguetes são iguais para todos os caças. A 5.000 km/h, o guiado faz uma curva mais larga que a de um caça
-  // a 1.000 km/h: uma curva bem fechada no último segundo faz ele passar direto.
-  const VEL_MISSIL = 5000 / 3.6;             // m/s
-  const ACEL_MISSIL = 450;                   // m/s²: sai na velocidade de quem lança e chega lá em uns 2,4 s
-  const GIRO_MISSIL = Math.PI * 2 / 3;       // rad/s: 120°/s
-  const VIDA_GUIADO = 14, VIDA_FOGUETE = 8;  // s no ar
   const misseisContra = (p) => misseis.reduce((n, m) => n + (m.alvo === p && m.rastreando ? 1 : 0), 0);
   const misseisContraMim = () => misseisContra(aviao);
   // guiado: míssil guiado no alvo; senão, foguete, que voa reto
@@ -5499,7 +5568,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     m.quat.rotateTowards(qAlvo, giro * dt);
   }
   // chance de um caça do computador soltar flares contra um míssil que chega perto (os mais hábeis soltam mais)
-  const chanceFlare = (p) => (p.dif ? 0.25 + 0.6 * p.dif.habil : 0);
+  const chanceFlare = (p) => (p.dif ? p.dif.flares : 0);
   // ronco do motor de um míssil que passa perto do jogador: mais alto e mais agudo chegando perto
   function somMissilPerto(m) {
     const d = m.pos.distanceTo(aviao.pos);
@@ -5517,7 +5586,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     for (let i = misseis.length - 1; i >= 0; i--) {
       const m = misseis[i];
       const meu = m.dono === aviao;
-      m.vel = Math.min(m.vel + ACEL_MISSIL * dt, VEL_MISSIL);
+      m.vel = m.guiado ? Math.min(m.vel + ACEL_MISSIL * dt, VEL_MISSIL) : Math.min(m.vel + ACEL_FOGUETE * dt, VEL_FOGUETE);
       tmpB.set(0, 0, -1).applyQuaternion(m.quat);
       if (m.rastreando) {
         const a = m.alvo;
@@ -5580,18 +5649,14 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
   // Todos os caças do computador são iguais ao do jogador: mesma velocidade, gasolina, curva, travas e armas. O que muda é
   // o piloto. Na sobrevivência ele melhora a cada nível (o 1 é bem manso); no mata-mata todos são iguais, nas duas equipes.
   // manche (quanto da curva ele usa, de 0 a 1), rajada (tiros seguidos) e pausa (s) entre elas, habil (0 a 1: antecipa o
-  // alvo, foge de quem está atrás, solta flares), recarga (s que ele espera entre um lançamento e outro), maxMisseis (no ar
+  // alvo, foge de quem está atrás), flares (chance de soltar, de 0 a 1), recarga (s que ele espera entre um lançamento e outro), maxMisseis (no ar
   // contra o mesmo alvo), previsao (s: quanto olha à frente para não bater no chão nem nos prédios), lead (quanto antecipa
   // o tiro: 1 é a conta certa) e curva (quanto conta com a curva que o alvo está fazendo: 0 mira na reta).
-  function dificuldade(n) {
-    const k = clamp((n - 1) / 9, 0, 1);
-    return {
-      manche: 0.6 + 0.4 * k, rajada: Math.round(4 + 6 * k), pausa: 3.6 - 2.4 * k,
-      habil: k, recarga: 30 - 14 * k, maxMisseis: Math.min(3, 1 + Math.floor((n - 1) / 3)),
-      previsao: 2.4 + 1.1 * k, lead: 0.3 + 0.7 * k, curva: 0.6 * k,
-    };
-  }
-  const DIF_EQUIPE = Object.assign(dificuldade(6), { manche: 0.8, rajada: 12, pausa: 1.6, lead: 0.92, curva: 0.9, maxMisseis: 2, recarga: 12 });
+  const pilotoDe = (v) => ({
+    manche: v.pilotoCurva / 100, rajada: v.pilotoRajada, pausa: v.pilotoPausa, habil: v.pilotoFuga / 100, flares: v.pilotoFlares / 100,
+    recarga: v.pilotoEspera, maxMisseis: v.pilotoMisseis, previsao: v.pilotoPrevisao, lead: v.pilotoPontaria / 100, curva: v.pilotoAntecipa / 100,
+  });
+  const dificuldade = (n) => pilotoDe(VOO_TABELA.valores('sobrevivencia', n));
   const iFrente = new THREE.Vector3(), iPara = new THREE.Vector3(), iPonto = new THREE.Vector3(), iMira = new THREE.Vector3();
   const iTmp = new THREE.Vector3(), iTmp2 = new THREE.Vector3();
   // ficha: a do participante; dif: como pilota; onde: { pos, rumo } para nascer num lugar certo (mata-mata). Sem
@@ -5647,14 +5712,14 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       alvoAnt: null, velAlvo: new THREE.Vector3(), acelAlvo: new THREE.Vector3(),   // para ver a curva do alvo
       tempoMissil: dif.recarga * (0.4 + Math.random() * 0.4), tempoFoguete: dif.recarga * (0.6 + Math.random() * 0.6), trava: 0,
       seguindo: null, tempoMira: 0,            // metralhadora: a mesma trava do jogador
-      desvio: 0, fuga: 0, ladoFuga: 1, inclinacao: 0,
+      desvio: 0, fuga: 0, ladoFuga: 1, inclinacao: 0, evita: 0, rumoEvita: new THREE.Vector3(),
       raio: base.config.comprimento * 0.42, detalhe, longe,
       som: null, somEspera: 0,                 // som de passagem perto do jogador
     };
     if (onde) {
       ini.pos.copy(onde.pos);
       ini.quat.setFromAxisAngle(EIXO_Y, -THREE.MathUtils.degToRad(onde.rumo));
-      ini.invulneravel = 2.5;
+      ini.invulneravel = V.renascerProtecao;
     } else {
       // chega pela frente do jogador (até 60° para cada lado), a uns 3,5 a 5 km, sempre acima do chão
       const dist = 3500 + Math.random() * 1500;
@@ -5681,7 +5746,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     if (i >= 0) inimigos.splice(i, 1);
     if (ini.ficha.caca === ini) {
       ini.ficha.caca = null;
-      ini.ficha.volta = 4;                     // no mata-mata, volta para a base da equipe 4 s depois, como o jogador
+      ini.ficha.volta = V.renascerTempo;       // no mata-mata, volta para a base da equipe depois de um tempo, como o jogador
     }
     if (alvoTravado === ini) alvoTravado = null;
     if (candidato === ini) { candidato = null; tempoTrava = 0; }
@@ -5720,6 +5785,29 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     if (ver(aviao)) return true;
     for (const o of inimigos) if (o.vivo && ver(o)) return true;
     return false;
+  }
+  // Desvio de colisão: vê onde ele e cada um dos outros caças (de qualquer equipe, e o jogador) vão estar nos próximos segundos,
+  // seguindo reto. Se algum vai passar perto demais, põe em "saida" o lado para onde quebrar: para longe do ponto de encontro.
+  // Bem de frente, cada um vai para a própria direita e um pouco para cima, como na aviação: os dois saem para lados opostos.
+  const cRel = new THREE.Vector3(), cVel = new THREE.Vector3(), cEncontro = new THREE.Vector3();
+  function rumoDeDesvio(ini, frente, saida) {
+    let urgente = Infinity;
+    const ver = (p) => {
+      if (p === ini || !emJogo(p)) return;
+      cRel.subVectors(p.pos, ini.pos);
+      cVel.set(0, 0, -1).applyQuaternion(p.quat).multiplyScalar(p.vel).addScaledVector(frente, -ini.vel);
+      const v2 = cVel.lengthSq();
+      const t = v2 > 1 ? clamp(-cRel.dot(cVel) / v2, 0, V.evitarTempo) : 0;
+      cRel.addScaledVector(cVel, t);
+      if (t < urgente && cRel.lengthSq() < V.evitarDistancia ** 2) { urgente = t; cEncontro.copy(cRel); }
+    };
+    ver(aviao);
+    for (const o of inimigos) if (o.vivo) ver(o);
+    if (urgente === Infinity) return false;
+    saida.copy(cEncontro).negate().addScaledVector(frente, cEncontro.dot(frente));   // só vale o lado: para trás ele não vai
+    if (saida.lengthSq() < 100) saida.set(1, 0.4, 0).applyQuaternion(ini.quat);
+    saida.normalize();
+    return true;
   }
   // O ponto mais alto do chão (e dos prédios) no caminho dos próximos segundos, mais a folga: o caça sobe antes de
   // chegar lá. Quem olha pouco à frente (os mais fracos) bate quando persegue alguém rente aos obstáculos.
@@ -5823,17 +5911,22 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       iPonto.copy(ini.pos).addScaledVector(iFrente, 400).addScaledVector(iTmp2, 700 * ini.ladoFuga);
       iPonto.y -= 150;
     }
+    // não bater nos outros caças: vale mais que o ataque e a fuga, em qualquer nível, e a curva vai até o fim antes de ele voltar ao alvo
+    ini.evita -= dt;
+    if (rumoDeDesvio(ini, iFrente, ini.rumoEvita)) ini.evita = 0.6;
+    const evitando = ini.evita > 0;
+    if (evitando) iPonto.copy(ini.pos).addScaledVector(iFrente, 300).addScaledVector(ini.rumoEvita, 900);
     // não bater no chão nem nos prédios: olha o caminho à frente e sobe a tempo
     const piso = pisoAdiante(ini, iFrente, iPonto);
     if (iPonto.y < piso + 30) iPonto.y = piso + 30;
     const baixo = ini.pos.y < piso;
     if (baixo) { iPonto.copy(ini.pos).addScaledVector(iFrente, 250); iPonto.y = ini.pos.y + 450; }
-    if (ini.desvio <= 0 || baixo) {
+    if (ini.desvio <= 0 || baixo || evitando) {
       mTmp.lookAt(ini.pos, iPonto, EIXO_Y);
       qAlvo.setFromRotationMatrix(mTmp);
-      const giro = giroDe(ini.vel) * ini.dif.manche * (baixo ? 1.5 : 1);
+      const giro = giroDe(ini.vel) * (baixo ? 1.5 * ini.dif.manche : evitando ? 1 : ini.dif.manche);
       // com a mira travada, a mesma assistência do jogador leva o nariz até o alvo
-      const ang = ini.seguindo && !baixo && ini.fuga <= 0 ? iFrente.angleTo(iTmp.subVectors(iPonto, ini.pos)) : 0;
+      const ang = ini.seguindo && !baixo && !evitando && ini.fuga <= 0 ? iFrente.angleTo(iTmp.subVectors(iPonto, ini.pos)) : 0;
       ini.quat.rotateTowards(qAlvo, Math.max(giro, Math.min(ASSISTENCIA.maximo, ang * ASSISTENCIA.ganho)) * dt);
     }
     iFrente.set(0, 0, -1).applyQuaternion(ini.quat);
@@ -5844,7 +5937,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     // inclina as asas na direção da curva (só visual)
     iTmp2.set(1, 0, 0).applyQuaternion(ini.quat);
     iTmp.subVectors(iPonto, ini.pos);
-    const lateral = ini.desvio > 0 ? 0 : iTmp2.dot(iTmp) / Math.max(iTmp.length(), 1);
+    const lateral = ini.desvio > 0 && !evitando ? 0 : iTmp2.dot(iTmp) / Math.max(iTmp.length(), 1);
     ini.inclinacao = aproximar(ini.inclinacao, clamp(-lateral * 1.8, -1.25, 1.25), 3, dt);
     qVis.setFromAxisAngle(EIXO_Z, ini.inclinacao);
     ini.grupo.position.copy(ini.pos);
@@ -6050,12 +6143,12 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
   function jogadorAbatido(quem, arma) {
     const motivo = arma === 'chao' || arma === 'agua' ? arma : 'ar';
     if (modo === 'equipe') {
-      // no mata-mata o jogador volta para a base da equipe depois de 4 s
+      // no mata-mata o jogador volta para a base da equipe depois de um tempo
       estado = 'batido';
-      tempoBatida = 4;
+      tempoBatida = V.renascerTempo;
       aviao.estol = false;
       destruirAviao(motivo);
-      mensagem((quem ? 'Derrubado por ' + quem.ficha.nome : arma === 'agua' ? 'Você caiu no mar' : 'Você bateu') + '. Voltando em 4 s…', 3.8);
+      mensagem((quem ? 'Derrubado por ' + quem.ficha.nome : arma === 'agua' ? 'Você caiu no mar' : 'Você bateu') + '. Voltando em ' + String(V.renascerTempo).replace('.', ',') + ' s…', Math.max(1, V.renascerTempo - 0.2));
       return;
     }
     abatido(arma === 'chao' ? 'Você bateu.' : arma === 'agua' ? 'Você caiu no mar.' : arma === 'trombada' ? 'Trombada no ar.'
@@ -6122,8 +6215,9 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
   // --- os modos de combate
   function novoNivel() {
     jogo.abatidosNivel = 0;
-    jogo.dif = dificuldade(jogo.nivel);
-    jogo.totalNivel = Math.min(1 + jogo.nivel, 8);
+    trocarValores('sobrevivencia', jogo.nivel);
+    jogo.dif = pilotoDe(V);
+    jogo.totalNivel = V.cacasNoNivel;
     jogo.fila = jogo.totalNivel;
     jogo.tempoSpawn = 0.5;
     mensagem('Nível ' + jogo.nivel + ': ' + jogo.totalNivel + ' caças inimigos chegando pela frente', 4);
@@ -6165,7 +6259,8 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
   function iniciarEquipe() {
     limparCombate();
     zerarJogador();
-    jogo.tempo = DURACAO_EQUIPE;
+    jogo.tempo = V.duracaoPartida * 60;
+    jogo.dif = pilotoDe(V);
     const nomes = NOMES.slice().sort(() => Math.random() - 0.5);
     fichas = [fichaJogador];
     for (let k = 0; k < 9; k++) fichas.push({ nome: nomes[k], time: k < 4 ? 0 : 1, jogador: false, pontos: 0, abates: 0, mortes: 0, caca: null, volta: 0, vaga: k < 4 ? k + 1 : k - 4 });
@@ -6182,7 +6277,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     return { pos: new THREE.Vector3(x, Math.max(b.y + (vaga % 3) * 25, superficie(x, z) + 200), z), rumo: b.rumo || 0 };
   }
   function nascer(f) {
-    if (criarCaca(f, DIF_EQUIPE, lugarDeNascer(f.time, f.vaga))) f.volta = 0;
+    if (criarCaca(f, jogo.dif, lugarDeNascer(f.time, f.vaga))) f.volta = 0;
     else f.volta = 1;                            // nenhum modelo carregou ainda: tenta de novo daqui a pouco
   }
   // o jogador volta para a base da equipe depois de cair (mata-mata)
@@ -6191,10 +6286,10 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     aviao.vida = 100;
     aviao.danos.clear();
     aviao.ultimoAtacante = null;
-    aviao.invulneravel = 2.5;
+    aviao.invulneravel = V.renascerProtecao;
     recarregarArmas();
     estado = 'voando';
-    mensagem('De volta à base com as armas cheias! Por 2 s nada acerta você', 2.4);
+    mensagem('De volta à base com as armas cheias!' + (V.renascerProtecao >= 1 ? ' Por ' + Math.floor(V.renascerProtecao) + ' s nada acerta você' : ''), 2.4);
   }
   const porPontos = (a, b) => b.pontos - a.pontos || b.abates - a.abates || a.mortes - b.mortes;
   function pontosEquipes() {
@@ -6261,7 +6356,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
         jogo.tempoSpawn -= dt;
         if (jogo.tempoSpawn <= 0) {
           if (criarCaca({ nome: 'Inimigo', time: 1, pontos: 0, abates: 0, mortes: 0 }, jogo.dif)) jogo.fila--;
-          jogo.tempoSpawn = 1.5;
+          jogo.tempoSpawn = V.chegadaIntervalo;
         }
       } else if (jogo.totalNivel > 0 && !inimigos.some((i) => i.vivo)) {
         jogo.tempoProximo += dt;
@@ -6269,8 +6364,8 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
           jogo.tempoProximo = 0;
           jogo.nivel++;
           const antes = aviao.vida;
-          aviao.vida = Math.min(100, aviao.vida + 25);
           novoNivel();
+          aviao.vida = Math.min(100, aviao.vida + V.consertoCasco);
           if (aviao.vida > antes) mensagem('Nível ' + jogo.nivel + ': ' + jogo.totalNivel + ' caças chegando. Casco consertado: ' + Math.round(aviao.vida) + '%', 4);
         }
       }
@@ -6514,9 +6609,8 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     c.setAttribute('r', r);
     c.setAttribute('stroke-dasharray', (traco * 0.62).toFixed(2) + ' ' + (traco * 0.38).toFixed(2));
   }
-  // --- radar: você no centro, com a frente do caça para cima. O círculo de dentro marca o alcance da trava do míssil (5,5 km);
-  // quem está além do alcance do radar (10 km) fica na borda, mais apagado, só para mostrar de que lado está.
-  const ALCANCE_RADAR = 10000;
+  // --- radar: você no centro, com a frente do caça para cima. O círculo de dentro marca o alcance da trava do míssil;
+  // quem está além do alcance do radar fica na borda, mais apagado, só para mostrar de que lado está.
   const elRadar = $('radar');
   const ctxRadar = elRadar.getContext('2d');
   const rumoRadar = { x: 0, z: -1 };
@@ -6729,7 +6823,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
 
   // tudo o que o jogo carrega neste aparelho (a página e o manifesto o próprio service worker já guarda)
   function arquivosDoJogo() {
-    const l = ['js/three.min.js', 'js/GLTFLoader.js', 'icones/icone-192.png', 'icones/icone-512.png'];
+    const l = ['js/three.min.js', 'js/GLTFLoader.js', 'valores.js?v=7.6', 'icones/icone-192.png', 'icones/icone-512.png'];
     for (const id in CACAS) l.push(CACAS[id].arquivo, 'modelos/' + id + '.jpg');
     for (const n of ['floresta.json', 'floresta.glb', 'chao.jpg', 'chao_relevo.jpg', 'arvores.webp', 'casca.jpg']) l.push('cenarios/floresta/' + n);
     for (const id in CENARIOS) {
@@ -6951,6 +7045,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     gasolina: (g) => { aviao.gasolina = g; },
     armas: (a) => Object.assign(armas, a),
     morrer: () => ferir(aviao, 1000, null, 'tiro'),
+    vida: (v) => { aviao.vida = v; },
     caca: (i) => inimigos[i || 0],
     decolar: () => { iniciar(); return estado; },
     continuar: () => { continuar(); return estado; },
@@ -6963,7 +7058,14 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     modo: (m) => { modo = m; },
     cenario: (id) => escolherCenario(id),
     // avança o jogo sem depender da tela estar à vista e tira uma foto (salva pelo servidor de teste)
-    avancar: (seg, fps) => { fps = fps || 60; for (let i = 0; i < seg * fps; i++) passoJogo(ultimo + 1000 / fps); return estado; },
+    avancar: (seg, fps, semDesenhar) => {
+      fps = fps || 60;
+      const desenhar = renderer.render;
+      if (semDesenhar) renderer.render = () => { scene.updateMatrixWorld(); camera.updateMatrixWorld(); };   // bem mais rápido, para os testes longos
+      for (let i = 0; i < seg * fps; i++) passoJogo(ultimo + 1000 / fps);
+      renderer.render = desenhar;
+      return estado;
+    },
     // avança os efeitos com o avião parado no mesmo lugar
     esperar: (seg) => { const p = aviao.pos.clone(), q = aviao.quat.clone(); for (let i = 0; i < seg * 60; i++) { passoJogo(ultimo + 1000 / 60); aviao.pos.copy(p); aviao.quat.copy(q); aviao.vel = 200; } return estado; },
     // foto do caça sozinho num fundo azul, para a miniatura do menu (640 x 400)

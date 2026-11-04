@@ -33,6 +33,17 @@ No menu dá para usar as setas ↑ ↓, Enter e Esc, e as opções fazem um tiqu
 sobrevivência (pontos e nível) fica guardado neste navegador e aparece no menu; quando você o bate, o fim de voo mostra
 "Novo recorde!".
 
+## Tabela de ajustes
+
+Em Configurações, **Abrir a tabela** leva à página `ajustes.html`, com todos os valores do jogo. Cada jogo tem a sua página
+(Sobrevivência, Mata-mata e Voo livre), e na Sobrevivência cada nível, de 1 a 15, tem os seus valores; depois do 15, o jogo
+segue com os do 15. Dentro de cada página, os valores ficam por categoria: Caça, Mira e assistência, Tiro, Míssil teleguiado,
+Míssil normal, Flares, Pilotos do computador, Ondas de inimigos ou Partida, e Radar.
+
+O que você muda lá fica guardado neste navegador (`localStorage` `voo-ajustes`) e vale a partir do próximo voo; o menu avisa
+quando há valores mudados. Para valer para todos os jogadores, é preciso mudar os padrões em `valores.js`, que é a lista única
+de valores que o jogo e a tabela usam. **Copiar valores** copia o que foi mudado, para isso.
+
 ## Os caças
 
 Na tela Jogar você escolhe qual caça pilotar. Os três primeiros são modelos 3D de artistas do Sketchfab, com
@@ -146,6 +157,8 @@ As fotos ficam em `ceu/`, cortadas do topo até um pouco abaixo do horizonte, em
   computador que deixa você 1,2 s dentro do círculo dele, a até 5,5 km, lança um míssil guiado. Toca um bipe e aparece o
   aviso MÍSSIL, com a distância. Uma curva bem fechada no último segundo faz o míssil passar direto, e os flares enganam,
   com as regras abaixo. Os caças do computador também lançam foguetes e, atrás de você, travam a mira como você trava.
+  Em qualquer nível, eles evitam bater em outro caça, seja o seu ou o de qualquer equipe: olham 1,2 s à frente e, se alguém
+  vai passar a menos de 100 m, quebram a curva para longe, usando toda a curva do caça.
 
 ## Armas
 
@@ -302,11 +315,11 @@ enquanto ele voa.
 ## Como publicar uma versão nova
 
 O site é publicado pelo GitHub Pages a partir da pasta raiz do branch `main`. Qualquer alteração enviada ao `main`
-aparece no endereço acima em cerca de um minuto. O jogo é um arquivo só (`index.html`); a biblioteca 3D (three.js
-r147) vai junto, em `js/`, para o jogo rodar sem internet. Só as fontes vêm do Google (sem elas, o jogo usa as do
-aparelho).
+aparece no endereço acima em cerca de um minuto. O jogo é o `index.html` mais a lista de valores `valores.js`, que a tabela
+de ajustes (`ajustes.html`) também usa; a biblioteca 3D (three.js r147) vai junto, em `js/`, para o jogo rodar sem internet.
+Só as fontes vêm do Google (sem elas, o jogo usa as do aparelho).
 
 Se um arquivo do jogo mudar mantendo o mesmo nome (um modelo, uma textura, um som), aumente o número do cache em
 `sw.js` (`ARQUIVOS`) e em `index.html` (`CACHE_ARQUIVOS`): assim quem baixou o jogo recebe o arquivo novo. Arquivo novo,
 com nome novo, não precisa disso; só precisa entrar na lista de `arquivosDoJogo()` no `index.html`, para o "Baixar
-tudo" pegar.
+tudo" pegar. Ao mudar o `valores.js`, suba o número de `?v=` no `index.html` (nos dois lugares) e no `ajustes.html`.

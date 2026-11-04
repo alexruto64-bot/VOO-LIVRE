@@ -1,5 +1,6 @@
 // Service worker do Voo Livre: guarda o jogo no aparelho para ele abrir e rodar sem internet.
-// - A página vem da rede quando dá (para pegar a versão nova); sem rede, ou com a rede lenta, vem da cópia guardada.
+// - As páginas (o jogo e a tabela de ajustes) vêm da rede quando dá (para pegar a versão nova); sem rede, ou com a rede
+//   lenta, vêm da cópia guardada.
 // - Os outros arquivos do jogo (modelos, texturas, sons) vêm da cópia guardada; o que ainda não estiver guardado vem
 //   da rede e fica guardado. O botão "Baixar tudo" da tela de início guarda de uma vez o que falta.
 // - As fontes do Google vêm da cópia guardada e são atualizadas por trás quando há internet.
@@ -11,7 +12,7 @@ const FONTES = 'voo-fontes-1';
 const NOSSOS = [PAGINA, ARQUIVOS, FONTES];
 
 self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(PAGINA).then((c) => c.addAll(['./', 'manifest.webmanifest'])).then(() => self.skipWaiting()));
+  e.waitUntil(caches.open(PAGINA).then((c) => c.addAll(['./', 'ajustes.html', 'manifest.webmanifest'])).then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', (e) => {
@@ -37,12 +38,13 @@ self.addEventListener('fetch', (e) => {
 // a página: rede primeiro, mas sem esperar mais de 4 s; a cópia fica sempre com a última versão que chegou
 async function pagina(req, e) {
   const cache = await caches.open(PAGINA);
+  const chave = new URL(req.url).pathname.endsWith('/ajustes.html') ? 'ajustes.html' : './';
   const rede = fetch(req).then((r) => {
-    if (r.ok && !r.redirected) cache.put('./', r.clone());
+    if (r.ok && !r.redirected) cache.put(chave, r.clone());
     return r;
   });
   e.waitUntil(rede.then(() => {}, () => {}));
-  const guardada = cache.match('./');
+  const guardada = cache.match(chave);
   try {
     return await Promise.race([rede, new Promise((_, desistir) => setTimeout(desistir, 4000))]);
   } catch (_) {
