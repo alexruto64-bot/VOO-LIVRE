@@ -665,7 +665,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     <div class="capa-carga" id="capa-carga"><div class="carga" aria-hidden="true"><span id="capa-barra"></span></div><p id="capa-texto">Carregando…</p></div>
     <p class="capa-comecar"><span class="so-teclado">Aperte qualquer tecla</span><span class="so-toque">Toque para começar</span></p>
   </div>
-  <p class="capa-versao">Versão 7.7</p>
+  <p class="capa-versao">Versão 7.8</p>
 </div>
 
 <div class="capa-arte fundo-menu" id="fundo-menu" hidden aria-hidden="true"></div>
@@ -686,7 +686,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     <div class="menu-rodape">
       <p class="menu-recorde" id="menu-recorde" hidden></p>
       <p class="menu-versao" id="menu-ajustes" hidden>Com valores mudados na tabela de ajustes</p>
-      <p class="menu-versao">Versão 7.7</p>
+      <p class="menu-versao">Versão 7.8</p>
     </div>
   </div>
 </div>
@@ -905,7 +905,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
 
 <script src="js/three.min.js"></script>
 <script src="js/GLTFLoader.js"></script>
-<script src="valores.js?v=7.7"></script>
+<script src="valores.js?v=7.8"></script>
 <script>
 (() => {
   'use strict';
@@ -6825,7 +6825,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
 
   // tudo o que o jogo carrega neste aparelho (a página e o manifesto o próprio service worker já guarda)
   function arquivosDoJogo() {
-    const l = ['js/three.min.js', 'js/GLTFLoader.js', 'valores.js?v=7.7', 'icones/icone-192.png', 'icones/icone-512.png'];
+    const l = ['js/three.min.js', 'js/GLTFLoader.js', 'valores.js?v=7.8', 'icones/icone-192.png', 'icones/icone-512.png'];
     for (const id in CACAS) l.push(CACAS[id].arquivo, 'modelos/' + id + '.jpg');
     for (const n of ['floresta.json', 'floresta.glb', 'chao.jpg', 'chao_relevo.jpg', 'arvores.webp', 'casca.jpg']) l.push('cenarios/floresta/' + n);
     for (const id in CENARIOS) {

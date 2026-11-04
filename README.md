@@ -44,6 +44,10 @@ O que você muda lá fica guardado neste navegador (`localStorage` `voo-ajustes`
 quando há valores mudados. Para valer para todos os jogadores, é preciso mudar os padrões em `valores.js`, que é a lista única
 de valores que o jogo e a tabela usam. **Copiar valores** copia o que foi mudado, para isso.
 
+Cada valor da tabela explica como funciona, o que acontece ao aumentar e ao diminuir, para que lado ele fica melhor e, quando
+ajuda, dá um exemplo feito com os valores atuais. Os caças do computador têm os mesmos valores do seu: uma arma mais forte fica
+mais forte para você e para eles.
+
 ## Os caças
 
 Na tela Jogar você escolhe qual caça pilotar. Os três primeiros são modelos 3D de artistas do Sketchfab, com

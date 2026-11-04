@@ -25,6 +25,8 @@
   --ciano: #74e0ff;
   --campo: rgba(5, 10, 17, 0.72);
   --erro: #ff9a86;
+  --verde: #8dffa0;
+  --verde-fundo: rgba(124, 255, 138, 0.13);
   --fonte-rotulo: "B612", "Segoe UI", system-ui, sans-serif;
   --fonte-numero: "B612 Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
   --fonte-titulo: "Teko", "Arial Narrow", Impact, sans-serif;
@@ -76,7 +78,9 @@ h1 { margin: 2px 0 4px; font: 700 clamp(42px, 9vw, 66px)/0.95 var(--fonte-titulo
 .categoria[aria-pressed="true"] { border-color: var(--ciano); background: var(--ciano); color: #06222c; }
 .categoria b { display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 10px; background: var(--laranja); color: var(--tinta-laranja); font: 700 12px/1 var(--fonte-numero); }
 
-main { padding-top: 12px; }
+.legenda { margin-top: 10px; margin-bottom: 0; font-size: 13px; line-height: 1.4; color: var(--suave); text-wrap: pretty; }
+.legenda b { color: var(--texto); }
+main { padding-top: 10px; }
 .grupo { background: var(--cartao); border: 1px solid var(--borda); border-radius: 10px; overflow: hidden; }
 .grupo h2 { margin: 0; padding: 12px 16px 8px; font: 600 30px/1 var(--fonte-titulo); letter-spacing: 0.06em; text-transform: uppercase; color: var(--laranja); }
 .onde { margin: 0; padding: 0 16px 10px; font-size: 13px; color: var(--suave); }
@@ -87,13 +91,23 @@ main { padding-top: 12px; }
 .campo { display: flex; align-items: center; gap: 6px; }
 .campo input { width: 104px; height: 44px; padding: 0 10px; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 7px; background: var(--campo); color: var(--texto); font: 700 17px/1 var(--fonte-rotulo); font-variant-numeric: tabular-nums; text-align: right; }
 .campo input:focus { outline: 2px solid var(--ciano); outline-offset: 1px; border-color: transparent; }
-.uni { width: 42px; font: 400 12.5px/1 var(--fonte-numero); color: var(--suave); }
+.uni { width: 42px; font: 400 13px/1 var(--fonte-rotulo); color: var(--suave); }
 .desfazer { width: 44px; height: 44px; padding: 0; border: 1px solid transparent; border-radius: 7px; background: transparent; color: var(--laranja); font-size: 21px; line-height: 1; cursor: pointer; visibility: hidden; }
 .desfazer:hover { border-color: var(--borda); }
 .linha.mudou { background: linear-gradient(90deg, rgba(255, 171, 69, 0.14), rgba(255, 171, 69, 0)); box-shadow: inset 3px 0 0 var(--laranja); }
 .linha.mudou .campo input { border-color: var(--laranja); color: var(--laranja); }
 .linha.mudou .desfazer { visibility: visible; }
 .aviso { grid-column: 1 / -1; margin: 0; font-size: 13px; color: var(--erro); }
+.ajuda { grid-column: 1 / -1; display: grid; justify-items: start; gap: 6px; margin-top: 4px; }
+.selo { padding: 3px 8px; border-radius: 5px; font-size: 12.5px; font-weight: 700; line-height: 1.3; }
+.selo.bom { background: var(--verde-fundo); color: var(--verde); }
+.selo.dificil { background: rgba(255, 171, 69, 0.15); color: var(--laranja); }
+.selo.neutro { background: rgba(255, 255, 255, 0.09); color: #d8dde3; }
+.como { margin: 0; font-size: 14px; line-height: 1.4; color: #d8dde3; text-wrap: pretty; }
+.exemplo { margin: 0; padding-left: 9px; border-left: 2px solid var(--ciano); font-size: 13.5px; line-height: 1.35; color: var(--ciano); text-wrap: pretty; }
+.efeitos { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 18px; width: 100%; }
+.efeitos p { margin: 0; font-size: 13px; line-height: 1.35; color: var(--suave); }
+.efeitos b { color: var(--texto); }
 
 .rodape { margin-top: 0; padding-top: 14px; font-size: 13px; color: var(--suave); }
 .barra { position: fixed; left: 0; right: 0; bottom: 0; z-index: 3; background: var(--fundo); border-top: 1px solid var(--borda); padding-top: 10px; padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px)); }
@@ -109,6 +123,7 @@ main { padding-top: 12px; }
 @media (max-width: 760px) {
   .lista-niveis { grid-template-columns: repeat(8, 1fr); }
   .alcance span:first-child { width: 100%; }
+  .efeitos { grid-template-columns: 1fr; }
   .opcao { flex: 1; padding: 0 4px; font-size: 12.5px; }
   .longo { display: none; }
   /* uma fila só, que corre para o lado: fixa no alto, não pode tomar a tela */
@@ -173,6 +188,7 @@ main { padding-top: 12px; }
   <nav class="categorias dentro" id="categorias" aria-label="Categorias"></nav>
 </div>
 
+<p class="legenda dentro" id="legenda"></p>
 <main class="dentro" id="conteudo"></main>
 <p class="rodape dentro">O próximo voo já usa o que estiver aqui. As mudanças ficam só neste aparelho. Para um valor valer para todos os jogadores, toque em Copiar valores e mande o texto para o Claude colocar no jogo.</p>
 
@@ -186,7 +202,7 @@ main { padding-top: 12px; }
   </div>
 </footer>
 
-<script src="valores.js?v=7.7"></script>
+<script src="valores.js?v=7.8"></script>
 <script>
 (() => {
   'use strict';
@@ -255,10 +271,31 @@ main { padding-top: 12px; }
     const aviso = document.createElement('p');
     aviso.className = 'aviso';
     aviso.hidden = true;
-    linha.append(texto, campo, aviso);
+    const ajuda = document.createElement('div');
+    ajuda.className = 'ajuda';
+    const selo = document.createElement('span');
+    selo.className = 'selo ' + i.selo.tipo;
+    selo.textContent = i.selo.texto;
+    const como = document.createElement('p');
+    como.className = 'como';
+    como.textContent = i.como;
+    const exemplo = document.createElement('p');
+    exemplo.className = 'exemplo';
+    exemplo.hidden = !i.exemplo;
+    const efeitos = document.createElement('div');
+    efeitos.className = 'efeitos';
+    for (const [nome, efeito] of [['▲ Aumentar', i.mais], ['▼ Diminuir', i.menos]]) {
+      const p = document.createElement('p');
+      const b = document.createElement('b');
+      b.textContent = nome + ': ';
+      p.append(b, efeito);
+      efeitos.append(p);
+    }
+    ajuda.append(selo, como, exemplo, efeitos);
+    linha.append(texto, campo, aviso, ajuda);
     const atual = () => (i.id in ajustes[modo][nivel] ? ajustes[modo][nivel][i.id] : T.padraoDe(i, modo, nivel));
     entrada.value = noCampo(atual());
-    detalhe.textContent = 'Padrão: ' + comUni(T.padraoDe(i, modo, nivel), i) + (i.nota ? ' · ' + i.nota : '');
+    detalhe.textContent = 'Padrão: ' + comUni(T.padraoDe(i, modo, nivel), i);
     entrada.addEventListener('input', () => {
       const x = lerNumero(entrada.value);
       if (x >= i.min && x <= i.max) gravar(i, x);
@@ -279,14 +316,15 @@ main { padding-top: 12px; }
       atualizar();
       entrada.focus();
     });
-    linhas.push({ i, linha, entrada, aviso });
+    linhas.push({ i, linha, entrada, aviso, exemplo });
     return linha;
   }
 
   // mostra o que mudou e avisa o que não vale
   function atualizar() {
     const usados = T.valores(modo, nivel);
-    for (const { i, linha, entrada, aviso } of linhas) {
+    for (const { i, linha, entrada, aviso, exemplo } of linhas) {
+      if (i.exemplo) exemplo.textContent = i.exemplo(usados);
       const x = lerNumero(entrada.value);
       const fora = !(x >= i.min && x <= i.max);
       const trocado = !fora && usados[i.id] !== x;
@@ -318,6 +356,7 @@ main { padding-top: 12px; }
     for (const b of $('jogos').children) b.setAttribute('aria-pressed', String(b.dataset.modo === modo));
     $('niveis').hidden = dados.niveis === 1;
     $('nome-nivel').textContent = 'Nível ' + nivel;
+    $('legenda').textContent = 'As setas mostram para que lado o valor fica melhor para quem usa.' + (modo === 'livre' ? '' : ' Os caças do computador têm os mesmos valores do seu: uma arma mais forte fica mais forte para você e para eles.');
     for (const b of $('lista-niveis').children) b.setAttribute('aria-pressed', String(+b.dataset.nivel === nivel));
     for (const b of $('alcance').querySelectorAll('[data-alcance]')) b.setAttribute('aria-pressed', String(b.dataset.alcance === alcance));
     $('categorias').replaceChildren(...grupos.map((g) => {
