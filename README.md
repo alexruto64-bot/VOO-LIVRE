@@ -153,8 +153,8 @@ As fotos ficam em `ceu/`, cortadas do topo até um pouco abaixo do horizonte, em
   inimigo, a até 2.500 m, com a cruz da mira em cima dele por 1,25 segundo: o anel laranja se fecha, a mira trava e o caça
   segue o inimigo sozinho.
 - **Míssil guiado** (Espaço): 4 por vez. Só lança com alvo travado: o inimigo precisa ficar 1,2 segundo dentro do círculo
-  tracejado (uns 14° em volta da cruz), a até 5,5 km. Aí o círculo e a caixa dele ficam vermelhos. Se ele sair do círculo,
-  a trava cai. Voa a 5.000 km/h e curva 120° por segundo; se o alvo sai da frente dele, perde a trava e segue reto. Um míssil
+  tracejado (uns 14° em volta da cruz), a até 5,5 km. Com alguém dentro, o círculo cresce. Depois do tempo, o círculo e a
+  caixa dele ficam vermelhos. Se ele sair do círculo, a trava cai. Voa a 5.000 km/h e curva 120° por segundo; se o alvo sai da frente dele, perde a trava e segue reto. Um míssil
   novo volta a cada 20 s.
 - **Foguete** (X): 12 por vez, voa reto, a 5.000 km/h, por 8 s. Um foguete novo volta a cada 6 s.
 - **Flares** (F): solta uma salva de 6 chamarizes de calor atrás do avião. Só funcionam com o míssil a menos de 2 km:
@@ -165,8 +165,11 @@ As fotos ficam em `ceu/`, cortadas do topo até um pouco abaixo do horizonte, em
 No mata-mata, quem cai volta na base com todas as armas e o tanque cheios.
 
 Na tela: a mira é uma cruz pequena que mostra para onde o nariz aponta e fica vermelha quando há um inimigo embaixo dela.
-Em volta dela fica o círculo tracejado do míssil: verde, laranja travando e vermelho travado. À esquerda do círculo fica
-a velocidade; à direita, a gasolina. As caixas azuis marcam os inimigos com a distância e a vida; com o míssil travado, a
+Em volta dela fica o círculo tracejado do míssil: verde vazio, laranja travando e vermelho travado. Assim que um inimigo
+entra no círculo, a assistência suave vai levando o nariz até ele, até 25° por segundo, sem precisar de trava; o manche
+manda mais que ela. À esquerda do círculo fica
+a velocidade; à direita, a gasolina. As caixas azuis marcam os inimigos com a distância e a vida, com uma barra de vida em cima, e cada acerto seu mostra o
+dano em cima do inimigo; com o míssil travado, a
 caixa fica vermelha e redonda. Com a mira travada (1,25 s atrás do inimigo, o anel laranja fechado), a assistência leva o
 nariz até o ponto onde os tiros vão encontrar o inimigo, até 90° por segundo. Para sair, puxe o manche para o lado
 contrário. A trava também solta se o nariz desvia mais de 17° desse ponto, se o inimigo fica de lado ou passa de 3.000 m.

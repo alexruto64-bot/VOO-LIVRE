@@ -256,10 +256,12 @@ h1 {
 /* anel laranja em volta da cruz: enche em 1,25 s atrás do inimigo e fica fechado com a mira travada (metralhadora) */
 .mira-anel { left: -20px; top: -20px; width: 40px; height: 40px; filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.9)); }
 .mira .anel { stroke: #ffb547; }
-/* círculo do míssil: laranja travando, vermelho travado */
-.mira-circulo { filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.8)); }
+/* círculo do míssil: verde vazio, laranja travando, vermelho travado */
+.mira-circulo { filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.8)); transition: transform 0.18s ease-out; }
 .mira.travando .mira-circulo { color: #ffb547; }
 .mira.travado .mira-circulo { color: #ff3b30; }
+/* com um inimigo dentro, o círculo cresce (de raio 0,2 para 0,25 da altura da tela) */
+.mira.travando .mira-circulo, .mira.travado .mira-circulo { transform: scale(1.25); }
 .mira.sem-circulo .mira-circulo { display: none; }
 .hud-vel { right: calc(var(--raio-circulo, 140px) + 14px); top: 0; transform: translateY(-50%); text-align: right; white-space: nowrap; font: 700 17px/1 var(--fonte-numero); font-variant-numeric: tabular-nums; text-shadow: 0 0 3px #000, 0 0 1px #000; }
 .hud-vel small { display: block; margin-top: 3px; font: 700 10px/1 var(--fonte-rotulo); letter-spacing: 0.1em; }
@@ -269,15 +271,29 @@ h1 {
 .hud-gas.baixa { color: var(--ambar); }
 .hud-gas.vazia { color: #ff5a46; animation: piscar 0.5s steps(2, jump-none) infinite; }
 /* Caças na tela: inimigo azul; travando, azul com a barra enchendo; travado (míssil pronto), vermelho; companheiro, verde */
-.alvo { position: fixed; z-index: 2; width: 46px; height: 46px; margin: -23px 0 0 -23px; border: 2px solid rgba(69, 180, 255, 0.95); pointer-events: none; font: 700 11px/1 var(--fonte-numero); color: #7cc8ff; }
+.alvo { position: fixed; z-index: 2; width: 31px; height: 31px; margin: -17.5px 0 0 -17.5px; border: 2px solid rgba(69, 180, 255, 0.95); pointer-events: none; font: 700 11px/1 var(--fonte-numero); color: #7cc8ff; }
 .alvo span { position: absolute; left: 50%; top: 100%; transform: translateX(-50%); margin-top: 5px; white-space: nowrap; text-shadow: 0 0 4px #000, 0 0 2px #000; }
 .alvo i { position: absolute; left: -2px; bottom: -9px; height: 4px; width: 0; background: #45b4ff; border-radius: 2px; }
 .alvo.travando { border-style: dashed; }
-.alvo.longe { width: 16px; height: 16px; margin: -8px 0 0 -8px; }
+.alvo.longe { width: 10px; height: 10px; margin: -7px 0 0 -7px; }
 .alvo.travado { border-color: #ff3b30; color: #ff7a70; border-radius: 50%; box-shadow: 0 0 8px rgba(255, 59, 48, 0.6); }
 .alvo.travado i { display: none; }
-.alvo.aliado { width: 22px; height: 22px; margin: -11px 0 0 -11px; border-color: rgba(124, 255, 138, 0.9); color: #9dffa8; transform: rotate(45deg); }
+.alvo.aliado { width: 14px; height: 14px; margin: -9px 0 0 -9px; border-color: rgba(124, 255, 138, 0.9); color: #9dffa8; transform: rotate(45deg); }
 .alvo.aliado span { transform: translateX(-50%) rotate(-45deg); margin-top: 10px; transform-origin: 0 0; left: 100%; }
+/* barra de vida em cima do quadrado */
+.alvo em { position: absolute; left: 50%; bottom: 100%; width: 34px; height: 4px; margin: 0 0 4px -17px; background: rgba(5, 18, 31, 0.75); box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4); border-radius: 2px; overflow: hidden; }
+.alvo em b { display: block; height: 100%; background: #7cff8a; transform-origin: left center; }
+.alvo em b.baixa { background: #ff6a4a; }
+.alvo.longe em { width: 20px; margin-left: -10px; }
+.alvo.aliado em { left: 50%; top: 50%; bottom: auto; margin: 0; transform: translate(-50%, -50%) rotate(-45deg) translateY(-18px); }
+/* números de dano: sobem e somem em cima do inimigo que você acertou */
+.num-dano { position: fixed; left: 0; top: 0; z-index: 3; margin: 0; pointer-events: none; font: 700 14px/1 var(--fonte-numero); color: #ffe27a; text-shadow: 0 0 3px #000, 0 1px 2px #000; animation: num-dano 0.8s ease-out forwards; }
+.num-dano.grande { font-size: 22px; color: #ff9d3c; }
+@keyframes num-dano {
+  0% { transform: translate(var(--x), var(--y)) scale(1.35); opacity: 1; }
+  18% { transform: translate(var(--x), calc(var(--y) - 8px)) scale(1); opacity: 1; }
+  100% { transform: translate(var(--x), calc(var(--y) - 46px)) scale(0.9); opacity: 0; }
+}
 .seta-alvo { position: fixed; z-index: 2; font-size: 30px; line-height: 1; color: #45b4ff; pointer-events: none; text-shadow: 0 0 6px #000; }
 /* Mata-mata: placar das equipes e relógio em cima, no meio; quedas no canto */
 .placar-equipes { position: fixed; z-index: 2; top: calc(12px + env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; margin: 0; padding: 6px 12px; font: 700 13px/1 var(--fonte-numero); letter-spacing: 0.06em; white-space: nowrap; }
@@ -592,6 +608,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     <div class="hud-gas" id="hud-gas"><span class="gas-barra"><i class="gas-nivel" id="gas-nivel"></i></span><span>GAS<br><span id="gas-txt">100%</span></span></div>
   </div>
   <div id="alvos" aria-hidden="true"></div>
+  <div id="numeros-dano" aria-hidden="true"></div>
   <div class="seta-alvo" id="seta-alvo" hidden aria-hidden="true">➤</div>
   <div class="dano" id="dano" aria-hidden="true"></div>
 
@@ -646,7 +663,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     <div class="capa-carga" id="capa-carga"><div class="carga" aria-hidden="true"><span id="capa-barra"></span></div><p id="capa-texto">Carregando…</p></div>
     <p class="capa-comecar"><span class="so-teclado">Aperte qualquer tecla</span><span class="so-toque">Toque para começar</span></p>
   </div>
-  <p class="capa-versao">Versão 7.4</p>
+  <p class="capa-versao">Versão 7.5</p>
 </div>
 
 <div class="capa-arte fundo-menu" id="fundo-menu" hidden aria-hidden="true"></div>
@@ -666,7 +683,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     </nav>
     <div class="menu-rodape">
       <p class="menu-recorde" id="menu-recorde" hidden></p>
-      <p class="menu-versao">Versão 7.4</p>
+      <p class="menu-versao">Versão 7.5</p>
     </div>
   </div>
 </div>
@@ -800,7 +817,9 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
         <h3>Combate</h3>
         <ul class="regras">
           <li><b>Metralhadora:</b> 5 segundos de tiro certeiro derrubam um caça. Atirando, a câmera dá um zoom. A cruz da mira fica vermelha quando há um inimigo embaixo dela. Fique atrás dele, a até 2,5 km, com a cruz em cima por 1,25 segundo: o anel laranja se fecha, a mira trava e o caça segue o inimigo sozinho. Para sair da trava, puxe o manche para o outro lado.</li>
-          <li><b>Míssil guiado:</b> deixe o inimigo dentro do círculo tracejado, a até 5,5 km, por 1,2 segundo: o círculo e a caixa dele ficam vermelhos e dá para lançar. Se ele sair do círculo, a trava cai. Tira 50% da vida.</li>
+          <li><b>Míssil guiado:</b> deixe o inimigo dentro do círculo tracejado, a até 5,5 km, por 1,2 segundo: o círculo e a caixa dele ficam vermelhos e dá para lançar. Com alguém dentro, o círculo cresce. Se o inimigo sair dele, a trava cai. Tira 50% da vida.</li>
+          <li><b>Assistência suave:</b> assim que um inimigo entra no círculo, o caça vai levando a mira até ele, devagar, e vai seguindo. O manche sempre manda mais que ela.</li>
+          <li><b>Vida e dano:</b> cada caça tem uma barra de vida em cima do quadrado dele. Quando você acerta alguém, o dano que deu aparece em cima do inimigo. A sua vida é a barra CASCO, no painel.</li>
           <li><b>Foguete:</b> vai reto, sem guia. Tira 60%.</li>
           <li><b>Flares:</b> só funcionam com o míssil a menos de 2 km, e enganam bem mais se você estiver em curva fechada na hora de soltar. Entre duas salvas há 3 segundos de espera. São 3 salvas: acabando, só voltam quando você cair e renascer.</li>
           <li><b>Radar:</b> no canto de cima, à esquerda. Você é o triângulo branco no centro, com a frente do caça para cima; vermelho é inimigo e verde é companheiro. O círculo de dentro marca 5,5 km, o alcance do míssil, e quem está a mais de 10 km fica na borda.</li>
@@ -4196,16 +4215,20 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     qTmp.setFromAxisAngle(EIXO_Z, ctrl.rolagem * taxaRol * dt); q.multiply(qTmp);
     qTmp.setFromAxisAngle(EIXO_Y, ctrl.guinada * taxaGui * dt); q.multiply(qTmp);
 
-    // Assistência de mira: com a mira travada num inimigo (metralhadora), o nariz segue sozinho o ponto onde os tiros vão
-    // encontrá-lo, até 90° por segundo. O manche manda: puxando para o lado contrário, ela quase some e a trava solta.
-    if (comPiloto && alvoSeguido && alvoSeguido.vivo) {
+    // Assistência de mira. A suave: assim que um inimigo entra no círculo, o nariz vai até ele devagar, até 25° por segundo,
+    // e vai seguindo. A forte: com a mira travada (metralhadora), o nariz segue o ponto onde os tiros vão encontrá-lo, até
+    // 90° por segundo. O manche manda: puxando para o lado contrário, ela quase some (e a trava da metralhadora solta).
+    const seguido = !comPiloto ? null : alvoSeguido && alvoSeguido.vivo ? alvoSeguido : candidato && candidato.vivo ? candidato : null;
+    if (seguido) {
+      const a = seguido === alvoSeguido ? ASSISTENCIA : ASSISTENCIA_SUAVE;
       frente.set(0, 0, -1).applyQuaternion(q);
-      pontoDeTiro(alvoSeguido, eixoTmp).sub(aviao.pos).normalize();
+      if (a === ASSISTENCIA) pontoDeTiro(seguido, eixoTmp); else eixoTmp.copy(seguido.pos);
+      eixoTmp.sub(aviao.pos).normalize();
       const ang = frente.angleTo(eixoTmp);
-      if (ang > 1e-4 && ang < ASSISTENCIA.solta) {
+      if (ang > 1e-4 && ang < a.solta) {
         direita.crossVectors(frente, eixoTmp).normalize();
         const contra = clamp(-1.5 * ctrl.arfagem * direita.dot(eixoPiloto.set(1, 0, 0).applyQuaternion(q)), 0, 0.9);
-        qTmp.setFromAxisAngle(direita, Math.min(ang, Math.min(ASSISTENCIA.maximo, ang * ASSISTENCIA.ganho) * (1 - contra) * dt));
+        qTmp.setFromAxisAngle(direita, Math.min(ang, Math.min(a.maximo, ang * a.ganho) * (1 - contra) * dt));
         q.premultiply(qTmp);
       }
     }
@@ -4333,15 +4356,18 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
   const DANO_GUIADO = 50, DANO_FOGUETE = 60, BONUS_SOZINHO = 30;
   const TEMPO_TRAVA = 1.25;                // metralhadora: segundos atrás do inimigo, com a mira em cima dele, para a mira travar
   // míssil guiado: o inimigo precisa ficar 1,2 s dentro do círculo tracejado, a até 5,5 km. raio: o do círculo, em partes da
-  // altura da tela. cone: o mesmo círculo para os caças do computador, em rad (uns 14° em volta do nariz)
-  const TRAVA_MISSIL = { tempo: 1.2, alcance: 5500, raio: 0.185, cone: 0.245 };
-  const COS_CIRCULO = Math.cos(TRAVA_MISSIL.cone);
+  // altura da tela; com um inimigo dentro, ele cresce (raioComAlvo). cone e coneComAlvo: o mesmo círculo para os caças do
+  // computador, em rad (uns 14° e 17,5° em volta do nariz)
+  const TRAVA_MISSIL = { tempo: 1.2, alcance: 5500, raio: 0.2, raioComAlvo: 0.25, cone: 0.248, coneComAlvo: 0.305 };
+  const COS_CIRCULO = Math.cos(TRAVA_MISSIL.cone), COS_CIRCULO_ALVO = Math.cos(TRAVA_MISSIL.coneComAlvo);
   const ERRO_TRAVA = 0.06;                 // rad: os caças do computador travam a mira com o alvo a até 3,4° do nariz
   const ALCANCE_TRAVA = 2500;              // metralhadora: até onde a mira trava (m)
   const SOLTA_TRAVA = 3000;                // e a distância em que ela solta: tem de ser maior, senão a trava cai na hora
   // assistência de mira da metralhadora: maximo (rad/s, 90°/s), ganho (por segundo: quanto do desvio ela corrige) e solta
   // (rad, 17°: desvio do nariz em que a trava cai)
   const ASSISTENCIA = { maximo: Math.PI / 2, ganho: 8, solta: 0.3 };
+  // assistência suave: com um inimigo dentro do círculo, sem precisar de trava (25°/s, mais fraca que o manche, que dá 46°/s)
+  const ASSISTENCIA_SUAVE = { maximo: 25 * Math.PI / 180, ganho: 2, solta: 0.6 };
   const ZOOM_TIRO = 1.5;                   // zoom da câmera enquanto a metralhadora atira
   const DURACAO_EQUIPE = 300;              // a partida do mata-mata dura 5 min
   const jogo = { nivel: 1, dif: null, abatidosNivel: 0, totalNivel: 0, fila: 0, tempoSpawn: 0, tempoProximo: 0, tempo: 0, acabou: false };
@@ -4406,7 +4432,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     const c = document.createElement('div');
     c.className = 'alvo';
     c.hidden = true;
-    c.innerHTML = '<span></span><i></i>';
+    c.innerHTML = '<span></span><em><b></b></em><i></i>';
     elAlvos.appendChild(c);
     caixas.push(c);
   }
@@ -5848,7 +5874,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     // míssil guiado: a mesma trava do jogador: o alvo dentro do círculo (uns 14° em volta do nariz), a até 5,5 km, por 1,2 s.
     // O tempo entre um lançamento e outro é do piloto.
     ini.tempoMissil -= dt;
-    const noCirculo = dist < TRAVA_MISSIL.alcance && iFrente.dot(iPara) > COS_CIRCULO;
+    const noCirculo = dist < TRAVA_MISSIL.alcance && iFrente.dot(iPara) > (ini.trava > 0 ? COS_CIRCULO_ALVO : COS_CIRCULO);
     ini.trava = noCirculo ? ini.trava + dt : Math.max(0, ini.trava - 6 * dt);
     if (ini.trava >= TRAVA_MISSIL.tempo && ini.armas.guiados > 0 && ini.tempoMissil <= 0 && misseisContra(alvo) < ini.dif.maxMisseis) {
       lancarMissilInimigo(ini, alvo, true);
@@ -5926,6 +5952,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       alvo.tempoAtaque = 0;
     }
     if (alvo === aviao) flashDano = 1;
+    if (atacante === aviao && (arma === 'tiro' || arma === 'guiado' || arma === 'foguete')) mostrarDano(alvo, tirou);
     if (alvo.vida > 0.01) {
       if (alvo !== aviao && alvo.pos.distanceToSquared(camera.position) < 9e6) explodir(alvo.pos, 0.35);
       if (atacante === aviao) somAcerto();
@@ -5933,6 +5960,31 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     }
     alvo.vida = 0;
     abater(alvo, atacante, arma);
+  }
+  // números de dano: cada acerto do jogador mostra o dano em cima do inimigo, subindo e sumindo
+  const elNumeros = $('numeros-dano');
+  const numerosDano = [];
+  for (let i = 0; i < 16; i++) {
+    const p = document.createElement('p');
+    p.hidden = true;
+    p.addEventListener('animationend', () => { p.hidden = true; });
+    elNumeros.appendChild(p);
+    numerosDano.push(p);
+  }
+  let proximoDano = 0;
+  function mostrarDano(alvo, quanto) {
+    const t = naTela(alvo.pos);
+    if (!t.dentro) return;
+    const p = numerosDano[proximoDano];
+    proximoDano = (proximoDano + 1) % numerosDano.length;
+    p.textContent = String(+quanto.toFixed(1)).replace('.', ',');
+    p.className = 'num-dano' + (quanto >= 20 ? ' grande' : '');
+    p.style.setProperty('--x', Math.round(t.x + (Math.random() - 0.5) * 40) + 'px');
+    p.style.setProperty('--y', Math.round(t.y - 30 - Math.random() * 12) + 'px');
+    // reinicia a animação, caso este número ainda esteja na tela
+    p.hidden = true;
+    void p.offsetWidth;
+    p.hidden = false;
   }
   function abater(alvo, atacante, arma) {
     // derrubou sozinho: ninguém mais tirou vida desse caça nesta vida dele
@@ -6286,17 +6338,17 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       if (tempoFora > 0.3) { candidatoMira = null; tempoMira = 0; }
     }
     // Míssil guiado: o inimigo tem de ficar dentro do círculo, a até 5,5 km, por 1,2 s. Quem está sendo travado continua
-    // enquanto estiver lá dentro, mesmo com outro mais perto da cruz; saindo do círculo, a trava cai.
-    const cosCirculo = Math.cos(Math.atan(TRAVA_MISSIL.raio * window.innerHeight / pxPorRad));
-    let alvoM = null, cosM = cosCirculo, noCirculo = false;
+    // enquanto estiver lá dentro (com alguém dentro o círculo cresce), mesmo com outro mais perto da cruz; saindo, a trava cai.
+    const cosEntra = Math.cos(Math.atan(TRAVA_MISSIL.raio * window.innerHeight / pxPorRad));
+    const cosFica = Math.cos(Math.atan(TRAVA_MISSIL.raioComAlvo * window.innerHeight / pxPorRad));
+    let alvoM = null, cosM = cosEntra, noCirculo = false;
     for (const ini of inimigos) {
       if (!ini.vivo || ini.time === aviao.time) continue;
       tmpA.subVectors(ini.pos, aviao.pos);
       const d = tmpA.length();
       if (d > TRAVA_MISSIL.alcance || d < 1) continue;
       const cos = frenteJog.dot(tmpA.divideScalar(d));
-      if (cos < cosCirculo) continue;
-      if (ini === candidato) noCirculo = true;
+      if (ini === candidato && cos >= cosFica) noCirculo = true;
       if (cos > cosM) { cosM = cos; alvoM = ini; }
     }
     if (noCirculo) tempoForaCirculo = 0;
@@ -6391,6 +6443,9 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       const dTxt = d >= 1000 ? (d / 1000).toFixed(1) + ' km' : Math.round(d) + ' m';
       c.firstChild.textContent = longe ? '' : amigo ? ini.nome : dTxt + ' · ' + Math.ceil(ini.vida) + '%' + (travado ? ' · TRAVADO' : '');
       c.lastChild.style.width = travando ? Math.round(clamp(tempoTrava / TRAVA_MISSIL.tempo, 0, 1) * 100) + '%' : '0';
+      const barra = c.children[1].firstChild;
+      barra.style.transform = 'scaleX(' + ini.vida / 100 + ')';
+      barra.classList.toggle('baixa', ini.vida <= 35);
     }
     for (; k < caixas.length; k++) caixas[k].hidden = true;
 
@@ -6452,7 +6507,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
   // o círculo do míssil é medido em pixels, para o tracejado ficar igual em qualquer tela
   function medirCirculo() {
     const r = Math.round(window.innerHeight * TRAVA_MISSIL.raio), c = elCirculo.firstElementChild, traco = 2 * Math.PI * r / 36;
-    elMira.style.setProperty('--raio-circulo', r + 'px');
+    elMira.style.setProperty('--raio-circulo', Math.round(window.innerHeight * TRAVA_MISSIL.raioComAlvo) + 'px');   // a velocidade e a gasolina ficam fora do círculo grande
     elCirculo.style.cssText = 'left:' + (-r - 2) + 'px;top:' + (-r - 2) + 'px;width:' + (2 * r + 4) + 'px;height:' + (2 * r + 4) + 'px';
     c.setAttribute('cx', r + 2);
     c.setAttribute('cy', r + 2);
