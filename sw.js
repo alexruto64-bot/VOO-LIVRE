@@ -35,11 +35,12 @@ self.addEventListener('fetch', (e) => {
   }
 });
 
-// a página: rede primeiro, mas sem esperar mais de 4 s; a cópia fica sempre com a última versão que chegou
+// a página: rede primeiro, mas sem esperar mais de 4 s; a cópia fica sempre com a última versão que chegou. O site deixa o
+// navegador guardar a página por 10 minutos: no-cache faz perguntar ao site se ela mudou, para a versão nova chegar logo.
 async function pagina(req, e) {
   const cache = await caches.open(PAGINA);
   const chave = new URL(req.url).pathname.endsWith('/ajustes.html') ? 'ajustes.html' : './';
-  const rede = fetch(req).then((r) => {
+  const rede = fetch(new Request(req, { cache: 'no-cache' })).then((r) => {
     if (r.ok && !r.redirected) cache.put(chave, r.clone());
     return r;
   });

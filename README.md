@@ -293,6 +293,9 @@ Quem guarda os arquivos é o service worker (`sw.js`): a página vem da internet
 resto vem da cópia guardada, e o que o jogo carregar com internet também fica guardado. O manifesto do app é o
 `manifest.webmanifest` e os ícones ficam em `icones/`.
 
+O botão **Atualizar versão**, no menu principal, compara a versão do aparelho com a publicada e, se houver uma nova, instala e
+recarrega o jogo. Os valores mudados na tabela de ajustes continuam guardados.
+
 ## Como o voo funciona
 
 - **Velocidade:** sem acelerar nem frear, o caça fica nos 1.000 km/h (subindo perde um pouco, mergulhando ganha).

@@ -481,6 +481,8 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
 .menu-recorde { margin: 0; font: 500 19px/1.15 var(--fonte-titulo); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ambar); }
 .menu-recorde b { font-weight: 600; color: #fff; }
 .menu-versao { margin: 0; font: 500 15px/1 var(--fonte-titulo); letter-spacing: 0.18em; color: var(--texto-suave); }
+.menu-versoes { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; }
+.atualizar { min-height: 44px; padding: 8px 14px 4px; font-size: 18px; letter-spacing: 0.08em; }
 /* janelas dos menus: Jogar, Configurações, Como jogar e Créditos */
 .janela {
   position: relative; width: min(780px, 100%); max-height: 100%; margin-left: clamp(0px, 4vw, 64px); display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden;
@@ -665,7 +667,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     <div class="capa-carga" id="capa-carga"><div class="carga" aria-hidden="true"><span id="capa-barra"></span></div><p id="capa-texto">Carregando…</p></div>
     <p class="capa-comecar"><span class="so-teclado">Aperte qualquer tecla</span><span class="so-toque">Toque para começar</span></p>
   </div>
-  <p class="capa-versao">Versão 7.8</p>
+  <p class="capa-versao">Versão 7.9</p>
 </div>
 
 <div class="capa-arte fundo-menu" id="fundo-menu" hidden aria-hidden="true"></div>
@@ -686,7 +688,10 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     <div class="menu-rodape">
       <p class="menu-recorde" id="menu-recorde" hidden></p>
       <p class="menu-versao" id="menu-ajustes" hidden>Com valores mudados na tabela de ajustes</p>
-      <p class="menu-versao">Versão 7.8</p>
+      <div class="menu-versoes">
+        <p class="menu-versao">Versão 7.9</p>
+        <button class="secundario atualizar" id="atualizar" type="button" aria-live="polite">Atualizar versão</button>
+      </div>
     </div>
   </div>
 </div>
@@ -4124,6 +4129,41 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
   const avisarAjustes = () => { $('menu-ajustes').hidden = !VOO_TABELA.temMudancas(); };
   avisarAjustes();
   window.addEventListener('storage', avisarAjustes);
+  // Atualizar versão: compara a versão daqui com a publicada. O endereço muda a cada pedido para não vir de nenhuma cópia
+  // guardada, e x-voo-baixar faz o service worker deixar o pedido passar sem guardar nada.
+  const versaoDe = (texto) => (texto.match(/Versão (\d+(?:\.\d+)*)/) || [])[1];
+  const btAtualizar = $('atualizar');
+  let voltaAtualizar = 0;
+  async function versaoPublicada() {
+    const desistir = new AbortController(), limite = setTimeout(() => desistir.abort(), 8000);
+    try {
+      const r = await fetch('./?procurar=' + Date.now(), { cache: 'no-store', headers: { 'x-voo-baixar': '1' }, signal: desistir.signal });
+      return r.ok ? versaoDe(await r.text()) : null;
+    } catch (e) {
+      return null;                         // sem internet, ou demorou demais
+    } finally {
+      clearTimeout(limite);
+    }
+  }
+  btAtualizar.addEventListener('click', async () => {
+    clearTimeout(voltaAtualizar);
+    btAtualizar.disabled = true;
+    btAtualizar.textContent = 'Procurando versão nova…';
+    const nova = await versaoPublicada();
+    if (nova && nova !== versaoDe(document.querySelector('.capa-versao').textContent)) {
+      btAtualizar.textContent = 'Instalando a versão ' + nova + '…';
+      try {
+        const sw = 'serviceWorker' in navigator && await navigator.serviceWorker.getRegistration();
+        if (sw) await sw.update();
+      } catch (e) { /* a página nova vem do mesmo jeito */ }
+      location.replace('./?atualizado=' + Date.now());
+      return;
+    }
+    btAtualizar.textContent = nova ? 'Você já está na versão mais nova' : 'Sem conexão. Tente de novo';
+    btAtualizar.disabled = false;
+    voltaAtualizar = setTimeout(() => { btAtualizar.textContent = 'Atualizar versão'; }, 3500);
+  });
+  if (location.search.includes('atualizado=')) history.replaceState(null, '', location.pathname);
   // no celular: tela cheia e deitado, quando o navegador deixa
   function telaCheia() {
     if (document.fullscreenElement) return;
