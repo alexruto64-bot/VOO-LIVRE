@@ -143,21 +143,21 @@ As fotos ficam em `ceu/`, cortadas do topo até um pouco abaixo do horizonte, em
 - Um caça que bate no chão ou num prédio dá os pontos que faltavam para quem o atacou por último ou, se ninguém, para
   quem ele perseguia: fugir rente aos obstáculos derruba quem vem atrás.
 - **Caças do computador:** são iguais ao seu: mesma velocidade, gasolina, curva, travas, armas e munição. Um caça do
-  computador que deixa você 1,5 s dentro do círculo dele, a até 5 km, lança um míssil guiado. Toca um bipe e aparece o
+  computador que deixa você 1,2 s dentro do círculo dele, a até 5,5 km, lança um míssil guiado. Toca um bipe e aparece o
   aviso MÍSSIL, com a distância. Uma curva bem fechada no último segundo faz o míssil passar direto, e os flares enganam,
   com as regras abaixo. Os caças do computador também lançam foguetes e, atrás de você, travam a mira como você trava.
 
 ## Armas
 
-- **Metralhadora** (Z): tiros infinitos, 13 por segundo. Atirando, a câmera dá um zoom de 30%. Fique atrás de um
-  inimigo, a até 1.667 m, com a cruz da mira em cima dele por 2 segundos: o anel laranja se fecha, a mira trava e o caça
+- **Metralhadora** (Z): tiros infinitos, 13 por segundo. Atirando, a câmera dá um zoom de 50%. Fique atrás de um
+  inimigo, a até 2.500 m, com a cruz da mira em cima dele por 1,25 segundo: o anel laranja se fecha, a mira trava e o caça
   segue o inimigo sozinho.
-- **Míssil guiado** (Espaço): 4 por vez. Só lança com alvo travado: o inimigo precisa ficar 1,5 segundo dentro do círculo
-  tracejado (uns 14° em volta da cruz), a até 5 km. Aí o círculo e a caixa dele ficam vermelhos. Se ele sair do círculo,
-  a trava cai. Voa a 4.000 km/h e curva 115° por segundo; se o alvo sai da frente dele, perde a trava e segue reto. Um míssil
+- **Míssil guiado** (Espaço): 4 por vez. Só lança com alvo travado: o inimigo precisa ficar 1,2 segundo dentro do círculo
+  tracejado (uns 14° em volta da cruz), a até 5,5 km. Aí o círculo e a caixa dele ficam vermelhos. Se ele sair do círculo,
+  a trava cai. Voa a 5.000 km/h e curva 120° por segundo; se o alvo sai da frente dele, perde a trava e segue reto. Um míssil
   novo volta a cada 20 s.
-- **Foguete** (X): 12 por vez, voa reto, a 4.000 km/h. Um foguete novo volta a cada 6 s.
-- **Flares** (F): solta uma salva de 6 chamarizes de calor atrás do avião. Só funcionam com o míssil a menos de 1,5 km:
+- **Foguete** (X): 12 por vez, voa reto, a 5.000 km/h, por 8 s. Um foguete novo volta a cada 6 s.
+- **Flares** (F): solta uma salva de 6 chamarizes de calor atrás do avião. Só funcionam com o míssil a menos de 2 km:
   cada míssil perto tem 45% de chance de ir atrás deles com o caça em linha reta e 80% em curva fechada (manche mais que
   meio puxado). Entre duas salvas há 3 s de espera. São 3 salvas e elas não voltam sozinhas: acabando, só quando você cair
   e renascer no mata-mata (na sobrevivência, no próximo voo). Os inimigos seguem as mesmas regras.
@@ -167,14 +167,14 @@ No mata-mata, quem cai volta na base com todas as armas e o tanque cheios.
 Na tela: a mira é uma cruz pequena que mostra para onde o nariz aponta e fica vermelha quando há um inimigo embaixo dela.
 Em volta dela fica o círculo tracejado do míssil: verde, laranja travando e vermelho travado. À esquerda do círculo fica
 a velocidade; à direita, a gasolina. As caixas azuis marcam os inimigos com a distância e a vida; com o míssil travado, a
-caixa fica vermelha e redonda. Com a mira travada (2 s atrás do inimigo, o anel laranja fechado), a assistência leva o
-nariz até o ponto onde os tiros vão encontrar o inimigo, até 86° por segundo. Para sair, puxe o manche para o lado
-contrário. A trava também solta se o nariz desvia mais de 17° desse ponto, se o inimigo fica de lado ou passa de 1.917 m.
+caixa fica vermelha e redonda. Com a mira travada (1,25 s atrás do inimigo, o anel laranja fechado), a assistência leva o
+nariz até o ponto onde os tiros vão encontrar o inimigo, até 90° por segundo. Para sair, puxe o manche para o lado
+contrário. A trava também solta se o nariz desvia mais de 17° desse ponto, se o inimigo fica de lado ou passa de 3.000 m.
 A seta na borda aponta para o inimigo mais perto quando ele está fora da tela.
 
 **Radar:** no canto de cima, à esquerda, nos combates. Você é o triângulo branco no centro, com a frente do caça para
 cima; vermelho é inimigo, verde é companheiro, e cada triângulo aponta para onde aquele caça voa. O círculo de dentro
-marca 5 km, o alcance do míssil; quem está a mais de 10 km fica na borda, mais apagado.
+marca 5,5 km, o alcance do míssil; quem está a mais de 10 km fica na borda, mais apagado.
 
 ## Explosões
 
@@ -275,14 +275,14 @@ resto vem da cópia guardada, e o que o jogo carregar com internet também fica 
 
 ## Como o voo funciona
 
-- **Velocidade:** sem acelerar nem frear, o caça fica nos 1.500 km/h (subindo perde um pouco, mergulhando ganha).
+- **Velocidade:** sem acelerar nem frear, o caça fica nos 1.000 km/h (subindo perde um pouco, mergulhando ganha).
   Acelerar (W ou o botão de cima) leva a 2.500 km/h em uns 4,5 s. Frear (S ou o botão de baixo) não gasta nada: o caça cai
-  rápido até 250 km/h e, segurando, fica nisso.
+  rápido até 250 km/h (de 1.500 km/h, em 2 s) e, segurando, fica nisso.
 - **Gasolina:** o tanque cheio dura 15 s de acelerador apertado. Solto, ele enche 5% por segundo (20 s do zero ao cheio),
   então dá para usar um pouco mesmo sem esperar encher. Se acabar com o botão apertado, é preciso soltar para acelerar de
   novo com o que voltou.
 - **Curva:** como num caça de verdade, inclinar as asas sozinho não vira. Incline (← →) e puxe o manche (↓): quanto
-  mais inclinado, mais a puxada vira o nariz. O manche (↑ ↓) gira o nariz uns 46° por segundo até 1.500 km/h (mais rápido
+  mais inclinado, mais a puxada vira o nariz. O manche (↑ ↓) gira o nariz uns 46° por segundo até 1.000 km/h (mais rápido
   se estiver devagar); daí até 2.500 km/h o caça vai ficando pesado, até 18° por segundo.
 - **Sem piloto automático:** o caça fica na posição em que você deixou. Inclinado, de faca ou de cabeça para baixo, ele
   continua assim até você mexer de novo; as asas não voltam sozinhas ao nível.

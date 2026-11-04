@@ -253,7 +253,7 @@ h1 {
 .mira svg { display: block; overflow: visible; }
 .mira-cruz { left: -10px; top: -10px; width: 20px; height: 20px; filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.9)); }
 .mira.na-mira .mira-cruz { color: #ff3b30; }
-/* anel laranja em volta da cruz: enche em 2 s atrás do inimigo e fica fechado com a mira travada (metralhadora) */
+/* anel laranja em volta da cruz: enche em 1,25 s atrás do inimigo e fica fechado com a mira travada (metralhadora) */
 .mira-anel { left: -20px; top: -20px; width: 40px; height: 40px; filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.9)); }
 .mira .anel { stroke: #ffb547; }
 /* círculo do míssil: laranja travando, vermelho travado */
@@ -588,7 +588,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     <svg class="mira-circulo" id="mira-circulo"><circle fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
     <svg class="mira-anel" viewBox="0 0 100 100"><circle class="anel" id="mira-anel" cx="50" cy="50" r="46" fill="none" stroke-width="5" pathLength="100" stroke-dasharray="0 100" transform="rotate(-90 50 50)"/></svg>
     <svg class="mira-cruz" viewBox="0 0 100 100"><path d="M50 4V38M50 62V96M4 50H38M62 50H96" fill="none" stroke="currentColor" stroke-width="8"/></svg>
-    <p class="hud-vel"><span id="hud-vel">1500</span><small>km/h</small></p>
+    <p class="hud-vel"><span id="hud-vel">1000</span><small>km/h</small></p>
     <div class="hud-gas" id="hud-gas"><span class="gas-barra"><i class="gas-nivel" id="gas-nivel"></i></span><span>GAS<br><span id="gas-txt">100%</span></span></div>
   </div>
   <div id="alvos" aria-hidden="true"></div>
@@ -646,7 +646,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     <div class="capa-carga" id="capa-carga"><div class="carga" aria-hidden="true"><span id="capa-barra"></span></div><p id="capa-texto">Carregando…</p></div>
     <p class="capa-comecar"><span class="so-teclado">Aperte qualquer tecla</span><span class="so-toque">Toque para começar</span></p>
   </div>
-  <p class="capa-versao">Versão 7.3</p>
+  <p class="capa-versao">Versão 7.4</p>
 </div>
 
 <div class="capa-arte fundo-menu" id="fundo-menu" hidden aria-hidden="true"></div>
@@ -666,7 +666,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     </nav>
     <div class="menu-rodape">
       <p class="menu-recorde" id="menu-recorde" hidden></p>
-      <p class="menu-versao">Versão 7.3</p>
+      <p class="menu-versao">Versão 7.4</p>
     </div>
   </div>
 </div>
@@ -794,16 +794,16 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       </section>
       <section>
         <h3>Velocidade</h3>
-        <p class="nota">Sem acelerar nem frear, o caça fica nos 1.500 km/h. Acelerar leva a 2.500 km/h e gasta gasolina: o tanque cheio dura 15 segundos de botão apertado e volta sozinho com o acelerador solto, 5% por segundo, então dá para usar um pouco mesmo sem esperar encher. Frear não gasta: o caça cai rápido até 250 km/h e, segurando, fica nisso e estola. Com o caça a toda, a curva fica mais pesada.</p>
+        <p class="nota">Sem acelerar nem frear, o caça fica nos 1.000 km/h. Acelerar leva a 2.500 km/h e gasta gasolina: o tanque cheio dura 15 segundos de botão apertado e volta sozinho com o acelerador solto, 5% por segundo, então dá para usar um pouco mesmo sem esperar encher. Frear não gasta: o caça cai rápido até 250 km/h e, segurando, fica nisso e estola. Com o caça a toda, a curva fica mais pesada.</p>
       </section>
       <section>
         <h3>Combate</h3>
         <ul class="regras">
-          <li><b>Metralhadora:</b> 5 segundos de tiro certeiro derrubam um caça. Atirando, a câmera dá um zoom. A cruz da mira fica vermelha quando há um inimigo embaixo dela. Fique atrás dele, a até 1,6 km, com a cruz em cima por 2 segundos: o anel laranja se fecha, a mira trava e o caça segue o inimigo sozinho. Para sair da trava, puxe o manche para o outro lado.</li>
-          <li><b>Míssil guiado:</b> deixe o inimigo dentro do círculo tracejado, a até 5 km, por 1,5 segundo: o círculo e a caixa dele ficam vermelhos e dá para lançar. Se ele sair do círculo, a trava cai. Tira 50% da vida.</li>
+          <li><b>Metralhadora:</b> 5 segundos de tiro certeiro derrubam um caça. Atirando, a câmera dá um zoom. A cruz da mira fica vermelha quando há um inimigo embaixo dela. Fique atrás dele, a até 2,5 km, com a cruz em cima por 1,25 segundo: o anel laranja se fecha, a mira trava e o caça segue o inimigo sozinho. Para sair da trava, puxe o manche para o outro lado.</li>
+          <li><b>Míssil guiado:</b> deixe o inimigo dentro do círculo tracejado, a até 5,5 km, por 1,2 segundo: o círculo e a caixa dele ficam vermelhos e dá para lançar. Se ele sair do círculo, a trava cai. Tira 50% da vida.</li>
           <li><b>Foguete:</b> vai reto, sem guia. Tira 60%.</li>
-          <li><b>Flares:</b> só funcionam com o míssil a menos de 1,5 km, e enganam bem mais se você estiver em curva fechada na hora de soltar. Entre duas salvas há 3 segundos de espera. São 3 salvas: acabando, só voltam quando você cair e renascer.</li>
-          <li><b>Radar:</b> no canto de cima, à esquerda. Você é o triângulo branco no centro, com a frente do caça para cima; vermelho é inimigo e verde é companheiro. O círculo de dentro marca 5 km, o alcance do míssil, e quem está a mais de 10 km fica na borda.</li>
+          <li><b>Flares:</b> só funcionam com o míssil a menos de 2 km, e enganam bem mais se você estiver em curva fechada na hora de soltar. Entre duas salvas há 3 segundos de espera. São 3 salvas: acabando, só voltam quando você cair e renascer.</li>
+          <li><b>Radar:</b> no canto de cima, à esquerda. Você é o triângulo branco no centro, com a frente do caça para cima; vermelho é inimigo e verde é companheiro. O círculo de dentro marca 5,5 km, o alcance do míssil, e quem está a mais de 10 km fica na borda.</li>
           <li><b>Inimigos:</b> os caças do computador são iguais ao seu: mesma velocidade, gasolina, travas e armas. Na sobrevivência, o nível muda só a habilidade do piloto.</li>
           <li><b>Pontos:</b> cada 1% de vida tirado de um inimigo vale 1 ponto; derrubar um caça sozinho, sem ajuda, dá mais 30.</li>
           <li><b>Obstáculos:</b> fuja rente aos morros e entre os prédios. Quem vem atrás pode bater, e a queda conta para você.</li>
@@ -3667,13 +3667,15 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
 
   // ---------- estado do voo ----------
   const INICIO = { x: 0, y: 1500, z: 0, vel: 200, motor: 0.6 };
-  const VEL_PADRAO = 1500 / 3.6;    // m/s: a velocidade sem acelerar nem frear
+  const VEL_PADRAO = 1000 / 3.6;    // m/s: a velocidade sem acelerar nem frear
   const VEL_MAXIMA = 2500 / 3.6;    // acelerando
   const VEL_MINIMA = 250 / 3.6;     // freando
+  const ACELERACAO = (VEL_MAXIMA - VEL_PADRAO) / 4.5;   // m/s²: da velocidade normal à máxima em 4,5 s
+  const FREADA = (1500 - 250) / 3.6 / 2;                // m/s²: de 1.500 a 250 km/h em 2 s
   const VEL_ESTOL = 75;             // m/s (270 km/h): abaixo disso as asas perdem sustentação (freando até o fim, o caça estola)
   const TEMPO_GASOLINA = 15;        // segundos de acelerador apertado com o tanque cheio
   const RECARGA_GASOLINA = 20;      // segundos para encher do zero, com o acelerador solto
-  // quanto o manche gira o caça (rad/s): até 1.500 km/h e a 2.500 km/h (a máxima é a de antes, a 2.000 km/h)
+  // quanto o manche gira o caça (rad/s): até a velocidade normal e a 2.500 km/h
   const GIRO_ARFAGEM = 0.8, GIRO_ARFAGEM_MAX = 0.32;
   const GIRO_ROLAGEM = 3.2, GIRO_ROLAGEM_MAX = 2.6;
   const aviao = {
@@ -4139,7 +4141,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
   const eixoPiloto = new THREE.Vector3();
   const qTmp = new THREE.Quaternion();
   // As asas e o motor são iguais em todos os caças, o do jogador e os do computador.
-  // Devagar, as asas sustentam pouco; de 1.500 a 2.500 km/h o caça vai ficando pesado.
+  // Devagar, as asas sustentam pouco; da velocidade normal até 2.500 km/h o caça vai ficando pesado.
   const sustentacaoDe = (v) => clamp((v - VEL_ESTOL * 0.6) / (VEL_ESTOL * 1.2), 0.15, 1);
   const pesoDe = (v) => clamp((v - VEL_PADRAO) / (VEL_MAXIMA - VEL_PADRAO), 0, 1);
   // quanto o manche todo puxado gira o nariz (rad/s)
@@ -4158,7 +4160,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     } else p.gasolina = Math.min(100, p.gasolina + 100 / RECARGA_GASOLINA * dt);
     const ar = clamp(1 - (p.pos.y - 12000) / 6000, 0.2, 1);   // ar rarefeito lá em cima
     const alvoVel = freando ? VEL_MINIMA : VEL_MINIMA + ((acelerando ? VEL_MAXIMA : normal - 40 * subida) - VEL_MINIMA) * ar;
-    const ritmo = (freando ? 130 : acelerando ? 62 : p.vel < alvoVel ? 70 : 40) * dt;
+    const ritmo = (freando ? FREADA : acelerando ? ACELERACAO : p.vel < alvoVel ? 70 : 40) * dt;
     p.vel = clamp(p.vel + clamp(alvoVel - p.vel, -ritmo, ritmo), 0, VEL_MAXIMA);
     return acelerando;
   }
@@ -4195,7 +4197,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     qTmp.setFromAxisAngle(EIXO_Y, ctrl.guinada * taxaGui * dt); q.multiply(qTmp);
 
     // Assistência de mira: com a mira travada num inimigo (metralhadora), o nariz segue sozinho o ponto onde os tiros vão
-    // encontrá-lo, até uns 86° por segundo. O manche manda: puxando para o lado contrário, ela quase some e a trava solta.
+    // encontrá-lo, até 90° por segundo. O manche manda: puxando para o lado contrário, ela quase some e a trava solta.
     if (comPiloto && alvoSeguido && alvoSeguido.vivo) {
       frente.set(0, 0, -1).applyQuaternion(q);
       pontoDeTiro(alvoSeguido, eixoTmp).sub(aviao.pos).normalize();
@@ -4303,7 +4305,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       camera.fov = aproximar(camera.fov, fovAlvo, 2, dt);
       camera.updateProjectionMatrix();
     }
-    // atirando com a metralhadora, a câmera dá um zoom de 30%
+    // atirando com a metralhadora, a câmera dá um zoom de 50%
     const zoomAlvo = estado === 'voando' && !olhandoTras && (apertada('KeyZ') || toque.atirando) ? ZOOM_TIRO : 1;
     if (camera.zoom !== zoomAlvo) {
       camera.zoom = Math.abs(camera.zoom - zoomAlvo) < 0.002 ? zoomAlvo : aproximar(camera.zoom, zoomAlvo, 10, dt);
@@ -4329,17 +4331,18 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
   const CADENCIA = 0.075;                  // segundos entre dois tiros da metralhadora
   const DANO_TIRO = 100 * CADENCIA / 5;    // 1,5% por tiro: 5 s de tiro certeiro derrubam
   const DANO_GUIADO = 50, DANO_FOGUETE = 60, BONUS_SOZINHO = 30;
-  const TEMPO_TRAVA = 2;                   // metralhadora: segundos atrás do inimigo, com a mira em cima dele, para a mira travar
-  // míssil guiado: o inimigo precisa ficar 1,5 s dentro do círculo tracejado, a até 5 km. raio: o do círculo, em partes da
+  const TEMPO_TRAVA = 1.25;                // metralhadora: segundos atrás do inimigo, com a mira em cima dele, para a mira travar
+  // míssil guiado: o inimigo precisa ficar 1,2 s dentro do círculo tracejado, a até 5,5 km. raio: o do círculo, em partes da
   // altura da tela. cone: o mesmo círculo para os caças do computador, em rad (uns 14° em volta do nariz)
-  const TRAVA_MISSIL = { tempo: 1.5, alcance: 5000, raio: 0.185, cone: 0.245 };
+  const TRAVA_MISSIL = { tempo: 1.2, alcance: 5500, raio: 0.185, cone: 0.245 };
   const COS_CIRCULO = Math.cos(TRAVA_MISSIL.cone);
   const ERRO_TRAVA = 0.06;                 // rad: os caças do computador travam a mira com o alvo a até 3,4° do nariz
-  const ALCANCE_TRAVA = TRAVA_MISSIL.alcance / 3;   // metralhadora: a mira trava 3 vezes mais perto que o míssil (1.667 m)
-  // assistência de mira da metralhadora: maximo (rad/s, 86°/s), ganho (por segundo: quanto do desvio ela corrige) e solta
+  const ALCANCE_TRAVA = 2500;              // metralhadora: até onde a mira trava (m)
+  const SOLTA_TRAVA = 3000;                // e a distância em que ela solta: tem de ser maior, senão a trava cai na hora
+  // assistência de mira da metralhadora: maximo (rad/s, 90°/s), ganho (por segundo: quanto do desvio ela corrige) e solta
   // (rad, 17°: desvio do nariz em que a trava cai)
-  const ASSISTENCIA = { maximo: 1.5, ganho: 8, solta: 0.3 };
-  const ZOOM_TIRO = 1.3;                   // zoom da câmera enquanto a metralhadora atira
+  const ASSISTENCIA = { maximo: Math.PI / 2, ganho: 8, solta: 0.3 };
+  const ZOOM_TIRO = 1.5;                   // zoom da câmera enquanto a metralhadora atira
   const DURACAO_EQUIPE = 300;              // a partida do mata-mata dura 5 min
   const jogo = { nivel: 1, dif: null, abatidosNivel: 0, totalNivel: 0, fila: 0, tempoSpawn: 0, tempoProximo: 0, tempo: 0, acabou: false };
   // Ficha de cada participante: nome, equipe (0 = a do jogador) e placar. A do jogador é sempre a mesma; no mata-mata,
@@ -4685,7 +4688,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     t.vel.x += (Math.random() - 0.5) * espalhar;
     t.vel.y += (Math.random() - 0.5) * espalhar;
     t.vel.z += (Math.random() - 0.5) * espalhar;
-    t.vida = 2.2;
+    t.vida = 3.2;
     t.dono = dono;
     const nosso = dono.time === aviao.time;
     t.malha.material = nosso ? matTiro : matTiroInimigo;
@@ -5274,7 +5277,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
   // por eles. A regra é a mesma para todos os caças: só funcionam com o míssil perto, enganam bem mais quem está em curva
   // fechada e há uma espera entre as salvas. São 3 salvas por vida: elas não voltam sozinhas.
   const FLARES_POR_SALVA = 6;
-  const FLARE = { alcance: 1500, chanceReto: 0.45, chanceCurva: 0.8, espera: 3 };
+  const FLARE = { alcance: 2000, chanceReto: 0.45, chanceCurva: 0.8, espera: 3 };
   const flares = [];
   const salvas = [];
   const spritesFlare = [];
@@ -5314,7 +5317,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     if (jogador) {
       if (enganados) mensagem(enganados > 1 ? 'Os flares enganaram ' + enganados + ' mísseis!' : 'Os flares enganaram o míssil!', 2.4);
       else if (falhou) mensagem('O míssil não caiu nos flares: faça uma curva fechada', 2.4);
-      else if (cedo) mensagem('Cedo demais: os flares só funcionam com o míssil a menos de 1,5 km', 2.4);
+      else if (cedo) mensagem('Cedo demais: os flares só funcionam com o míssil a menos de 2 km', 2.4);
     }
     return s;
   }
@@ -5394,12 +5397,12 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     g.frustumCulled = false;
     return { malha: g, pos: new THREE.Vector3(), ant: new THREE.Vector3(), quat: new THREE.Quaternion(), vel: 0, vida: 0, dono: null, time, alvo: null, guiado, rastreando: false, salvaIsca: null, testouFlare: false, chama, fumaca: 0, som: null, passou: false };
   }
-  // Mísseis e foguetes são iguais para todos os caças. Bem a 4.000 km/h, o guiado faz uma curva mais larga que a de um caça
-  // a 1.500 km/h: uma curva bem fechada no último segundo faz ele passar direto.
-  const VEL_MISSIL = 4000 / 3.6;             // m/s
-  const ACEL_MISSIL = 300;                   // m/s²: sai na velocidade de quem lança e chega lá em uns 2 s
-  const GIRO_MISSIL = 2;                     // rad/s
-  const VIDA_GUIADO = 14, VIDA_FOGUETE = 7;  // s no ar
+  // Mísseis e foguetes são iguais para todos os caças. A 5.000 km/h, o guiado faz uma curva mais larga que a de um caça
+  // a 1.000 km/h: uma curva bem fechada no último segundo faz ele passar direto.
+  const VEL_MISSIL = 5000 / 3.6;             // m/s
+  const ACEL_MISSIL = 450;                   // m/s²: sai na velocidade de quem lança e chega lá em uns 2,4 s
+  const GIRO_MISSIL = Math.PI * 2 / 3;       // rad/s: 120°/s
+  const VIDA_GUIADO = 14, VIDA_FOGUETE = 8;  // s no ar
   const misseisContra = (p) => misseis.reduce((n, m) => n + (m.alvo === p && m.rastreando ? 1 : 0), 0);
   const misseisContraMim = () => misseisContra(aviao);
   // guiado: míssil guiado no alvo; senão, foguete, que voa reto
@@ -5562,7 +5565,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       previsao: 2.4 + 1.1 * k, lead: 0.3 + 0.7 * k, curva: 0.6 * k,
     };
   }
-  const DIF_EQUIPE = Object.assign(dificuldade(6), { manche: 1, rajada: 12, pausa: 1.6, lead: 0.92, curva: 0.9, maxMisseis: 2, recarga: 12 });
+  const DIF_EQUIPE = Object.assign(dificuldade(6), { manche: 0.8, rajada: 12, pausa: 1.6, lead: 0.92, curva: 0.9, maxMisseis: 2, recarga: 12 });
   const iFrente = new THREE.Vector3(), iPara = new THREE.Vector3(), iPonto = new THREE.Vector3(), iMira = new THREE.Vector3();
   const iTmp = new THREE.Vector3(), iTmp2 = new THREE.Vector3();
   // ficha: a do participante; dif: como pilota; onde: { pos, rumo } para nascer num lugar certo (mata-mata). Sem
@@ -5842,7 +5845,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       ini.armas.foguetes--;
       ini.tempoFoguete = ini.dif.recarga * (0.6 + Math.random() * 0.6);
     }
-    // míssil guiado: a mesma trava do jogador: o alvo dentro do círculo (uns 14° em volta do nariz), a até 5 km, por 1,5 s.
+    // míssil guiado: a mesma trava do jogador: o alvo dentro do círculo (uns 14° em volta do nariz), a até 5,5 km, por 1,2 s.
     // O tempo entre um lançamento e outro é do piloto.
     ini.tempoMissil -= dt;
     const noCirculo = dist < TRAVA_MISSIL.alcance && iFrente.dot(iPara) > COS_CIRCULO;
@@ -5852,11 +5855,11 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       ini.armas.guiados--;
       ini.tempoMissil = ini.dif.recarga * (0.8 + Math.random() * 0.4);
     }
-    // metralhadora: a mesma trava do jogador: atrás do alvo, a até 1.667 m, com ele na mira por 2 s, o nariz passa a segui-lo.
+    // metralhadora: a mesma trava do jogador: atrás do alvo, a até 2.500 m, com ele na mira por 1,25 s, o nariz passa a segui-lo.
     // Solta se o ponto de mira escapa demais do nariz, se o alvo fica de lado ou se foge para longe.
     const atras = iTmp2.set(0, 0, -1).applyQuaternion(alvo.quat).dot(iPara);
     if (ini.seguindo) {
-      if (dist > ALCANCE_TRAVA * 1.15 || atras < 0 || iFrente.angleTo(iTmp.subVectors(iMira, ini.pos)) > ASSISTENCIA.solta) { ini.seguindo = null; ini.tempoMira = 0; }
+      if (dist > SOLTA_TRAVA || atras < 0 || iFrente.angleTo(iTmp.subVectors(iMira, ini.pos)) > ASSISTENCIA.solta) { ini.seguindo = null; ini.tempoMira = 0; }
     } else if (dist < ALCANCE_TRAVA && atras > 0.26 && Math.acos(clamp(iFrente.dot(iPara), -1, 1)) - Math.atan(alvo.raio / dist) < ERRO_TRAVA && visivel(ini.pos, alvo.pos)) {
       ini.tempoMira += dt;
       if (ini.tempoMira >= TEMPO_TRAVA) ini.seguindo = alvo;
@@ -6246,7 +6249,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     } else armas.cadencia = Math.max(armas.cadencia, 0);
 
     // A mira: o inimigo embaixo da cruz (mais o tamanho dele) a deixa vermelha.
-    // Metralhadora: ficar atrás do inimigo, a até 1.667 m, com ele na mira por 2 s trava a mira nele, e o caça o segue. Ela
+    // Metralhadora: ficar atrás do inimigo, a até 2.500 m, com ele na mira por 1,25 s trava a mira nele, e o caça o segue. Ela
     // solta se o ponto onde os tiros vão encontrá-lo escapa demais do nariz, se ele fica de lado ou se foge para longe.
     const pxPorRad = camera.zoom * window.innerHeight / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2));
     const raioMira = 12 / pxPorRad;                                 // a cruz
@@ -6268,7 +6271,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     naMira = melhor;
     if (alvoSeguido) {
       const desvio = frenteJog.angleTo(pontoDeTiro(alvoSeguido, tmpA).sub(aviao.pos));
-      if (!alvoSeguido.vivo || alvoSeguido.pos.distanceTo(aviao.pos) > ALCANCE_TRAVA * 1.15 || desvio > ASSISTENCIA.solta || !atrasDe(alvoSeguido, 0)) {
+      if (!alvoSeguido.vivo || alvoSeguido.pos.distanceTo(aviao.pos) > SOLTA_TRAVA || desvio > ASSISTENCIA.solta || !atrasDe(alvoSeguido, 0)) {
         alvoSeguido = candidatoMira = null;
         tempoMira = 0;
         mensagem('A mira soltou: siga o inimigo de novo', 1.6);
@@ -6282,7 +6285,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       tempoFora += dt;
       if (tempoFora > 0.3) { candidatoMira = null; tempoMira = 0; }
     }
-    // Míssil guiado: o inimigo tem de ficar dentro do círculo, a até 5 km, por 1,5 s. Quem está sendo travado continua
+    // Míssil guiado: o inimigo tem de ficar dentro do círculo, a até 5,5 km, por 1,2 s. Quem está sendo travado continua
     // enquanto estiver lá dentro, mesmo com outro mais perto da cruz; saindo do círculo, a trava cai.
     const cosCirculo = Math.cos(Math.atan(TRAVA_MISSIL.raio * window.innerHeight / pxPorRad));
     let alvoM = null, cosM = cosCirculo, noCirculo = false;
@@ -6437,7 +6440,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     }
     if (feed.length && feed[feed.length - 1].ate < performance.now()) { feed.pop(); desenharFeed(); }
     if (flashDano > 0) { flashDano = Math.max(0, flashDano - 0.04); elDano.style.opacity = flashDano * 0.55; }
-    // alerta de míssil, com a distância: os flares só funcionam com ele a menos de 1,5 km
+    // alerta de míssil, com a distância: os flares só funcionam com ele a menos de 2 km
     const perseguido = voando && misseisContraMim() > 0;
     elAlertaMissil.hidden = !perseguido;
     if (perseguido) {
@@ -6456,7 +6459,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     c.setAttribute('r', r);
     c.setAttribute('stroke-dasharray', (traco * 0.62).toFixed(2) + ' ' + (traco * 0.38).toFixed(2));
   }
-  // --- radar: você no centro, com a frente do caça para cima. O círculo de dentro marca o alcance da trava do míssil (5 km);
+  // --- radar: você no centro, com a frente do caça para cima. O círculo de dentro marca o alcance da trava do míssil (5,5 km);
   // quem está além do alcance do radar (10 km) fica na borda, mais apagado, só para mostrar de que lado está.
   const ALCANCE_RADAR = 10000;
   const elRadar = $('radar');
