@@ -19,9 +19,10 @@ o caça e o cenário escolhidos, com a câmera passeando em volta dele:
 
 - **Jogar:** modo, caça, cenário (com miniaturas, `cenarios/*_mini.jpg`) e céu, e o botão Decolar. As escolhas ficam
   guardadas no navegador.
-- **Configurações:** gráficos em baixo, médio ou alto (o jogo recarrega para trocar); volume geral, da música e dos
-  efeitos; sensibilidade do manche; inverter o manche; câmera tremendo com as explosões; e o jogo sem internet. A pausa
-  também abre as Configurações (menos os gráficos, que só mudam no menu).
+- **Configurações:** gráficos em baixo, médio ou alto (o jogo recarrega para trocar); brilho de luz e sombras do sol
+  (ligam e desligam na hora); volume geral, da música e dos efeitos; o jeito de pilotar (fácil ou profissional);
+  sensibilidade do manche; inverter o manche; câmera tremendo com as explosões; e o jogo sem internet. A pausa também
+  abre as Configurações (menos os gráficos, que só mudam no menu).
 - **Como jogar:** os comandos do teclado e do celular, as armas, os pontos e os modos.
 - **Créditos:** de onde vem cada modelo, textura, céu, som e música.
 
@@ -113,6 +114,20 @@ a cidade e as vilas estão no dobro do tamanho original do modelo, o aeroporto e
 2,6 a 3,4 vezes (uns 700 m) e as pedras em 6 a 9 vezes (300 a 470 m).
 
 ## Visual
+
+- **Brilho de luz** (versão 8.0): o quadro é desenhado primeiro numa imagem que guarda luz acima do branco da tela. O
+  que passa do branco (o fogo do motor, os tiros, as explosões, os flares, o sol e o reflexo dele no mar) é separado,
+  borrado em vários tamanhos e somado de volta como um brilho em volta. No fim a luz forte dobra devagar até o branco,
+  em vez de virar uma mancha chapada, e as cores ganham um pouco de contraste e de vida, com os cantos da tela
+  levemente mais escuros. Ligado no gráfico médio e no alto; em Configurações liga e desliga na hora. Se o aparelho não
+  consegue desenhar nesse tipo de imagem, o jogo desenha direto na tela, como antes.
+- **Sombras do sol** (versão 8.0): prédios, construções, caças, o relevo das ilhas (montanhas, pedras e as Agulhas no
+  mar) e, no gráfico alto, as árvores da floresta fazem sombra no chão, na água e uns nos outros. O sol desenha num
+  mapa a distância das coisas até ele; o mapa cobre um quadrado em volta de um ponto do chão à frente da câmera, pequeno
+  e detalhado no voo baixo (1 km de lado) e maior no voo alto (até 9 km). As nuvens também fazem sombra, com um desenho
+  delas vistas de cima que anda com o vento. Na sombra o chão puxa para o azul do céu. Cada céu tem a sua força: no
+  nublado as sombras quase somem. Ligadas no gráfico médio (mapa de 1.024 pontos) e no alto (2.048); em Configurações
+  ligam e desligam na hora. Com elas desligadas volta a sombra redonda embaixo do caça.
 
 - **Montanhas das ilhas:** o relevo entre os pontos da grade é uma curva suave (sem as quinas retas de antes), e de
   perto entram texturas de verdade do [Poly Haven](https://polyhaven.com/) (CC0): rocha, grama com pedras e terra,
@@ -245,10 +260,20 @@ editadas para tocar em loop e com o volume igualado:
 
 ## Comandos
 
+Há dois jeitos de pilotar, escolhidos em Configurações:
+
+- **Fácil** (o padrão desde a versão 8.0): o manche aponta para onde o caça vai. Para o lado ele já vira, para cima
+  sobe e para baixo desce; na diagonal faz os dois juntos. As asas inclinam sozinhas para acompanhar a curva e voltam ao
+  nível quando o manche é solto. O nariz para a 80° para cima ou para baixo (sem looping).
+- **Profissional** (o de antes): para o lado só inclina as asas; para curvar, incline e puxe o manche. Dá para fazer
+  looping e voar de cabeça para baixo.
+
+A curva mais fechada é a mesma nos dois: o que muda é só como o manche pede a curva.
+
 | Tecla     | O que faz                                   |
 | --------- | ------------------------------------------- |
-| ↓ ↑       | Puxar / empurrar o manche (nariz sobe / desce) |
-| ← →       | Inclinar as asas. Para curvar, incline e puxe |
+| ↑ ↓       | Fácil: subir / descer. Profissional: ↓ puxa o manche (nariz sobe), ↑ empurra |
+| ← →       | Fácil: virar para a esquerda / para a direita. Profissional: inclinar as asas |
 | A D       | Leme: vira o nariz de lado                  |
 | W S       | Segure: W acelera (gasta gasolina), S freia |
 | Z         | Metralhadora                                |
@@ -266,8 +291,9 @@ editadas para tocar em loop e com o volume igualado:
 
 O jogo é só na horizontal: com o celular em pé ele pausa e pede para deitar o aparelho. Ao decolar, entra em tela cheia.
 
-- **Lado esquerdo:** encoste e arraste para pilotar. O manche aparece onde o dedo encostou; para baixo o nariz sobe,
-  para os lados inclina as asas.
+- **Lado esquerdo:** encoste e arraste para pilotar. O manche aparece onde o dedo encostou. No controle fácil, arraste
+  para onde o caça deve ir (para o lado vira, para cima sobe); no profissional, para baixo o nariz sobe e para os lados
+  inclina as asas.
 - **Lado direito:** os botões de acelerar e frear (segure, um em cima do outro), tiro (segure), míssil, foguete e flares,
   com a quantidade que sobra de cada um.
 - **Em cima:** olhar para trás (segure), trocar câmera e pausar.
@@ -304,11 +330,12 @@ recarrega o jogo. Os valores mudados na tabela de ajustes continuam guardados.
 - **Gasolina:** o tanque cheio dura 15 s de acelerador apertado. Solto, ele enche 5% por segundo (20 s do zero ao cheio),
   então dá para usar um pouco mesmo sem esperar encher. Se acabar com o botão apertado, é preciso soltar para acelerar de
   novo com o que voltou.
-- **Curva:** como num caça de verdade, inclinar as asas sozinho não vira. Incline (← →) e puxe o manche (↓): quanto
-  mais inclinado, mais a puxada vira o nariz. O manche (↑ ↓) gira o nariz uns 46° por segundo até 1.000 km/h (mais rápido
-  se estiver devagar); daí até 2.500 km/h o caça vai ficando pesado, até 18° por segundo.
-- **Sem piloto automático:** o caça fica na posição em que você deixou. Inclinado, de faca ou de cabeça para baixo, ele
-  continua assim até você mexer de novo; as asas não voltam sozinhas ao nível.
+- **Curva:** o nariz gira uns 46° por segundo até 1.000 km/h (mais rápido se estiver devagar); daí até 2.500 km/h o caça
+  vai ficando pesado, até 18° por segundo. No controle fácil o manche para o lado já faz essa curva (as asas inclinam
+  68° sozinhas, só para acompanhar). No profissional é como num caça de verdade: inclinar as asas sozinho não vira;
+  incline (← →) e puxe o manche (↓): quanto mais inclinado, mais a puxada vira o nariz.
+- **Sem piloto automático no profissional:** o caça fica na posição em que você deixou. Inclinado, de faca ou de cabeça
+  para baixo, ele continua assim até você mexer de novo. No fácil, as asas voltam sozinhas ao nível.
 - **Estol:** abaixo de 270 km/h as asas perdem sustentação. O nariz cai aos poucos, o caça afunda e aparece o aviso
   ESTOL até ganhar velocidade de novo. Segurando o freio até os 250 km/h, ele estola: é só soltar o freio e baixar o nariz.
 - **Teto:** acima de 12.000 m o ar fica rarefeito e o caça perde velocidade.

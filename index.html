@@ -521,6 +521,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
 .cenario small { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 /* Configurações */
 .segmentos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.segmentos.dois { grid-template-columns: repeat(2, 1fr); margin-bottom: 12px; }
 .segmentos button { display: grid; gap: 4px; align-content: start; padding: 10px 12px 9px; border: 2px solid var(--painel-borda); border-radius: 4px; background: var(--tecla); color: var(--texto); text-align: left; cursor: pointer; }
 .segmentos span { font: 600 22px/1 var(--fonte-titulo); letter-spacing: 0.08em; text-transform: uppercase; padding-top: 3px; }
 .segmentos small { font: 400 11px/1.35 var(--fonte-rotulo); color: var(--texto-suave); }
@@ -624,8 +625,8 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
   <section class="painel ajuda" id="ajuda" aria-label="Comandos">
     <p class="ajuda-titulo">Comandos <span>H esconde</span></p>
     <dl class="comandos">
-      <dt><kbd>↓</kbd><kbd>↑</kbd></dt><dd>Puxar / empurrar o manche (nariz sobe / desce)</dd>
-      <dt><kbd>←</kbd><kbd>→</kbd></dt><dd>Inclinar as asas. Para curvar, incline e puxe</dd>
+      <dt data-ajuda="teclas-vertical"><kbd>↑</kbd><kbd>↓</kbd></dt><dd data-ajuda="vertical">Subir / descer</dd>
+      <dt><kbd>←</kbd><kbd>→</kbd></dt><dd data-ajuda="lados">Virar para a esquerda / para a direita</dd>
       <dt><kbd>A</kbd><kbd>D</kbd></dt><dd>Leme: vira o nariz de lado</dd>
       <dt><kbd>W</kbd><kbd>S</kbd></dt><dd>Segure: W acelera (gasta gasolina), S freia</dd>
       <dt><kbd>Z</kbd></dt><dd>Metralhadora (tiros infinitos, com zoom)</dd>
@@ -667,7 +668,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     <div class="capa-carga" id="capa-carga"><div class="carga" aria-hidden="true"><span id="capa-barra"></span></div><p id="capa-texto">Carregando…</p></div>
     <p class="capa-comecar"><span class="so-teclado">Aperte qualquer tecla</span><span class="so-toque">Toque para começar</span></p>
   </div>
-  <p class="capa-versao">Versão 7.9</p>
+  <p class="capa-versao">Versão 8.0</p>
 </div>
 
 <div class="capa-arte fundo-menu" id="fundo-menu" hidden aria-hidden="true"></div>
@@ -689,7 +690,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       <p class="menu-recorde" id="menu-recorde" hidden></p>
       <p class="menu-versao" id="menu-ajustes" hidden>Com valores mudados na tabela de ajustes</p>
       <div class="menu-versoes">
-        <p class="menu-versao">Versão 7.9</p>
+        <p class="menu-versao">Versão 8.0</p>
         <button class="secundario atualizar" id="atualizar" type="button" aria-live="polite">Atualizar versão</button>
       </div>
     </div>
@@ -757,6 +758,11 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
         </div>
         <p class="nota" id="graficos-nota"></p>
         <div class="botoes" id="graficos-aplicar" hidden><button class="principal" type="button" id="aplicar-graficos">Aplicar e recarregar</button></div>
+        <div class="regulagens">
+          <label class="chave"><input type="checkbox" id="cfg-brilho"><span>Brilho de luz: fogo, tiros, explosões e sol brilham, e as cores ganham cara de filme</span></label>
+          <label class="chave"><input type="checkbox" id="cfg-sombras"><span>Sombras do sol: prédios, montanhas, nuvens e caças fazem sombra</span></label>
+        </div>
+        <p class="nota" id="efeitos-nota">Ligados no gráfico médio e no alto. Se o jogo ficar lento neste aparelho, desligue primeiro as sombras.</p>
       </section>
       <section>
         <h3>Som</h3>
@@ -768,9 +774,13 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       </section>
       <section>
         <h3>Controles</h3>
+        <div class="segmentos dois" id="controle" role="group" aria-label="Jeito de pilotar">
+          <button type="button" data-controle="facil" aria-pressed="false"><span>Fácil</span><small>O manche aponta para onde o caça vai: para o lado ele já vira, para cima sobe e para baixo desce. As asas inclinam e voltam sozinhas.</small></button>
+          <button type="button" data-controle="pro" aria-pressed="false"><span>Profissional</span><small>Como num caça de verdade: para o lado só inclina as asas. Para curvar, incline e puxe o manche. Dá para fazer looping e voar de cabeça para baixo.</small></button>
+        </div>
         <div class="regulagens">
           <label class="regulagem"><span>Sensibilidade do manche</span><input type="range" min="50" max="150" step="10" id="sensibilidade"><output id="sensibilidade-v"></output></label>
-          <label class="chave"><input type="checkbox" id="cfg-inverter"><span>Inverter o manche: ↑ (ou arrastar para cima) puxa e o nariz sobe</span></label>
+          <label class="chave"><input type="checkbox" id="cfg-inverter"><span id="cfg-inverter-texto">Inverter o manche: ↑ (ou arrastar para cima) puxa e o nariz sobe</span></label>
           <label class="chave"><input type="checkbox" id="cfg-tremor"><span>Câmera treme com as explosões perto</span></label>
         </div>
       </section>
@@ -802,8 +812,8 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       <section class="so-teclado">
         <h3>Teclado</h3>
         <dl class="comandos">
-      <dt><kbd>↓</kbd><kbd>↑</kbd></dt><dd>Puxar / empurrar o manche (nariz sobe / desce)</dd>
-      <dt><kbd>←</kbd><kbd>→</kbd></dt><dd>Inclinar as asas. Para curvar, incline e puxe</dd>
+      <dt data-ajuda="teclas-vertical"><kbd>↑</kbd><kbd>↓</kbd></dt><dd data-ajuda="vertical">Subir / descer</dd>
+      <dt><kbd>←</kbd><kbd>→</kbd></dt><dd data-ajuda="lados">Virar para a esquerda / para a direita</dd>
       <dt><kbd>A</kbd><kbd>D</kbd></dt><dd>Leme: vira o nariz de lado</dd>
       <dt><kbd>W</kbd><kbd>S</kbd></dt><dd>Segure: W acelera (gasta gasolina), S freia</dd>
       <dt><kbd>Z</kbd></dt><dd>Metralhadora (tiros infinitos, com zoom)</dd>
@@ -820,7 +830,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       </section>
       <section>
         <h3>No celular</h3>
-        <p class="nota">Deite o aparelho. Lado esquerdo da tela: encoste e arraste para pilotar (para baixo, o nariz sobe). Lado direito: acelerar e frear (segure), tiro, míssil, foguete e flares. Em cima: olhar para trás, câmera e pausa.</p>
+        <p class="nota"><span id="ajuda-celular">Deite o aparelho. Lado esquerdo da tela: encoste e arraste para onde o caça deve ir.</span> Lado direito: acelerar e frear (segure), tiro, míssil, foguete e flares. Em cima: olhar para trás, câmera e pausa.</p>
       </section>
       <section>
         <h3>Velocidade</h3>
@@ -1012,8 +1022,12 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
   }
 
   // Configurações (a tela de Configurações), guardadas neste navegador
-  const CONFIG_PADRAO = { graficos: null, volGeral: 80, volMusica: 60, volEfeitos: 100, sensibilidade: 100, inverter: false, tremor: true };
+  const CONFIG_PADRAO = { graficos: null, brilho: null, sombras: null, controle: 'facil', volGeral: 80, volMusica: 60, volEfeitos: 100, sensibilidade: 100, inverter: false, tremor: true };
   const config = Object.assign({}, CONFIG_PADRAO, (() => { try { return JSON.parse(localStorage.getItem('voo-config')) || {}; } catch (e) { return {}; } })());
+  // Jeito de pilotar: fácil (o padrão desde a 8.0) ou profissional (o de antes). Quem vem de uma versão anterior começa no
+  // fácil com o manche sem inverter: para cima sobe, para baixo desce.
+  if (config.controle !== 'facil' && config.controle !== 'pro') { config.controle = 'facil'; config.inverter = false; }
+  let controleFacil = config.controle === 'facil';
   function salvarConfig() {
     try { localStorage.setItem('voo-config', JSON.stringify(config)); } catch (e) { /* sem armazenamento */ }
   }
@@ -1024,6 +1038,10 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
   // no celular); baixo = o médio com menos pixels, sem suavizar o serrilhado, menos fumaça e as árvores mais perto.
   const GRAFICOS = ['baixo', 'medio', 'alto'].includes(config.graficos) ? config.graficos : CELULAR ? 'medio' : 'alto';
   const LEVE = GRAFICOS !== 'alto', BAIXO = GRAFICOS === 'baixo';
+  // Brilho de luz (o quadro passa por um tratamento de luz e cor antes de ir para a tela) e sombras do sol: ligados no
+  // gráfico médio e no alto. Em Configurações cada um liga e desliga na hora (null = segue o gráfico).
+  let comBrilho = config.brilho == null ? !BAIXO : !!config.brilho;
+  let comSombras = config.sombras == null ? !BAIXO : !!config.sombras;
   const canvas = $('cena');
   let renderer;
   try {
@@ -1073,16 +1091,93 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
   const luzCeu = new THREE.HemisphereLight(0xd6ecff, 0x8c8a80, 0.7);
   scene.add(luzCeu);
 
+  // ---------- sombras do sol ----------
+  // O sol desenha num mapa a distância das coisas até ele: prédios, construções, caças, o relevo das ilhas e, no gráfico
+  // alto, as árvores da floresta. Quem recebe sombra confere nesse mapa se tem algo na frente. O mapa cobre um quadrado em
+  // volta de um ponto do chão à frente da câmera: pequeno e detalhado no voo baixo, grande no voo alto (atualizarSombras).
+  // As nuvens entram com um desenho só delas, vistas de cima, que se repete junto com elas (desenharSombraNuvens).
+  const TAM_SOMBRA = LEVE ? 1024 : 2048;
+  // a cor que o chão sem luz própria ganha na sombra (o azul do céu aparece nela) e quanto a sombra das nuvens tira do sol
+  const SOMBRA_CEU = { dia: [0.56, 0.6, 0.7, 0.36], entardecer: [0.76, 0.72, 0.78, 0.2], nublado: [0.86, 0.87, 0.89, 0] };
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFShadowMap;
+  sol.castShadow = false;
+  sol.shadow.mapSize.set(TAM_SOMBRA, TAM_SOMBRA);
+  scene.add(sol.target);
+  const uniSombra = {
+    mapaSombra: { value: null }, matrizSombra: { value: sol.shadow.matrix },
+    sombraInfo: { value: new THREE.Vector4(0, 1 / TAM_SOMBRA, 0, TAM_SOMBRA) },   // ligada (0 ou 1), um ponto do mapa, folga, pontos do mapa
+    sombraCor: { value: new THREE.Color(0.56, 0.6, 0.7) },
+    mapaNuvens: { value: null },
+    nuvensInfo: { value: new THREE.Vector4(0, 0, 0, 0) },     // quanto as nuvens já andaram com o vento (x, z), força, —
+    nuvensSol: { value: new THREE.Vector4(0, 0, 9000, 0) },   // desvio da sombra por metro de altura (x, z), metros de uma repetição
+  };
+  // solNoPonto(p): quanto do sol chega no ponto p do mundo (1 = todo, 0 = na sombra de alguma coisa)
+  const GLSL_SOMBRA = `
+    uniform sampler2D mapaSombra;
+    uniform mat4 matrizSombra;
+    uniform vec4 sombraInfo;
+    uniform vec3 sombraCor;
+    uniform sampler2D mapaNuvens;
+    uniform vec4 nuvensInfo;
+    uniform vec4 nuvensSol;
+    float sombraComp(vec2 uv, float z) {
+      return step(z, dot(texture2D(mapaSombra, uv), vec4(5.937181e-8, 1.5199184e-5, 0.0038909912, 0.99609375)));
+    }
+    // a comparação misturada entre os quatro pontos vizinhos do mapa: a beira da sombra fica macia
+    float sombraSuave(vec2 uv, float z) {
+      vec2 px = uv * sombraInfo.w - 0.5, f = fract(px), b = (floor(px) + 0.5) * sombraInfo.y;
+      float e = sombraInfo.y;
+      return mix(mix(sombraComp(b, z), sombraComp(b + vec2(e, 0.0), z), f.x),
+                 mix(sombraComp(b + vec2(0.0, e), z), sombraComp(b + vec2(e, e), z), f.x), f.y);
+    }
+    float solNoPonto(vec3 p) {
+      float luz = 1.0;
+      if (sombraInfo.x > 0.5) {
+        vec4 c = matrizSombra * vec4(p, 1.0);
+        vec3 s = c.xyz / c.w;
+        vec2 b = min(s.xy, 1.0 - s.xy);
+        float borda = min(b.x, b.y);
+        if (borda > 0.0 && s.z < 1.0) {
+          float z = s.z - sombraInfo.z;
+          ${LEVE ? 'float soma = sombraSuave(s.xy, z);' : `float e = sombraInfo.y * 0.75;
+          float soma = (sombraSuave(s.xy + vec2(e, e), z) + sombraSuave(s.xy + vec2(-e, e), z)
+                      + sombraSuave(s.xy + vec2(e, -e), z) + sombraSuave(s.xy + vec2(-e, -e), z)) * 0.25;`}
+          luz = mix(1.0, soma, smoothstep(0.0, 0.16, borda));
+        }
+      }
+      if (nuvensInfo.z > 0.0) luz *= 1.0 - nuvensInfo.z * texture2D(mapaNuvens, (p.xz - nuvensSol.xy * p.y - nuvensInfo.xy) / nuvensSol.z).r;
+      return luz;
+    }`;
+  // material que desenha só a distância até o sol, para as malhas com shader próprio também fazerem sombra
+  function matProfundidade(vertexShader, uniforms, antes, descarte) {
+    return new THREE.ShaderMaterial({
+      uniforms, vertexShader,
+      fragmentShader: '#include <packing>\n' + (antes || '') + '\nvoid main() { ' + (descarte || '') + ' gl_FragColor = packDepthToRGBA(gl_FragCoord.z); }',
+    });
+  }
+
+  // ---------- o que emite luz ----------
+  // Com o brilho de luz ligado (ver "brilho de luz", perto do laço principal), fogo, tiros, clarões e o sol são desenhados
+  // mais fortes que o branco da tela: é essa sobra que vira o brilho em volta deles. ganhoLuz vale 1 com o brilho ligado
+  // e 0 desligado (aí tudo fica como sempre foi). Nos materiais prontos do three.js, a cor é que é multiplicada.
+  const ganhoLuz = { value: 0 };
+  const coresFortes = [];
+  function luzForte(material, ganho) {
+    coresFortes.push({ material, base: material.color.clone(), ganho });
+    return material;
+  }
+
   // Céus de verdade (fotos do Poly Haven, versão "só céu"). A foto vai do zênite (topo) até 11,25° abaixo
   // do horizonte (CORTE_CEU da altura de uma foto inteira). sol, cores e névoa medidos em cada foto.
   const CORTE_CEU = 0.5625;
   const CEUS = {
     dia: { id: 'kloofendal_48d_partly_cloudy_puresky', sol: [0.553, 0.743, 0.377], corSol: 0xfff8ec, luzSol: 1.25, corCeu: 0xcfdcf5, corChao: 0x6a6650, luzCeu: 0.62, nevoa: 0x8f97a8, nevoaPerto: 1600, nevoaLonge: 11500,
-      nuvemLuz: 0xffffff, nuvemSombra: 0xa9b3c4, nuvemOpac: 0.9 },
+      nuvemLuz: 0xffffff, nuvemSombra: 0xa9b3c4, nuvemOpac: 0.9, brilhoSol: 1 },
     entardecer: { id: 'kloppenheim_06_puresky', sol: [0.7566, 0.0827, 0.6486], corSol: 0xffbf86, luzSol: 1.15, corCeu: 0xb4c4e2, corChao: 0x4d4536, luzCeu: 0.62, nevoa: 0x9b9a98, nevoaPerto: 1400, nevoaLonge: 11000,
-      nuvemLuz: 0xffdcc0, nuvemSombra: 0x8c8ea6, nuvemOpac: 0.85 },
+      nuvemLuz: 0xffdcc0, nuvemSombra: 0x8c8ea6, nuvemOpac: 0.85, brilhoSol: 0.85 },
     nublado: { id: 'kloofendal_overcast_puresky', sol: [0.8021, 0.3912, 0.4512], corSol: 0xf1eee8, luzSol: 0.32, corCeu: 0xdfe5ec, corChao: 0x585a50, luzCeu: 1.02, nevoa: 0x797e86, nevoaPerto: 900, nevoaLonge: 8500,
-      nuvemLuz: 0xd9dde2, nuvemSombra: 0x8d939b, nuvemOpac: 0.95 },
+      nuvemLuz: 0xd9dde2, nuvemSombra: 0x8d939b, nuvemOpac: 0.95, brilhoSol: 0.1 },
   };
   const resCeu = renderer.capabilities.maxTextureSize >= 8192 && Math.max(screen.width, screen.height) * (window.devicePixelRatio || 1) >= 1600 ? '8k' : '4k';
   let ceuEscolhido = 'dia';
@@ -1102,6 +1197,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
         mapa: { value: null },
         temMapa: { value: 0 },
         corte: { value: CORTE_CEU },
+        solForte: { value: new THREE.Color(0, 0, 0) },   // com o brilho de luz: o sol passa do branco e ganha um halo
       },
       vertexShader: `
         varying vec3 vDir;
@@ -1117,6 +1213,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
         uniform sampler2D mapa;
         uniform float temMapa;
         uniform float corte;
+        uniform vec3 solForte;
         varying vec3 vDir;
         void main() {
           vec3 d = normalize(vDir);
@@ -1125,6 +1222,8 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
             float u = atan(d.z, d.x) * 0.15915494 + 0.5;
             float v = asin(clamp(d.y, -1.0, 1.0)) * 0.31830989 + 0.5;
             cor = texture2D(mapa, vec2(u, max((v - 1.0 + corte) / corte, 0.002))).rgb;
+            float s = max(dot(d, normalize(solDir)), 0.0);
+            cor += solForte * (pow(s, 2600.0) * 9.0 + pow(s, 260.0) * 0.9 + pow(s, 24.0) * 0.07);
           } else {
             cor = d.y > 0.0
               ? mix(corHorizonte, corTopo, pow(d.y, 0.55))
@@ -1148,7 +1247,11 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     const cenaEnv = new THREE.Scene();
     cenaEnv.add(new THREE.Mesh(new THREE.SphereGeometry(50, 32, 16), ceu.material));
     cenaEnv.add(new THREE.Mesh(new THREE.SphereGeometry(49, 16, 8, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), matChaoEnv));
+    // o reflexo nos caças usa o céu da foto, sem o sol mais forte que o branco (a luz do sol já vem da luz da cena)
+    const solForte = ceu.material.uniforms.solForte.value, guardado = solForte.clone();
+    solForte.setRGB(0, 0, 0);
     const rt = pmrem.fromScene(cenaEnv, 0.04);
+    solForte.copy(guardado);
     pmrem.dispose();
     if (envAtual) envAtual.dispose();
     envAtual = rt;
@@ -1186,8 +1289,14 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     matNuvem.uniforms.corLuz.value.setHex(c.nuvemLuz);
     matNuvem.uniforms.corSombra.value.setHex(c.nuvemSombra);
     matNuvem.uniforms.opacidade.value = c.nuvemOpac;
+    const sc = SOMBRA_CEU[id];
+    uniSombra.sombraCor.value.setRGB(sc[0], sc[1], sc[2]);
+    forcaSombraNuvens = sc[3];
+    desenharSombraNuvens();
+    aplicarBrilho();
     luzMudou();
   }
+  let forcaSombraNuvens = 0;
   function escolherCeu(id) {
     if (!CEUS[id]) return Promise.resolve();
     ceuEscolhido = id;
@@ -1344,6 +1453,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
   }
 
   const uniChao = THREE.UniformsUtils.merge([THREE.UniformsLib.fog]);
+  Object.assign(uniChao, uniSombra);
   uniChao.mapa = { value: criarTexturaChao() };
   uniChao.mascara = { value: (() => {
     const L = TEX / 4, k = L / TEX, c = document.createElement('canvas');
@@ -1428,6 +1538,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
         uniform float temFlor;
         varying vec2 vMundo;
         #include <fog_pars_fragment>
+        ${GLSL_SOMBRA}
         const vec2 LOTE = vec2(${LX.toFixed(1)}, ${LZ.toFixed(1)});
         float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
         // linha de largura l (m) em volta de 0, sem serrilhado
@@ -1556,6 +1667,8 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
               cor = mix(asfalto(vMundo) * 0.72, vec3(0.95), tinta);
             }
           }
+          // sombra dos prédios, das construções, dos caças e das nuvens
+          cor *= mix(sombraCor, vec3(1.0), solNoPonto(vec3(vMundo.x, 0.0, vMundo.y)));
           gl_FragColor = vec4(cor, 1.0);
           #include <fog_fragment>
         }`,
@@ -1871,10 +1984,50 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
   puffs.frustumCulled = false;
   scene.add(puffs);
 
+  // Sombra das nuvens: o desenho delas vistas de cima (repete a cada JAN_NUV metros, como elas). Cada bolha é empurrada
+  // para o lado oposto ao sol conforme a altura dela; com o sol baixo o empurrão tem limite, senão a sombra iria parar a
+  // quilômetros da nuvem. Refeito quando o céu muda; o vento só desloca o desenho.
+  const telaSombraNuvens = document.createElement('canvas');
+  telaSombraNuvens.width = telaSombraNuvens.height = LEVE ? 512 : 1024;
+  const texSombraNuvens = new THREE.CanvasTexture(telaSombraNuvens);
+  texSombraNuvens.wrapS = texSombraNuvens.wrapT = THREE.RepeatWrapping;
+  texSombraNuvens.flipY = false;
+  uniSombra.mapaNuvens.value = texSombraNuvens;
+  uniSombra.nuvensSol.value.z = JAN_NUV;
+  function desenharSombraNuvens() {
+    const L = telaSombraNuvens.width, g = telaSombraNuvens.getContext('2d'), k = L / JAN_NUV;
+    g.globalCompositeOperation = 'source-over';
+    g.fillStyle = '#000';
+    g.fillRect(0, 0, L, L);
+    g.globalCompositeOperation = 'lighter';
+    const inc = Math.max(SOL_DIR.y, 0.34), kx = SOL_DIR.x / inc, kz = SOL_DIR.z / inc;
+    const volta = (v) => ((v % JAN_NUV) + JAN_NUV) % JAN_NUV * k;
+    for (const n of nuvens) {
+      for (const p of n.puffs) {
+        const x = volta(n.x + p.ox - kx * (n.y + p.oy)), z = volta(n.z + p.oz - kz * (n.y + p.oy)), r = p.r * 1.3 * k;
+        for (const ox of [-L, 0, L]) for (const oz of [-L, 0, L]) {
+          const cx = x + ox, cz = z + oz;
+          if (cx < -r || cx > L + r || cz < -r || cz > L + r) continue;
+          const gr = g.createRadialGradient(cx, cz, 0, cx, cz, r);
+          gr.addColorStop(0, 'rgba(255,255,255,0.5)');
+          gr.addColorStop(0.55, 'rgba(255,255,255,0.3)');
+          gr.addColorStop(1, 'rgba(255,255,255,0)');
+          g.fillStyle = gr;
+          g.fillRect(cx - r, cz - r, 2 * r, 2 * r);
+        }
+      }
+    }
+    texSombraNuvens.needsUpdate = true;
+    uniSombra.nuvensInfo.value.x = 0;
+    uniSombra.nuvensSol.value.x = kx;
+    uniSombra.nuvensSol.value.y = kz;
+  }
+
   const mNuv = new THREE.Matrix4();
   const pNuv = new THREE.Vector3();
   const eNuv = new THREE.Vector3();
   function atualizarNuvens(dt, px, pz) {
+    uniSombra.nuvensInfo.value.x += VENTO * dt;
     let i = 0;
     for (const n of nuvens) {
       n.x += VENTO * dt;
@@ -1943,6 +2096,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     copaPerto: { value: 500 }, copaLonge: { value: 800 },
     clareiras: { value: [new THREE.Vector4(), new THREE.Vector4(), new THREE.Vector4(), new THREE.Vector4()] },
   };
+  Object.assign(uniTer, uniSombra);
   // névoa com a cor do céu logo abaixo do horizonte, na direção do olhar (chão, mar e ilhas)
   const NEVOA_CEU = `
     vec3 corDaNevoa(vec3 pos) {
@@ -2012,6 +2166,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     varying vec3 vMundo;
     varying vec3 vNormal;
     ${NEVOA_CEU}
+    ${GLSL_SOMBRA}
     void main() {
       if (vMundo.x > buracoMin.x && vMundo.x < buracoMax.x && vMundo.z > buracoMin.y && vMundo.z < buracoMax.y) discard;
       vec2 uv = vec2(vMundo.x / quadro.x, 1.0 - vMundo.z / quadro.y);
@@ -2022,7 +2177,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       if (mod(floor(vMundo.z / quadro.y), 2.0) > 0.5) r.y = -r.y;
       vec3 nr = normalize(vNormal + vec3(r.x, 0.0, -r.y) * 0.5 * (1.0 - smoothstep(150.0, 600.0, dist)));
       vec3 luzCima = corSol * luzSol * max(solDir.y, 0.0) + corCeu * luzCeuF;
-      vec3 luz = corSol * luzSol * max(dot(nr, solDir), 0.0) + mix(corChaoLuz, corCeu, nr.y * 0.5 + 0.5) * luzCeuF;
+      vec3 luz = corSol * luzSol * max(dot(nr, solDir), 0.0) * solNoPonto(vMundo + vec3(0.0, 0.5, 0.0)) + mix(corChaoLuz, corCeu, nr.y * 0.5 + 0.5) * luzCeuF;
       vec3 chao = texture2D(mapaChao, uv).rgb * luz;
       vec3 copa = texture2D(mapaCopa, uv).rgb * (luz / max(luzCima, vec3(0.05)));
       // nas clareiras não há copas: só o chão
@@ -2059,6 +2214,13 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
   }
   const terPerto = criarTerreno(2240, 320, 0);       // 7 m entre vértices
   const terLonge = criarTerreno(25600, 320, 3);      // 80 m entre vértices, 3 m abaixo para não brigar com a fina
+
+  // árvores 3D da floresta e dos bosques da cidade: fazem e recebem sombra só no gráfico alto (são milhares)
+  function sombraNaArvore(im) {
+    if (LEVE) return;
+    im.castShadow = im.receiveShadow = true;
+    if (im.material.alphaTest > 0) im.customDepthMaterial = flor.profFolhas;
+  }
 
   function carregarTextura(url, srgb, espelho) {
     return new Promise((resolver, rejeitar) => {
@@ -2107,6 +2269,8 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
 
     const matFolhas = new THREE.MeshLambertMaterial({ map: texArv, alphaTest: 0.5, side: THREE.DoubleSide });
     const matCasca = new THREE.MeshLambertMaterial({ map: texCasca });
+    // no gráfico alto as árvores fazem e recebem sombra (a das folhas segue o recorte da foto)
+    flor.profFolhas = new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking, map: texArv, alphaTest: 0.5 });
     const m4 = new THREE.Matrix4(), p = new THREE.Vector3(), q = new THREE.Quaternion(), s = new THREE.Vector3();
     const caixa = new THREE.Box3();
     const areaQuadro = flor.SX * flor.SZ;
@@ -2144,6 +2308,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
         im.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
         im.frustumCulled = false;
         im.count = 0;
+        sombraNaArvore(im);
         flor.grupo.add(im);
         ims.push(im);
       }
@@ -2584,6 +2749,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     corCeu: uniTer.corCeu, corChaoLuz: uniTer.corChaoLuz, luzCeuF: uniTer.luzCeuF,
     nevoaCor: uniTer.nevoaCor, nevoaPerto: uniTer.nevoaPerto, nevoaLonge: uniTer.nevoaLonge,
   };
+  Object.assign(uniIlha, uniSombra);
   const ALTURA_ILHA = `
     uniform sampler2D alturas;
     uniform vec2 grade;
@@ -2654,6 +2820,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     uniform float nevoaPerto;
     uniform float nevoaLonge;
     ${NEVOA_CEU}
+    ${GLSL_SOMBRA}
     float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
     float ruido(vec2 p) {
       vec2 i = floor(p), f = fract(p);
@@ -2748,8 +2915,10 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
         vec2 g = gradRuido(p / 85.0) * 0.6 + gradRuido(p / 27.0 + 5.3) * 0.35;
         n = normalize(n + (vec3(nd.x, 0.0, nd.y) * 0.8 + vec3(g.x, 0.0, g.y) * aspero) * perto);
       }
-      vec3 luz = corSol * luzSol * max(dot(n, solDir), 0.0) + mix(corChaoLuz, corCeu, n.y * 0.5 + 0.5) * luzCeuF;
-      vec3 luzPlana = corSol * luzSol * max(solDir.y, 0.0) + corCeu * luzCeuF;
+      // na sombra (de uma montanha, de uma pedra, de uma nuvem) o sol não chega: sobra a luz do céu
+      float sombraSol = solNoPonto(vMundo + vNormal * 1.5);
+      vec3 luz = corSol * luzSol * max(dot(n, solDir), 0.0) * sombraSol + mix(corChaoLuz, corCeu, n.y * 0.5 + 0.5) * luzCeuF;
+      vec3 luzPlana = corSol * luzSol * max(solDir.y, 0.0) * sombraSol + corCeu * luzCeuF;
       gl_FragColor = linearToOutputTexel(vec4(foto * mix(luzPlana, luz, 0.75) * 0.95, 1.0));
       gl_FragColor.rgb = mix(gl_FragColor.rgb, corDaNevoa(vMundo), smoothstep(nevoaPerto, nevoaLonge, dist));
     }`;
@@ -2792,11 +2961,13 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
         ceuR = texture2D(mapaCeu, vec2(u, max((vv - 1.0 + corte) / corte, 0.002))).rgb;
       }
       float fres = 0.02 + 0.98 * pow(1.0 - max(dot(n, v), 0.0), 5.0);
-      vec3 luz = corCeu * luzCeuF * 0.7 + corSol * luzSol * max(solDir.y, 0.0) * 0.45;
+      // sombra na água: sem sol direto ela escurece e perde o brilho do sol
+      float sombraSol = solNoPonto(vMundo);
+      vec3 luz = corCeu * luzCeuF * 0.7 + corSol * luzSol * max(solDir.y, 0.0) * 0.45 * sombraSol;
       vec3 corAgua = mix(vec3(0.03, 0.2, 0.2), vec3(0.006, 0.03, 0.055), smoothstep(1.5, 25.0, prof)) * luz;
-      vec3 cor = mix(corAgua, ceuR, fres);
+      vec3 cor = mix(corAgua, ceuR * mix(0.72, 1.0, sombraSol), fres);
       float s = max(dot(r, solDir), 0.0);
-      cor += corSol * luzSol * (pow(s, 700.0) * 5.0 + pow(s, 90.0) * 0.18) * (1.0 - smoothstep(4000.0, 20000.0, dist) * 0.7);
+      cor += corSol * luzSol * (pow(s, 700.0) * 5.0 + pow(s, 90.0) * 0.18) * (1.0 - smoothstep(4000.0, 20000.0, dist) * 0.7) * sombraSol;
       // espuma onde a onda bate na praia
       float espuma = (1.0 - smoothstep(0.0, 1.2, prof)) * (0.55 + 0.45 * ruido(vMundo.xz * 0.12 + tempo * 0.4)) * (1.0 - smoothstep(800.0, 3500.0, dist));
       cor = mix(cor, vec3(0.85) * luz, espuma * 0.7);
@@ -2825,6 +2996,15 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
   }
   // três grades: perto (7 m), meio (40 m) e longe (160 m), cada uma com um buraco onde está a mais fina
   const gradesIlha = [criarTerrenoIlha(2240, 320, 0), criarTerrenoIlha(12800, 320, 2), criarTerrenoIlha(51200, 320, 6)];
+  // O relevo faz sombra (montanhas, pedras e agulhas no mar). No gráfico alto, a grade fina e a do meio (com o buraco
+  // dela); nos outros só a do meio, inteira: mais grossa, mas com a metade dos triângulos.
+  gradesIlha.forEach((m, k) => {
+    if (k > 1 || (LEVE && k === 0)) return;
+    const comBuraco = !LEVE && k === 1;
+    m.customDepthMaterial = matProfundidade(VERT_ILHA, m.material.uniforms, 'uniform vec2 buracoMin; uniform vec2 buracoMax; varying vec3 vMundo;',
+      comBuraco ? 'if (vMundo.x > buracoMin.x && vMundo.x < buracoMax.x && vMundo.z > buracoMin.y && vMundo.z < buracoMax.y) discard;' : '');
+    m.castShadow = true;
+  });
   const mar = (() => {
     const geo = new THREE.PlaneGeometry(90000, 90000, 48, 48);
     geo.rotateX(-Math.PI / 2);
@@ -2968,7 +3148,11 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
         col.dados = new Uint8Array(bin.length);
         for (let i = 0; i < bin.length; i++) col.dados[i] = bin.charCodeAt(i);
       }
-      gltf.scene.traverse((o) => { if (o.isMesh) [].concat(o.material).forEach((m) => { m.envMapIntensity = 0.6; }); });
+      gltf.scene.traverse((o) => {
+        if (!o.isMesh) return;
+        [].concat(o.material).forEach((m) => { m.envMapIntensity = 0.6; });
+        o.castShadow = o.receiveShadow = true;
+      });
       return { cena: gltf.scene, col };
     }).catch((e) => { console.error('construção', nome, e); construcoes.cache[nome] = null; return null; });
     return construcoes.cache[nome];
@@ -3164,6 +3348,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       varying vec3 vNormal;
       varying vec4 vInfo;
       #include <fog_pars_fragment>
+      ${GLSL_SOMBRA}
       // metros de parede cobertos por uma repetição de cada foto (vidro escuro, vidro verde, escritório branco, tijolo,
       // concreto, tijolo com pilares)
       float tamanho(int f) { return f == 0 ? 36.0 : f == 1 ? 34.0 : f == 2 ? 27.0 : 20.0; }
@@ -3185,7 +3370,8 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
           vidro = f < 2 ? 1.0 : 0.0;
         }
         // luz: sol na parede virada para ele, céu de cima, e um pouco mais escuro junto do chão
-        float sol = max(dot(n, solDir), 0.0);
+        // (a sombra de outro prédio ou de uma nuvem tira o sol da parede e do teto)
+        float sol = max(dot(n, solDir), 0.0) * solNoPonto(vMundo + n * 0.8);
         vec3 luz = vec3(0.37) + corSol * luzSol * sol * 0.42 + mix(corChaoLuz, corCeu, n.y * 0.5 + 0.5) * luzCeuF * 0.62;
         cor *= luz * mix(0.72, 1.0, smoothstep(0.0, 16.0, vMundo.y));
         if (vidro > 0.5 && temCeu > 0.5) {
@@ -3203,7 +3389,15 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       }`,
   });
   Object.assign(matPredios.uniforms, { solDir: uniTer.solDir, corSol: uniTer.corSol, luzSol: uniTer.luzSol, corCeu: uniTer.corCeu, corChaoLuz: uniTer.corChaoLuz,
-    luzCeuF: uniTer.luzCeuF, mapaCeu: uniTer.mapaCeu, temCeu: uniTer.temCeu, corte: uniTer.corte, telhado: uniChao.asfaltoTex });
+    luzCeuF: uniTer.luzCeuF, mapaCeu: uniTer.mapaCeu, temCeu: uniTer.temCeu, corte: uniTer.corte, telhado: uniChao.asfaltoTex }, uniSombra);
+  // para o mapa de sombras: as mesmas caixas, só com a distância até o sol
+  const matPrediosProf = matProfundidade(`
+      attribute vec4 aPos;
+      attribute vec4 aTam;
+      void main() {
+        vec3 p = vec3(aPos.x + position.x * aTam.x, aPos.z + position.y * aTam.z, aPos.y + position.z * aTam.y);
+        gl_Position = projectionMatrix * viewMatrix * vec4(p, 1.0);
+      }`, {});
   function montarPredios() {
     const caixa = new THREE.BoxGeometry(1, 1, 1);
     caixa.translate(0, 0.5, 0);
@@ -3220,6 +3414,8 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     geo.instanceCount = n;
     const m = new THREE.Mesh(geo, matPredios);
     m.frustumCulled = false;
+    m.castShadow = true;
+    m.customDepthMaterial = matPrediosProf;
     m.visible = cidade.ativa;
     scene.add(m);
     cidade.malha = m;
@@ -3291,6 +3487,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
         im.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
         im.frustumCulled = false;
         im.count = 0;
+        sombraNaArvore(im);
         cidade.grupoPin.add(im);
         ims.push(im);
       }
@@ -3598,6 +3795,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       fragmentShader: `
         uniform float forca;
         uniform float tempo;
+        uniform float ganhoLuz;
         varying vec3 vGen;
         #include <fog_pars_fragment>
         float hash(vec3 p) { return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453); }
@@ -3623,11 +3821,14 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
           // o "bloom": um brilho laranja em volta das partes densas, que preenche os vãos entre as línguas de fogo
           cor += vec3(1.0, 0.36, 0.08) * smoothstep(0.26, 0.5, L) * 0.5 * forca;
           float nev = 1.0 - smoothstep(fogNear, fogFar, vFogDepth);
-          gl_FragColor = vec4(cor * nev, clamp(f * forca, 0.0, 1.0) * nev);
+          // com o brilho de luz ligado, o miolo da chama passa do branco e espalha o brilho de verdade
+          gl_FragColor = vec4(cor * nev * (1.0 + ganhoLuz * 0.5), clamp(f * forca, 0.0, 1.0) * nev);
         }`,
     });
     chama.uniforms.tempo = tempoChama;
-    const halo = new THREE.SpriteMaterial({ map: texFlash, color: 0xff7a26, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, opacity: 0.55 * forca });
+    chama.uniforms.ganhoLuz = ganhoLuz;
+    // (o halo imita o brilho em volta da chama; com o brilho de luz ligado ele quase some, e o de verdade assume)
+    const halo = luzForte(new THREE.SpriteMaterial({ map: texFlash, color: 0xff7a26, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, opacity: 0.55 * forca }), 0.3);
     return { chama, halo };
   }
   const matsChamaJogador = criarMaterialChama(1);
@@ -3676,7 +3877,9 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     modelo.scale.setScalar(esc);
     modelo.position.copy(centro).multiplyScalar(-esc);
     modelo.traverse((o) => {
-      if (o.isMesh && o.material) [].concat(o.material).forEach((m) => { m.envMapIntensity = 0.8; });
+      if (!o.isMesh || !o.material) return;
+      [].concat(o.material).forEach((m) => { m.envMapIntensity = 0.8; });
+      o.castShadow = true;                                  // o caça faz sombra no chão e nos prédios
     });
     const plumas = [];
     for (const [x, y, zz] of cfg.bocais) {
@@ -3836,7 +4039,8 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
         inverter = !inverter;
         config.inverter = inverter;
         salvarConfig();
-        mensagem(inverter ? 'Invertido: ↑ puxa o manche (nariz sobe)' : 'Normal: ↓ puxa o manche (nariz sobe)');
+        mensagem(inverter !== controleFacil ? '↑ sobe e ↓ desce' : '↓ sobe e ↑ desce');
+        textosControle();
         break;
       case 'KeyP':
       case 'Escape':
@@ -4252,7 +4456,15 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       $(id + '-v').textContent = config[chave] + '%';
     }
     $('cfg-inverter').checked = inverter;
+    $('cfg-inverter-texto').textContent = controleFacil ? 'Inverter para cima e para baixo: ↓ (ou arrastar para baixo) faz o caça subir'
+      : 'Inverter o manche: ↑ (ou arrastar para cima) puxa e o nariz sobe';
+    for (const b of $('controle').querySelectorAll('[data-controle]')) b.setAttribute('aria-pressed', String((b.dataset.controle === 'facil') === controleFacil));
     $('cfg-tremor').checked = config.tremor;
+    $('cfg-brilho').checked = comBrilho && pos.pronto;
+    $('cfg-brilho').disabled = !pos.pronto;
+    $('cfg-sombras').checked = comSombras;
+    $('efeitos-nota').textContent = (pos.pronto ? '' : 'Este aparelho não consegue fazer o brilho de luz. ')
+      + 'Ligados no gráfico médio e no alto. Se o jogo ficar lento neste aparelho, desligue primeiro as sombras.';
   }
   for (const [id, chave] of REGULAGENS) {
     $(id).addEventListener('input', (e) => { config[chave] = +e.target.value; aplicarVolumes(); sincronizarConfig(); });
@@ -4270,11 +4482,37 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     try { sessionStorage.setItem('voo-abrir', 'config'); } catch (e) { /* sem armazenamento */ }
     location.reload();
   });
-  $('cfg-inverter').addEventListener('change', (e) => { inverter = config.inverter = e.target.checked; salvarConfig(); });
+  $('cfg-inverter').addEventListener('change', (e) => { inverter = config.inverter = e.target.checked; salvarConfig(); textosControle(); });
+  $('controle').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-controle]');
+    if (!b) return;
+    config.controle = b.dataset.controle;
+    controleFacil = config.controle === 'facil';
+    inverter = config.inverter = false;          // cada jeito começa no sentido normal dele
+    salvarConfig();
+    textosControle();
+    sincronizarConfig();
+  });
+  // a ajuda dos comandos acompanha o jeito de pilotar
+  function textosControle() {
+    const sobeEmCima = inverter !== controleFacil;
+    for (const el of document.querySelectorAll('[data-ajuda="teclas-vertical"]')) el.innerHTML = sobeEmCima ? '<kbd>↑</kbd><kbd>↓</kbd>' : '<kbd>↓</kbd><kbd>↑</kbd>';
+    for (const el of document.querySelectorAll('[data-ajuda="vertical"]')) el.textContent = controleFacil ? 'Subir / descer' : 'Puxar / empurrar o manche (nariz sobe / desce)';
+    for (const el of document.querySelectorAll('[data-ajuda="lados"]')) el.textContent = controleFacil ? 'Virar para a esquerda / para a direita' : 'Inclinar as asas. Para curvar, incline e puxe';
+    $('ajuda-celular').textContent = controleFacil
+      ? 'Deite o aparelho. Lado esquerdo da tela: encoste e arraste para onde o caça deve ir (para o lado ele vira, para ' + (sobeEmCima ? 'cima' : 'baixo') + ' sobe).'
+      : 'Deite o aparelho. Lado esquerdo da tela: encoste e arraste para pilotar (para ' + (sobeEmCima ? 'cima' : 'baixo') + ', o nariz sobe).';
+  }
   $('cfg-tremor').addEventListener('change', (e) => { config.tremor = e.target.checked; salvarConfig(); });
+  $('cfg-brilho').addEventListener('change', (e) => { comBrilho = config.brilho = e.target.checked; salvarConfig(); aplicarBrilho(); });
+  $('cfg-sombras').addEventListener('change', (e) => { comSombras = config.sombras = e.target.checked; salvarConfig(); });
   $('cfg-padrao').addEventListener('click', () => {
     Object.assign(config, CONFIG_PADRAO, { graficos: config.graficos });
     inverter = false;
+    controleFacil = true;
+    textosControle();
+    comBrilho = comSombras = !BAIXO;
+    aplicarBrilho();
     graficosEscolhido = CELULAR ? 'medio' : 'alto';
     salvarConfig();
     aplicarVolumes();
@@ -4287,6 +4525,8 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
   const eixoTmp = new THREE.Vector3();
   const eixoPiloto = new THREE.Vector3();
   const qTmp = new THREE.Quaternion();
+  const eulerVoo = new THREE.Euler(0, 0, 0, 'YXZ');
+  const LIMITE_NARIZ = 80 * RAD, INCLINA_CURVA = 68 * RAD;   // controle fácil: até onde o nariz sobe ou desce e quanto as asas inclinam na curva
   // As asas e o motor são iguais em todos os caças, o do jogador e os do computador.
   // Devagar, as asas sustentam pouco; da velocidade normal até 2.500 km/h o caça vai ficando pesado.
   const sustentacaoDe = (v) => clamp((v - VEL_ESTOL * 0.6) / (VEL_ESTOL * 1.2), 0.15, 1);
@@ -4318,8 +4558,10 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     let alvoGui = 0;
     let pedeAcelerar = false, freando = false;
     if (comPiloto) {
-      // seta para baixo puxa o manche (nariz sobe); seta para cima empurra (nariz desce)
+      // profissional: seta para baixo puxa o manche (nariz sobe) e seta para cima empurra (nariz desce). Fácil: para cima
+      // sobe, para baixo desce. "Inverter" troca o sentido em cada um.
       alvoArf = clamp((apertada('ArrowDown') ? 1 : 0) - (apertada('ArrowUp') ? 1 : 0) + toque.arfagem, -1, 1);
+      if (controleFacil) alvoArf = -alvoArf;
       if (inverter) alvoArf = -alvoArf;
       alvoRol = clamp((apertada('ArrowLeft') ? 1 : 0) - (apertada('ArrowRight') ? 1 : 0) + toque.rolagem, -1, 1);
       alvoGui = (apertada('KeyA') ? 1 : 0) - (apertada('KeyD') ? 1 : 0);
@@ -4338,10 +4580,28 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     const taxaRol = THREE.MathUtils.lerp(GIRO_ROLAGEM, GIRO_ROLAGEM_MAX, pesoDe(v)) * clamp(v / 120, 0.3, 1) * sens;
     const taxaGui = 0.35 * sustentacaoDe(v);
 
-    // giros em torno dos eixos do próprio avião
-    qTmp.setFromAxisAngle(EIXO_X, ctrl.arfagem * taxaArf * dt); q.multiply(qTmp);
-    qTmp.setFromAxisAngle(EIXO_Z, ctrl.rolagem * taxaRol * dt); q.multiply(qTmp);
-    qTmp.setFromAxisAngle(EIXO_Y, ctrl.guinada * taxaGui * dt); q.multiply(qTmp);
+    const facil = comPiloto && controleFacil;
+    if (facil) {
+      // Controle fácil: o manche aponta para onde o caça deve ir. Para os lados muda o rumo, para cima e para baixo muda a
+      // subida, os dois na mesma taxa que o manche puxado tem no profissional (a curva mais fechada é igual nos dois
+      // jeitos). As asas inclinam sozinhas para acompanhar a curva e voltam ao nível com o manche solto. O nariz para
+      // a 80° para cima ou para baixo: sem looping.
+      let lado = ctrl.rolagem, sobe = ctrl.arfagem;
+      const forca = Math.hypot(lado, sobe);
+      if (forca > 1) { lado /= forca; sobe /= forca; }
+      eulerVoo.setFromQuaternion(q, 'YXZ');
+      eulerVoo.y += (lado * taxaArf + ctrl.guinada * taxaGui) * dt;
+      eulerVoo.x = clamp(eulerVoo.x + sobe * taxaArf * dt, -LIMITE_NARIZ, LIMITE_NARIZ);
+      let falta = lado * INCLINA_CURVA - eulerVoo.z;
+      falta -= Math.PI * 2 * Math.round(falta / (Math.PI * 2));
+      eulerVoo.z += clamp(falta * Math.min(1, 7 * dt), -taxaRol * dt, taxaRol * dt);
+      q.setFromEuler(eulerVoo);
+    } else {
+      // profissional: giros em torno dos eixos do próprio avião
+      qTmp.setFromAxisAngle(EIXO_X, ctrl.arfagem * taxaArf * dt); q.multiply(qTmp);
+      qTmp.setFromAxisAngle(EIXO_Z, ctrl.rolagem * taxaRol * dt); q.multiply(qTmp);
+      qTmp.setFromAxisAngle(EIXO_Y, ctrl.guinada * taxaGui * dt); q.multiply(qTmp);
+    }
 
     // Assistência de mira. A suave: assim que um inimigo entra no círculo, o nariz vai até ele devagar, até 25° por segundo,
     // e vai seguindo. A forte: com a mira travada (metralhadora), o nariz segue o ponto onde os tiros vão encontrá-lo, até
@@ -4364,9 +4624,11 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     // Sem piloto automático: o caça fica na posição em que o piloto deixou (inclinado, de cabeça
     // para baixo...), sem as asas voltarem sozinhas ao nível nem o nariz cair por estar inclinado.
     direita.set(1, 0, 0).applyQuaternion(q);
-    // a cauda acompanha um pouco a curva
-    qTmp.setFromAxisAngle(EIXO_Y, direita.y * 0.2 * dt);
-    q.premultiply(qTmp);
+    // a cauda acompanha um pouco a curva (no controle fácil a curva já vem toda do manche)
+    if (!facil) {
+      qTmp.setFromAxisAngle(EIXO_Y, direita.y * 0.2 * dt);
+      q.premultiply(qTmp);
+    }
     q.normalize();
     frente.set(0, 0, -1).applyQuaternion(q);
 
@@ -4799,7 +5061,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
   const somAcerto = () => ruido(0.1, 2600, 2.5, 0.3);
 
   // --- clarão na boca do canhão
-  const flash = new THREE.Sprite(new THREE.SpriteMaterial({ map: texFlash, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
+  const flash = new THREE.Sprite(luzForte(new THREE.SpriteMaterial({ map: texFlash, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }), 1.3));
   flash.scale.set(2.2, 2.2, 1);
   flash.visible = false;
   scene.add(flash);
@@ -4807,8 +5069,8 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
 
   // --- tiros: um estoque de malhas reaproveitadas
   const geoTiro = new THREE.BoxGeometry(1.1, 1.1, 24);
-  const matTiro = new THREE.MeshBasicMaterial({ color: 0xfff0a0, transparent: true, opacity: 0.95, blending: THREE.AdditiveBlending, depthWrite: false });
-  const matTiroInimigo = new THREE.MeshBasicMaterial({ color: 0xff8060, transparent: true, opacity: 0.95, blending: THREE.AdditiveBlending, depthWrite: false });
+  const matTiro = luzForte(new THREE.MeshBasicMaterial({ color: 0xfff0a0, transparent: true, opacity: 0.95, blending: THREE.AdditiveBlending, depthWrite: false }), 1.8);
+  const matTiroInimigo = luzForte(new THREE.MeshBasicMaterial({ color: 0xff8060, transparent: true, opacity: 0.95, blending: THREE.AdditiveBlending, depthWrite: false }), 1.8);
   const matBrilho = new THREE.SpriteMaterial({ map: texFlash, color: 0xfff0a0, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false });
   const matBrilhoInimigo = new THREE.SpriteMaterial({ map: texFlash, color: 0xff8060, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false });
   const tiros = [];
@@ -4895,7 +5157,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       fog: true,
       blending: aditivo ? THREE.AdditiveBlending : THREE.NormalBlending,
       defines: aditivo ? { ADITIVO: '' } : {},
-      uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { mapa: { value: null } }]),
+      uniforms: Object.assign(THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { mapa: { value: null } }]), { ganhoLuz }),
       vertexShader: `
         attribute vec4 aPos;
         attribute vec4 aCor;
@@ -4914,6 +5176,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
         }`,
       fragmentShader: `
         uniform sampler2D mapa;
+        uniform float ganhoLuz;
         varying vec2 vUv;
         varying vec4 vCor;
         #include <fog_pars_fragment>
@@ -4921,6 +5184,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
           vec4 t = texture2D(mapa, vUv);
           gl_FragColor = vec4(vCor.rgb * t.rgb, t.a * vCor.a);
           #ifdef ADITIVO
+            gl_FragColor.rgb *= 1.0 + ganhoLuz * 0.9;
             gl_FragColor.a *= 1.0 - smoothstep(fogNear, fogFar, vFogDepth);
           #else
             #include <fog_fragment>
@@ -5028,6 +5292,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     uniform float total;
     uniform float alfa;
     uniform vec3 luz;
+    uniform float ganhoLuz;
     varying vec2 vUv;
     #include <fog_pars_fragment>
     vec4 amostra(float q) {
@@ -5044,6 +5309,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       cor *= mix(luz, vec3(1.0), smoothstep(0.3, 0.75, brilho));
       float a = t.a * alfa;
       vec4 saida = linearToOutputTexel(vec4(cor, 1.0));
+      saida.rgb *= 1.0 + ganhoLuz * 0.7 * smoothstep(0.5, 0.95, brilho);   // a bola de fogo passa do branco
       float nev = smoothstep(fogNear, fogFar, vFogDepth);
       saida.rgb = mix(saida.rgb, fogColor, nev);
       // o fogo soma um pouco de luz ao fundo
@@ -5072,6 +5338,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       fragmentShader: FRAG_EXPLOSAO,
     });
     mat.uniforms.luz.value = luzExplosao;
+    mat.uniforms.ganhoLuz = ganhoLuz;
     const m = new THREE.Mesh(geoCartao, mat);
     m.visible = false;
     m.frustumCulled = false;
@@ -5424,7 +5691,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
   const flares = [];
   const salvas = [];
   const spritesFlare = [];
-  const matFlare = new THREE.SpriteMaterial({ map: texLuz, color: 0xfff1c4, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false });
+  const matFlare = luzForte(new THREE.SpriteMaterial({ map: texLuz, color: 0xfff1c4, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }), 3);
   for (let i = 0; i < 48; i++) {
     const s = new THREE.Sprite(matFlare);
     s.visible = false;
@@ -6755,6 +7022,196 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     }
   }
 
+  // ---------- brilho de luz ----------
+  // O quadro é desenhado primeiro numa imagem que guarda luz acima do branco da tela. O que passa do branco (fogo, tiros,
+  // explosões, o sol, o reflexo dele no mar e no metal) é separado, reduzido e borrado em vários tamanhos, e volta somado
+  // como um brilho em volta. No fim a luz muito forte dobra devagar até o branco (em vez de virar uma mancha chapada) e as
+  // cores ganham um pouco de contraste e de vida. Nem todo aparelho consegue desenhar nesse tipo de imagem: se não der,
+  // o jogo desenha direto na tela, como sempre.
+  const pos = { pronto: false, cena: null, niveis: [], w: 0, h: 0 };
+  const cenaPos = new THREE.Scene(), camPos = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+  const quadroPos = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), null);
+  quadroPos.frustumCulled = false;
+  cenaPos.add(quadroPos);
+  const tamTela = new THREE.Vector2();
+  const matPos = (uniformes, fragmentShader, somar) => new THREE.ShaderMaterial({
+    uniforms: Object.assign({ mapa: { value: null }, ponto: { value: new THREE.Vector2() } }, uniformes),
+    vertexShader: 'varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }',
+    fragmentShader: 'uniform sampler2D mapa; uniform vec2 ponto; varying vec2 vUv;\n' + fragmentShader,
+    depthTest: false, depthWrite: false, blending: somar ? THREE.AdditiveBlending : THREE.NoBlending,
+  });
+  // separa o que passa do branco (a cena está nas cores da tela: volta para luz antes) e já reduz à metade
+  const matCorte = matPos({}, `
+    vec3 forte(vec2 uv) {
+      vec3 c = pow(max(texture2D(mapa, uv).rgb, 0.0), vec3(2.2));
+      float b = max(c.r, max(c.g, c.b));
+      // o que passa do branco entra inteiro; o que chega perto do branco entra só um pouco (um brilho macio)
+      float passa = max(b - 1.0, 0.0) + 0.05 * smoothstep(0.6, 1.0, b);
+      return min(c * (passa / max(b, 1e-4)), vec3(40.0));
+    }
+    void main() {
+      gl_FragColor = vec4((forte(vUv + ponto * vec2(-1.0, -1.0)) + forte(vUv + ponto * vec2(1.0, -1.0))
+                         + forte(vUv + ponto * vec2(-1.0, 1.0)) + forte(vUv + ponto * vec2(1.0, 1.0))) * 0.25, 1.0);
+    }`);
+  const matReduzir = matPos({}, `
+    void main() {
+      gl_FragColor = vec4((texture2D(mapa, vUv + ponto * vec2(-1.0, -1.0)).rgb + texture2D(mapa, vUv + ponto * vec2(1.0, -1.0)).rgb
+                         + texture2D(mapa, vUv + ponto * vec2(-1.0, 1.0)).rgb + texture2D(mapa, vUv + ponto * vec2(1.0, 1.0)).rgb) * 0.25, 1.0);
+    }`);
+  // aumenta um tamanho e soma no de cima (borrão em tenda de 3 x 3)
+  const matAumentar = matPos({}, `
+    void main() {
+      vec3 s = texture2D(mapa, vUv).rgb * 4.0;
+      s += (texture2D(mapa, vUv + ponto * vec2(1.0, 0.0)).rgb + texture2D(mapa, vUv - ponto * vec2(1.0, 0.0)).rgb
+          + texture2D(mapa, vUv + ponto * vec2(0.0, 1.0)).rgb + texture2D(mapa, vUv - ponto * vec2(0.0, 1.0)).rgb) * 2.0;
+      s += texture2D(mapa, vUv + ponto).rgb + texture2D(mapa, vUv - ponto).rgb
+         + texture2D(mapa, vUv + ponto * vec2(1.0, -1.0)).rgb + texture2D(mapa, vUv + ponto * vec2(-1.0, 1.0)).rgb;
+      gl_FragColor = vec4(s / 16.0, 1.0);
+    }`, true);
+  // junta a cena com o brilho e ajusta as cores. ajuste: força do brilho, exposição, saturação e contraste; vinheta: quanto
+  // os cantos escurecem
+  const matFinal = matPos({ brilho: { value: null }, ajuste: { value: new THREE.Vector4(0.32, 1.04, 1.1, 1.05) }, vinheta: { value: 0.16 } }, `
+    uniform sampler2D brilho;
+    uniform vec4 ajuste;
+    uniform float vinheta;
+    void main() {
+      vec3 c = pow(max(texture2D(mapa, vUv).rgb, 0.0), vec3(2.2)) + texture2D(brilho, vUv).rgb * ajuste.x;
+      c *= ajuste.y;
+      // até 0,75 a luz passa igual; acima disso dobra devagar até o branco
+      const float A = 0.75;
+      vec3 y = max(c - A, 0.0) / (1.0 - A);
+      c = mix(c, A + (1.0 - A) * (1.0 - exp(-y)), step(A, c));
+      vec3 s = pow(c, vec3(1.0 / 2.2));
+      s = mix(vec3(dot(s, vec3(0.299, 0.587, 0.114))), s, ajuste.z);
+      s = (s - 0.5) * ajuste.w + 0.5;
+      vec2 d = vUv - 0.5;
+      s *= 1.0 - vinheta * smoothstep(0.3, 1.0, dot(d, d) * 2.0);
+      // granulado mínimo, para os degradês do céu não fazerem faixas
+      s += (fract(sin(dot(gl_FragCoord.xy, vec2(12.9898, 78.233))) * 43758.5453) - 0.5) / 255.0;
+      gl_FragColor = vec4(s, 1.0);
+    }`);
+  function criarPos() {
+    const ext = renderer.extensions;
+    if (!renderer.capabilities.isWebGL2 || !(ext.has('EXT_color_buffer_float') || ext.has('EXT_color_buffer_half_float'))) return false;
+    const gl = renderer.getContext();
+    const inteira = (alvo) => { renderer.setRenderTarget(alvo); return gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE; };
+    const nova = (opcoes) => new THREE.WebGLRenderTarget(8, 8, Object.assign({ type: THREE.HalfFloatType, minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter }, opcoes));
+    try {
+      // a cena: com o serrilhado suavizado se o aparelho deixar. O jogo escreve nela as cores da tela, como sempre fez
+      // (é o que isXRRenderTarget e a codificação sRGB garantem neste three.js); a conversão para luz é feita depois.
+      for (const amostras of BAIXO ? [0] : [4, 0]) {
+        const alvo = nova({ samples: amostras });
+        alvo.isXRRenderTarget = true;
+        alvo.texture.encoding = THREE.sRGBEncoding;
+        if (inteira(alvo)) { pos.cena = alvo; break; }
+        alvo.dispose();
+      }
+      if (!pos.cena) return false;
+      for (let i = 0; i < (LEVE ? 4 : 5); i++) {
+        const alvo = nova({ depthBuffer: false });
+        if (!inteira(alvo)) return false;
+        pos.niveis.push(alvo);
+      }
+      return true;
+    } catch (e) {
+      return false;
+    } finally {
+      renderer.setRenderTarget(null);
+    }
+  }
+  pos.pronto = criarPos();
+  function passe(material, fonte, destino) {
+    material.uniforms.mapa.value = fonte.texture;
+    material.uniforms.ponto.value.set(1 / fonte.width, 1 / fonte.height);
+    quadroPos.material = material;
+    renderer.setRenderTarget(destino);
+    renderer.render(cenaPos, camPos);
+  }
+  renderer.info.autoReset = false;
+  function desenhar() {
+    renderer.info.reset();
+    if (!pos.pronto || !comBrilho) {
+      renderer.setRenderTarget(null);
+      renderer.render(scene, camera);
+      return;
+    }
+    renderer.getDrawingBufferSize(tamTela);
+    if (tamTela.x !== pos.w || tamTela.y !== pos.h) {
+      pos.w = tamTela.x;
+      pos.h = tamTela.y;
+      pos.cena.setSize(pos.w, pos.h);
+      let w = pos.w, h = pos.h;
+      for (const n of pos.niveis) { w = Math.max(1, w >> 1); h = Math.max(1, h >> 1); n.setSize(w, h); }
+    }
+    renderer.setRenderTarget(pos.cena);
+    renderer.render(scene, camera);
+    const limpar = renderer.autoClear;
+    renderer.autoClear = false;
+    const N = pos.niveis;
+    passe(matCorte, pos.cena, N[0]);
+    for (let i = 1; i < N.length; i++) passe(matReduzir, N[i - 1], N[i]);
+    for (let i = N.length - 1; i > 0; i--) passe(matAumentar, N[i], N[i - 1]);
+    matFinal.uniforms.brilho.value = N[0].texture;
+    passe(matFinal, pos.cena, null);
+    renderer.autoClear = limpar;
+  }
+  // liga ou desliga o que passa do branco: o fogo, os tiros, os clarões e o sol
+  function aplicarBrilho() {
+    const liga = pos.pronto && comBrilho;
+    ganhoLuz.value = liga ? 1 : 0;
+    for (const c of coresFortes) c.material.color.copy(c.base).multiplyScalar(liga ? c.ganho : 1);
+    ceu.material.uniforms.solForte.value.copy(sol.color).multiplyScalar(liga ? CEUS[ceuEscolhido].brilhoSol : 0);
+  }
+  aplicarBrilho();
+
+  // ---------- sombras: o quadrado do mapa acompanha a câmera ----------
+  // O centro é um ponto do chão um pouco à frente da câmera; o lado cresce com a altura do voo (em degraus, para a sombra
+  // não tremer a cada metro que o caça sobe). O centro anda de ponto em ponto do mapa pelo mesmo motivo.
+  const focoSombra = new THREE.Vector3(), eixoSombraX = new THREE.Vector3(), eixoSombraY = new THREE.Vector3(), frenteSombra = new THREE.Vector3();
+  let ladoSombra = 0;
+  function atualizarSombras() {
+    const liga = comSombras;
+    if (sol.castShadow !== liga) sol.castShadow = liga;
+    if (!liga) {
+      uniSombra.sombraInfo.value.x = 0;
+      uniSombra.nuvensInfo.value.z = 0;
+      sol.target.position.set(0, 0, 0);
+      sol.position.copy(SOL_DIR);
+      return;
+    }
+    const alt = Math.max(0, camera.position.y - superficie(camera.position.x, camera.position.z));
+    const lado = 1000 * Math.pow(1.3, Math.round(Math.log(clamp(900 + alt * 2.6, 1000, 9000) / 1000) / Math.log(1.3)));
+    camera.getWorldDirection(frenteSombra);
+    frenteSombra.y = 0;
+    if (frenteSombra.lengthSq() > 1e-4) frenteSombra.normalize();
+    focoSombra.copy(camera.position).addScaledVector(frenteSombra, lado * 0.3);
+    focoSombra.y = Math.max(temMar() ? 0 : -1e9, alturaChao(focoSombra.x, focoSombra.z));
+    eixoSombraX.crossVectors(EIXO_Y, SOL_DIR).normalize();
+    eixoSombraY.crossVectors(SOL_DIR, eixoSombraX);
+    const ponto = lado / TAM_SOMBRA, dx = focoSombra.dot(eixoSombraX), dy = focoSombra.dot(eixoSombraY);
+    focoSombra.addScaledVector(eixoSombraX, Math.round(dx / ponto) * ponto - dx).addScaledVector(eixoSombraY, Math.round(dy / ponto) * ponto - dy);
+    const D = 3500 + lado, c = sol.shadow.camera;
+    sol.target.position.copy(focoSombra);
+    sol.position.copy(focoSombra).addScaledVector(SOL_DIR, D);
+    if (lado !== ladoSombra) {
+      ladoSombra = lado;
+      c.left = c.bottom = -lado / 2;
+      c.right = c.top = lado / 2;
+      c.near = 10;
+      c.far = 2 * D;
+      c.updateProjectionMatrix();
+      // folga: meio metro mais meio ponto do mapa, em partes da distância que o mapa cobre
+      const folga = (0.5 + 0.6 * ponto) / (c.far - c.near);
+      uniSombra.sombraInfo.value.z = folga;
+      sol.shadow.bias = -folga * 1.5;
+      sol.shadow.normalBias = ponto * 1.6;
+    }
+    const mapa = sol.shadow.map;
+    uniSombra.mapaSombra.value = mapa ? mapa.texture : null;
+    uniSombra.sombraInfo.value.x = mapa ? 1 : 0;
+    uniSombra.nuvensInfo.value.z = forcaSombraNuvens;
+  }
+
   // ---------- laço principal ----------
   function redimensionar() {
     const w = canvas.clientWidth || window.innerWidth;
@@ -6802,7 +7259,8 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     atualizarNuvens(estado === 'pausado' ? 0 : dt, aviao.pos.x, aviao.pos.z);
     chao.position.set(aviao.pos.x, 0, aviao.pos.z);
 
-    const opacidade = destruido ? 0 : clamp(0.55 * (1 - (aviao.pos.y - chaoAqui) / 140), 0, 0.55);
+    // (com as sombras do sol ligadas, o caça já faz a dele: a redonda fica só para quando elas estão desligadas)
+    const opacidade = destruido || comSombras ? 0 : clamp(0.55 * (1 - (aviao.pos.y - chaoAqui) / 140), 0, 0.55);
     sombra.visible = opacidade > 0.01;
     sombra.material.opacity = opacidade;
     sombra.position.set(aviao.pos.x, chaoAqui + 0.4, aviao.pos.z);
@@ -6831,7 +7289,8 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       if (tempoMsg <= 0) elMsg.hidden = true;
     }
 
-    renderer.render(scene, camera);
+    atualizarSombras();
+    desenhar();
   }
 
   // Quando a página é atualizada com o jogo aberto, o voo continua de onde parou.
@@ -7013,6 +7472,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       // estado salvo inválido: começa do zero
     }
     camQuat.copy(aviao.quat);
+    textosControle();
     escolherCaca(cacaEscolhido);
     escolherCeu(ceuEscolhido);
     escolherCenario(cenarioEscolhido).catch(() => { elCargaTexto.textContent = 'Não deu para carregar o cenário. Confira a internet e tente de novo.'; });
@@ -7024,7 +7484,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
 
   window.__voo = { get estado() { return estado; }, get modo() { return modo; }, tirosAtivos: () => tiros.filter((t) => t.vida > 0).length, tirosTela: () => tiros.filter((t) => t.vida > 0).map((t) => Object.assign(naTela(t.pos), { vis: t.malha.visible, bvis: t.brilho.visible, d: Math.round(t.pos.distanceTo(camera.position)) })), inimigos: () => inimigos.length, misseis: () => misseis.length, get vel() { return aviao.vel; }, get cenario() { return cenario; }, get ceu() { return ceuEscolhido; }, floresta: () => ({ pronta: flor.pronta, raio: Math.round(flor.raio), arvores: flor.tipos.map((t) => t.n), quadro: [flor.SX, flor.SZ] }), sons: () => Object.fromEntries(Object.entries(somBuf).map(([k, b]) => [k, +b.duration.toFixed(4)])), alturaChao: (x, z) => alturaChao(x, z),
     // tempo de desenho de um quadro (ms), medido esperando a placa de vídeo terminar
-    medirDesenho: (n) => { const gl = renderer.getContext(); renderer.render(scene, camera); gl.finish(); const t0 = performance.now(); for (let i = 0; i < n; i++) renderer.render(scene, camera); gl.finish(); return +((performance.now() - t0) / n).toFixed(2); },
+    medirDesenho: (n) => { const gl = renderer.getContext(); desenhar(); gl.finish(); const t0 = performance.now(); for (let i = 0; i < n; i++) desenhar(); gl.finish(); return +((performance.now() - t0) / n).toFixed(2); },
     triangulos: () => renderer.info.render.triangles,
     superficie: (x, z) => superficie(x, z),
     efeitos: () => ({ fumaca: fumacas.lista.length, brilho: brilhos.lista.length, pedacos: pedacos.length, focos: focos.length, flares: flares.length, explosoes: explosoesGrandes.filter((e) => e.malha.visible).length }),
@@ -7067,12 +7527,12 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     tempoPartida: (s) => { jogo.tempo = s; },
     // triângulos desenhados por cada parte da cena (escondendo uma de cada vez)
     partes: () => {
-      const desenhar = () => { renderer.render(scene, camera); return renderer.info.render.triangles; };
-      const total = desenhar(), lista = [];
+      const contar = () => { renderer.info.reset(); renderer.setRenderTarget(null); renderer.render(scene, camera); return renderer.info.render.triangles; };
+      const total = contar(), lista = [];
       for (const o of scene.children) {
         if (!o.visible) continue;
         o.visible = false;
-        const d = total - desenhar();
+        const d = total - contar();
         o.visible = true;
         if (d > 2000) lista.push([o.type + (o.material && o.material.type ? ':' + o.material.type : '') + (o.children.length ? '[' + o.children.length + ']' : ''), d]);
       }
@@ -7147,6 +7607,24 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       scene.add(m.malha);
       return ini.id;
     },
+    // brilho de luz e sombras: estado e chaves para comparar ligado e desligado
+    luz: () => ({ brilhoPronto: pos.pronto, brilho: comBrilho, sombras: comSombras, amostras: pos.cena ? pos.cena.samples : null, niveis: pos.niveis.length, mapa: sol.shadow.map ? sol.shadow.map.width : null, lado: Math.round(ladoSombra) }),
+    brilho: (v) => { comBrilho = !!v; aplicarBrilho(); },
+    sombras: (v) => { comSombras = !!v; },
+    ajusteLuz: () => matFinal.uniforms,
+    controle: (v) => { if (v) controleFacil = v === 'facil'; return controleFacil ? 'facil' : 'pro'; },
+    // parte do mapa de sombras que tem alguma coisa desenhada (0 a 1) e quantas malhas fazem sombra
+    mapaSombra: () => {
+      const m = sol.shadow.map;
+      if (!m) return null;
+      const n = 256, px = new Uint8Array(n * n * 4), passo = m.width / n;
+      let cheios = 0;
+      const um = new Uint8Array(4);
+      for (let j = 0; j < n; j += 4) for (let i = 0; i < n; i += 4) { renderer.readRenderTargetPixels(m, Math.floor(i * passo), Math.floor(j * passo), 1, 1, um); if (um[0] + um[1] + um[2] + um[3] < 1020) cheios++; }
+      let fazem = 0;
+      scene.traverse((o) => { if (o.castShadow && o.isMesh) fazem++; });
+      return { cheio: +(cheios / (n * n / 16)).toFixed(3), fazem, castSol: sol.castShadow, alvo: sol.target.position.toArray().map(Math.round), pos: sol.position.toArray().map(Math.round) };
+    },
     uniIlha: () => uniIlha,
     uniChao: () => uniChao,
     matArvores: () => matArvores,
@@ -7165,7 +7643,8 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       renderer.setSize(larg, Math.round(larg * 0.5625), false);
       camera.aspect = 16 / 9;
       camera.updateProjectionMatrix();
-      renderer.render(scene, camera);
+      atualizarSombras();
+      desenhar();
       const url = canvas.toDataURL('image/jpeg', 0.82);
       redimensionar();
       return fetch('/__foto?nome=' + encodeURIComponent(nome || 'foto'), { method: 'POST', body: url }).then((r) => r.status);
