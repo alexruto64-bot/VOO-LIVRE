@@ -299,6 +299,11 @@ h1 {
 /* Mata-mata: placar das equipes e relógio em cima, no meio; quedas no canto */
 .placar-equipes { position: fixed; z-index: 2; top: calc(12px + env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; margin: 0; padding: 6px 12px; font: 700 13px/1 var(--fonte-numero); letter-spacing: 0.06em; white-space: nowrap; }
 .placar-equipes .eq1 { color: #9dffa8; }
+/* Rádio dos pilotos: quem fala e o que disse, embaixo do placar */
+.radio-legenda { position: fixed; z-index: 2; top: calc(50px + env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%); max-width: min(560px, calc(100% - 32px)); margin: 0; padding: 5px 12px 6px; border-radius: 4px; background: var(--veu); font: 600 13px/1.25 var(--fonte-rotulo); color: var(--texto); text-align: center; pointer-events: none; }
+.radio-legenda b { margin-right: 6px; font: 700 12px/1 var(--fonte-numero); letter-spacing: 0.1em; color: #9dffa8; text-transform: uppercase; }
+.radio-legenda.comando b { color: var(--ambar); }
+body.toque .radio-legenda { font-size: 12px; }
 .placar-equipes .eq2 { color: #7cc8ff; }
 .placar-equipes b { font-size: 17px; color: var(--texto); }
 .placar-equipes .relogio { padding: 3px 8px; border-radius: 4px; background: var(--tecla); color: var(--ambar); font-size: 15px; }
@@ -604,6 +609,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
   </section>
   <p class="painel placar-equipes" id="placar-equipes" hidden><span class="eq1">EQUIPE 1 <b id="eq1-pontos">0</b></span><span class="relogio" id="relogio">5:00</span><span class="eq2"><b id="eq2-pontos">0</b> EQUIPE 2</span></p>
   <div class="feed" id="feed" hidden aria-live="polite"></div>
+  <p class="radio-legenda" id="radio-legenda" hidden><b id="radio-quem"></b><span id="radio-texto"></span></p>
   <canvas class="radar" id="radar" hidden aria-hidden="true"></canvas>
   <div class="mira" id="mira" hidden aria-hidden="true">
     <svg class="mira-circulo" id="mira-circulo"><circle fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
@@ -668,7 +674,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     <div class="capa-carga" id="capa-carga"><div class="carga" aria-hidden="true"><span id="capa-barra"></span></div><p id="capa-texto">Carregando…</p></div>
     <p class="capa-comecar"><span class="so-teclado">Aperte qualquer tecla</span><span class="so-toque">Toque para começar</span></p>
   </div>
-  <p class="capa-versao">Versão 8.0</p>
+  <p class="capa-versao">Versão 8.1</p>
 </div>
 
 <div class="capa-arte fundo-menu" id="fundo-menu" hidden aria-hidden="true"></div>
@@ -690,7 +696,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       <p class="menu-recorde" id="menu-recorde" hidden></p>
       <p class="menu-versao" id="menu-ajustes" hidden>Com valores mudados na tabela de ajustes</p>
       <div class="menu-versoes">
-        <p class="menu-versao">Versão 8.0</p>
+        <p class="menu-versao">Versão 8.1</p>
         <button class="secundario atualizar" id="atualizar" type="button" aria-live="polite">Atualizar versão</button>
       </div>
     </div>
@@ -770,6 +776,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
           <label class="regulagem"><span>Volume geral</span><input type="range" min="0" max="100" step="5" id="vol-geral"><output id="vol-geral-v"></output></label>
           <label class="regulagem"><span>Música</span><input type="range" min="0" max="100" step="5" id="vol-musica"><output id="vol-musica-v"></output></label>
           <label class="regulagem"><span>Efeitos</span><input type="range" min="0" max="100" step="5" id="vol-efeitos"><output id="vol-efeitos-v"></output></label>
+          <label class="regulagem"><span>Rádio dos pilotos</span><input type="range" min="0" max="100" step="5" id="vol-radio"><output id="vol-radio-v"></output></label>
         </div>
       </section>
       <section>
@@ -874,6 +881,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       <section><h3>Texturas</h3><p>Texturas e árvores do <a href="https://polyhaven.com/" target="_blank" rel="noopener">Poly Haven</a> (CC0): Aerial Rocks 02, Aerial Grass Rock, Aerial Ground Rock, Aerial Beach 01, Aerial Asphalt 01, Island Tree 01 e 02. Fachadas dos prédios do <a href="https://ambientcg.com/" target="_blank" rel="noopener">ambientCG</a> (CC0): Facade 001, 005, 006, 018 A, 019 A e 020 A.</p></section>
       <section><h3>Céus</h3><p>Céus do <a href="https://polyhaven.com/hdris/skies" target="_blank" rel="noopener">Poly Haven</a> (CC0): Kloofendal 48d Partly Cloudy, Kloppenheim 06 e Kloofendal Overcast, por Greg Zaal (com edição do céu por Jarod Guest).</p></section>
       <section><h3>Sons</h3><p>Sons do Freesound (CC0): <a href="https://freesound.org/people/qubodup/sounds/187734/" target="_blank" rel="noopener">Idle F-22 Jet Plane</a>, <a href="https://freesound.org/people/qubodup/sounds/854183/" target="_blank" rel="noopener">Autocannon Shot 1</a> e <a href="https://freesound.org/people/qubodup/sounds/442773/" target="_blank" rel="noopener">Big Water Splash</a> por qubodup · <a href="https://freesound.org/people/TiesWijnen/sounds/413312/" target="_blank" rel="noopener">Afterburner</a> por TiesWijnen · <a href="https://freesound.org/people/klangfabrik/sounds/249298/" target="_blank" rel="noopener">rpg launcher</a> por klangfabrik · <a href="https://freesound.org/people/Mozfoo/sounds/458377/" target="_blank" rel="noopener">Rocket Loop</a> por Mozfoo · <a href="https://freesound.org/people/northern87/sounds/88532/" target="_blank" rel="noopener">Woosh</a> por northern87 · <a href="https://freesound.org/people/kyles/sounds/450833/" target="_blank" rel="noopener">flare fire into sky</a> por kyles · <a href="https://freesound.org/people/derplayer/sounds/587194/" target="_blank" rel="noopener">explosion big 01</a> por derplayer · <a href="https://freesound.org/people/Robo9418/sounds/841831/" target="_blank" rel="noopener">Deep Explosion with Falling Debris</a> por Robo9418 · <a href="https://freesound.org/people/areniporgen/sounds/693421/" target="_blank" rel="noopener">CTS 7290</a> por areniporgen.</p></section>
+      <section><h3>Rádio dos pilotos</h3><p>Falas geradas com as vozes Daniel e Maria do Windows (Microsoft) e tratadas para soar como rádio de avião.</p></section>
       <section><h3>Arte da capa</h3><p>Gerada por inteligência artificial com o <a href="https://huggingface.co/black-forest-labs/FLUX.1-schnell" target="_blank" rel="noopener">FLUX.1 schnell</a>, da Black Forest Labs (licença Apache 2.0).</p></section>
       <section><h3>Motor 3D</h3><p><a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a>, licença MIT.</p></section>
     </div>
@@ -1022,7 +1030,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
   }
 
   // Configurações (a tela de Configurações), guardadas neste navegador
-  const CONFIG_PADRAO = { graficos: null, brilho: null, sombras: null, controle: 'facil', volGeral: 80, volMusica: 60, volEfeitos: 100, sensibilidade: 100, inverter: false, tremor: true };
+  const CONFIG_PADRAO = { graficos: null, brilho: null, sombras: null, controle: 'facil', volGeral: 80, volMusica: 60, volEfeitos: 100, volRadio: 85, sensibilidade: 100, inverter: false, tremor: true };
   const config = Object.assign({}, CONFIG_PADRAO, (() => { try { return JSON.parse(localStorage.getItem('voo-config')) || {}; } catch (e) { return {}; } })());
   // Jeito de pilotar: fácil (o padrão desde a 8.0) ou profissional (o de antes). Quem vem de uma versão anterior começa no
   // fácil com o manche sem inverter: para cima sobe, para baixo desce.
@@ -4435,7 +4443,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
 
   // --- Configurações: gráficos (o jogo recarrega para trocar), volumes e controles
   const NOMES_GRAFICOS = { baixo: 'baixo', medio: 'médio', alto: 'alto' };
-  const REGULAGENS = [['vol-geral', 'volGeral'], ['vol-musica', 'volMusica'], ['vol-efeitos', 'volEfeitos'], ['sensibilidade', 'sensibilidade']];
+  const REGULAGENS = [['vol-geral', 'volGeral'], ['vol-musica', 'volMusica'], ['vol-efeitos', 'volEfeitos'], ['vol-radio', 'volRadio'], ['sensibilidade', 'sensibilidade']];
   let graficosEscolhido = GRAFICOS;
   function sincronizarConfig() {
     const noMenu = estado === 'inicio';    // na pausa não dá para trocar os gráficos (o jogo recarrega) nem sair para a tabela
@@ -4935,6 +4943,165 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     geral.gain.setTargetAtTime(nivelVol(config.volGeral), t, 0.03);
     saidaMenu.gain.setTargetAtTime(0.8 * nivelVol(config.volEfeitos), t, 0.03);
     saidaMusica.gain.setTargetAtTime(volumeMusica(), t, 0.1);
+    if (RADIO.saida) RADIO.saida.gain.setTargetAtTime(1.15 * nivelVol(config.volRadio), t, 0.03);
+  }
+
+  // --- rádio dos pilotos
+  // As falas (radio/falas_1.json e radio/vozes_1.bin) foram geradas com as vozes Daniel e Maria do Windows e já vêm com a
+  // voz de rádio: só a faixa de um rádio de avião, volume apertado e um pouco de saturação. São 8.000 amostras por segundo,
+  // 8 bits em lei mu, todas em fila num arquivo só. Aqui entram o estalo de quem aperta o botão, o chiado por baixo da fala
+  // e o "kshh" de quem solta. No mata-mata falam os 4 companheiros (cada um com a sua voz, pela vaga dele na equipe) e o
+  // Comando; na sobrevivência, só o Comando. Uma fala por vez: as outras esperam na fila, e as que ficam velhas caem.
+  const RADIO = { taxa: 8000, vozes: null, textos: null, amostras: null, buf: null, ruido: null, saida: null, fila: [], livreEm: 0, ultima: {}, variante: {}, legendaAte: 0, conversa: 0 };
+  const ARQ_RADIO = ['radio/falas_1.json', 'radio/vozes_1.bin'];
+  // intervalo mínimo (s) entre duas falas do mesmo tipo, para o rádio não virar ladainha
+  const PAUSA_RADIO = { abati: 3, ajuda: 14, caiu: 2, missil: 7, aviso: 9, elogio: 5, ferido: 25, liderCaiu: 5, perda: 10, volta: 12, pronto: 5, atento: 30,
+    confirmado: 6, onda: 8, nivel: 20, danificado: 40, missilAr: 10 };
+  let radioCarga = null;
+  function carregarRadio() {
+    if (radioCarga) return radioCarga;
+    radioCarga = Promise.all([
+      fetch(ARQ_RADIO[0]).then((r) => { if (!r.ok) throw new Error('rádio'); return r.json(); }),
+      fetch(ARQ_RADIO[1]).then((r) => { if (!r.ok) throw new Error('rádio'); return r.arrayBuffer(); }),
+    ]).then(([indice, bin]) => {
+      const tabela = new Float32Array(256);              // lei mu: de volta para amostras entre -1 e 1
+      for (let i = 0; i < 256; i++) { const y = i / 255 * 2 - 1; tabela[i] = Math.sign(y) * (Math.pow(256, Math.abs(y)) - 1) / 255; }
+      const bytes = new Uint8Array(bin), amostras = new Float32Array(bytes.length);
+      for (let i = 0; i < bytes.length; i++) amostras[i] = tabela[bytes[i]];
+      RADIO.taxa = indice.taxa;
+      RADIO.textos = indice.textos;
+      RADIO.amostras = amostras;
+      RADIO.vozes = indice.vozes;
+    }).catch(() => { radioCarga = null; });
+    return radioCarga;
+  }
+  setTimeout(() => { if (config.volRadio > 0) carregarRadio(); }, 2500);
+  // prepara a saída, a gravação e o ruído (só depois do primeiro toque na tela, quando o som pode ligar)
+  function radioPronto() {
+    const ctx = somCtx();
+    if (!ctx || !RADIO.amostras) return null;
+    if (!RADIO.saida) {
+      RADIO.saida = ctx.createGain();
+      RADIO.saida.gain.value = 1.15 * nivelVol(config.volRadio);
+      RADIO.saida.connect(geral);
+    }
+    if (!RADIO.buf) {
+      // alguns navegadores antigos não aceitam uma gravação de 8.000 amostras por segundo: aí vai cada amostra três vezes
+      let taxa = RADIO.taxa, dados = RADIO.amostras;
+      try { RADIO.buf = ctx.createBuffer(1, dados.length, taxa); } catch (e) {
+        const tres = new Float32Array(dados.length * 3);
+        for (let i = 0; i < dados.length; i++) tres[i * 3] = tres[i * 3 + 1] = tres[i * 3 + 2] = dados[i];
+        dados = tres;
+        taxa *= 3;
+        RADIO.buf = ctx.createBuffer(1, dados.length, taxa);
+      }
+      RADIO.buf.getChannelData(0).set(dados);
+      RADIO.taxaBuf = taxa;
+    }
+    if (!RADIO.ruido) {
+      const n = Math.floor(ctx.sampleRate * 1.3), b = ctx.createBuffer(1, n, ctx.sampleRate), d = b.getChannelData(0);
+      for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
+      RADIO.ruido = b;
+    }
+    return ctx;
+  }
+  // toca uma fala agora; devolve quantos segundos a transmissão dura (0 se não deu)
+  function transmitir(voz, fala, k) {
+    const ctx = radioPronto();
+    if (!ctx) return 0;
+    const [inicio, n] = RADIO.vozes[voz][fala][k];
+    const tom = 0.97 + Math.random() * 0.06, dur = n / RADIO.taxa / tom;
+    const t0 = ctx.currentTime + 0.03, tFala = t0 + 0.07, tFim = tFala + dur;
+    const src = ctx.createBufferSource();
+    src.buffer = RADIO.buf;
+    src.playbackRate.value = tom;
+    src.connect(RADIO.saida);
+    src.start(tFala, inicio / RADIO.taxa, n / RADIO.taxa);
+    // chiado: ruído na faixa do rádio. Estalo forte ao abrir, baixinho durante a fala, "kshh" ao soltar o botão
+    const chiado = ctx.createBufferSource();
+    chiado.buffer = RADIO.ruido;
+    chiado.loop = true;
+    const faixa = ctx.createBiquadFilter();
+    faixa.type = 'bandpass';
+    faixa.frequency.value = 2100;
+    faixa.Q.value = 0.8;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0, t0);
+    g.gain.linearRampToValueAtTime(0.36, t0 + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.045, tFala);
+    g.gain.setValueAtTime(0.045, tFim);
+    g.gain.linearRampToValueAtTime(0.3, tFim + 0.02);
+    g.gain.setValueAtTime(0.3, tFim + 0.1);
+    g.gain.linearRampToValueAtTime(0, tFim + 0.13);
+    chiado.connect(faixa).connect(g).connect(RADIO.saida);
+    chiado.start(t0);
+    chiado.stop(tFim + 0.16);
+    return dur + 0.23;
+  }
+  const elRadio = $('radio-legenda'), elRadioQuem = $('radio-quem'), elRadioTexto = $('radio-texto');
+  // Pede uma fala. quem: a ficha de um companheiro ou 'comando'. prioridade: 2 = urgente (passa na frente), 1 = normal,
+  // 0 = conversa (só sai se o rádio estiver quieto). espera: segundos até poder sair.
+  function radio(quem, fala, prioridade, espera) {
+    if (!RADIO.vozes || config.volRadio <= 0 || estado === 'inicio') return;
+    const voz = quem === 'comando' ? 'torre' : 'ala' + quem.vaga;
+    if (!RADIO.vozes[voz] || !RADIO.vozes[voz][fala]) return;
+    const agora = performance.now();
+    if (agora - (RADIO.ultima[fala] || -1e9) < (PAUSA_RADIO[fala] || 4) * 1000) return;
+    if (prioridade === 0 && (RADIO.fila.length || agora < RADIO.livreEm + 2500)) return;
+    RADIO.ultima[fala] = agora;
+    RADIO.fila.push({ voz, fala, nome: quem === 'comando' ? 'Comando' : quem.nome, quem, prioridade: prioridade || 0, pedido: agora, sai: agora + (espera || 0) * 1000 });
+    if (RADIO.fila.length > 4) {
+      // fila cheia: cai a menos importante (das iguais, a mais nova)
+      let pior = 0;
+      RADIO.fila.forEach((f, i) => { const p = RADIO.fila[pior]; if (f.prioridade < p.prioridade || (f.prioridade === p.prioridade && f.pedido > p.pedido)) pior = i; });
+      RADIO.fila.splice(pior, 1);
+    }
+  }
+  // um companheiro vivo, sorteado (menos "fora", se der)
+  function companheiro(fora) {
+    const vivos = fichas.filter((f) => !f.jogador && f.time === aviao.time && f.caca && f.caca.vivo && f !== fora);
+    return vivos.length ? vivos[Math.floor(Math.random() * vivos.length)] : null;
+  }
+  function limparRadio() {
+    RADIO.fila.length = 0;
+    RADIO.ultima = {};
+    RADIO.conversa = performance.now() + 20000;
+  }
+  function atualizarRadio() {
+    const agora = performance.now();
+    if (!elRadio.hidden && (agora > RADIO.legendaAte || estado === 'inicio')) elRadio.hidden = true;
+    if (!RADIO.vozes || estado === 'pausado' || estado === 'inicio') return;
+    // conversa de vez em quando, no mata-mata, com o rádio quieto
+    if (modo === 'equipe' && estado === 'voando' && !jogo.acabou && agora > RADIO.conversa) {
+      RADIO.conversa = agora + 26000 + Math.random() * 20000;
+      const c = companheiro();
+      if (c) radio(c, 'atento', 0);
+    }
+    if (agora < RADIO.livreEm || !RADIO.fila.length) return;
+    // a mais urgente que já pode sair; as que esperaram demais (5 s além da hora) caem
+    let melhor = -1;
+    for (let i = RADIO.fila.length - 1; i >= 0; i--) {
+      const f = RADIO.fila[i];
+      if (agora - f.sai > 5000) { RADIO.fila.splice(i, 1); if (melhor > i) melhor--; continue; }
+      if (agora < f.sai) continue;
+      if (melhor < 0 || f.prioridade > RADIO.fila[melhor].prioridade || (f.prioridade === RADIO.fila[melhor].prioridade && f.pedido < RADIO.fila[melhor].pedido)) melhor = i;
+    }
+    if (melhor < 0) return;
+    const f = RADIO.fila.splice(melhor, 1)[0];
+    // quem ia falar caiu antes da vez dele (menos quando a fala é justamente a da queda)
+    if (f.quem !== 'comando' && f.fala !== 'caiu' && !(f.quem.caca && f.quem.caca.vivo)) return;
+    const variantes = RADIO.vozes[f.voz][f.fala], chave = f.voz + f.fala;
+    let k = Math.floor(Math.random() * variantes.length);
+    if (variantes.length > 1 && k === RADIO.variante[chave]) k = (k + 1) % variantes.length;
+    RADIO.variante[chave] = k;
+    const dur = transmitir(f.voz, f.fala, k);
+    if (!dur) return;
+    RADIO.livreEm = agora + dur * 1000 + 380;
+    elRadioQuem.textContent = f.nome;
+    elRadioTexto.textContent = RADIO.textos[f.voz === 'torre' ? 'torre' : 'ala'][f.fala][k];
+    elRadio.className = 'radio-legenda' + (f.voz === 'torre' ? ' comando' : '');
+    elRadio.hidden = false;
+    RADIO.legendaAte = agora + dur * 1000 + 1300;
   }
 
   // --- música: o tema do menu (menus, voo livre e fim de voo) e o de batalha (combates), em repetição
@@ -5259,6 +5426,191 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
   }
   function fogo(x, y, z, tam, vida, vx, vy, vz) {
     particula(brilhos, { x, y, z, vx: vx || 0, vy: vy || 0, vz: vz || 0, vida, tam0: tam, tam1: tam * 0.35, r: 1, g: 0.7, b: 0.3, alfa: 1, arrasto: 1.4, grav: -3, fogo: true });
+  }
+
+  // --- fitas: rastros compridos, feitos de uma tira que acompanha um ponto que anda (ponta de asa, míssil).
+  // Cada fita guarda os lugares por onde o ponto passou e quando; a tira é remontada a cada quadro, sempre de frente
+  // para a câmera, alargando e sumindo com a idade. Dois tipos: "vapor" (o risco branco que sai da ponta das asas nas
+  // curvas fechadas, onde o ar condensa) e "fumaca" (a trilha do motor dos mísseis, com falhas de ruído, que fica no ar).
+  // Um míssil anda mais de 1 km por segundo: com bolinhas de fumaça a trilha ficava pontilhada; a fita é contínua.
+  const FITAS = {
+    vapor: { pontos: 26, quantas: 30, vida: 0.75, passo: 10, largura0: 0.2, largura1: 1.25, alfa: 0.42, queda: 1.4, ruido: 0, cor: 0xffffff, perto: [3, 22] },
+    fumaca: { pontos: 84, quantas: BAIXO ? 8 : 16, vida: BAIXO ? 2.2 : LEVE ? 2.8 : 3.6, passo: 55, largura0: 1.1, largura1: 9, alfa: 0.55, queda: 1.15, ruido: 1, cor: 0xe6e7ea, perto: [14, 90] },
+  };
+  let tempoFitas = 0;
+  const fitasVivas = [];
+  for (const tipo in FITAS) {
+    const c = FITAS[tipo];
+    c.material = new THREE.ShaderMaterial({
+      transparent: true, depthWrite: false, fog: true, side: THREE.DoubleSide,
+      uniforms: Object.assign(THREE.UniformsUtils.merge([THREE.UniformsLib.fog]), { cor: { value: new THREE.Color(c.cor) }, ruido: { value: c.ruido }, perto: { value: new THREE.Vector2(c.perto[0], c.perto[1]) } }),
+      vertexShader: `
+        attribute float alfa;
+        attribute float lado;
+        attribute float dist;
+        varying float vAlfa;
+        varying float vLado;
+        varying float vDist;
+        #include <fog_pars_vertex>
+        void main() {
+          vAlfa = alfa;
+          vLado = lado;
+          vDist = dist;
+          vec4 mvPosition = viewMatrix * vec4(position, 1.0);
+          gl_Position = projectionMatrix * mvPosition;
+          #include <fog_vertex>
+        }`,
+      fragmentShader: `
+        uniform vec3 cor;
+        uniform float ruido;
+        uniform vec2 perto;         // de quantos a quantos metros da câmera a fita aparece (some colada nela)
+        varying float vAlfa;
+        varying float vLado;
+        varying float vDist;
+        #include <fog_pars_fragment>
+        float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+        float valor(vec2 p) {
+          vec2 i = floor(p), f = fract(p), u = f * f * (3.0 - 2.0 * f);
+          return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), u.x), mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x), u.y);
+        }
+        void main() {
+          float a = vAlfa * pow(max(1.0 - vLado * vLado, 0.0), 0.75) * smoothstep(perto.x, perto.y, vFogDepth);
+          if (ruido > 0.5) {
+            // falhas e calombos ao longo da trilha, para não parecer um tubo liso
+            float n = valor(vec2(vDist * 0.045, vLado * 1.4)) * 0.65 + valor(vec2(vDist * 0.17, vLado * 3.1 + 7.0)) * 0.35;
+            a *= 0.42 + 1.05 * n;
+          }
+          gl_FragColor = vec4(cor, a);
+          #include <fog_fragment>
+        }`,
+    });
+    c.livres = [];
+    for (let q = 0; q < c.quantas; q++) {
+      const n = c.pontos, geo = new THREE.BufferGeometry(), ind = [], lado = new Float32Array(n * 2);
+      for (let i = 0; i < n - 1; i++) { const a = i * 2; ind.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); }
+      for (let i = 0; i < n; i++) { lado[i * 2] = -1; lado[i * 2 + 1] = 1; }
+      geo.setIndex(ind);
+      const f = { cfg: c, geo, pos: new Float32Array(n * 6), alfa: new Float32Array(n * 2), dist: new Float32Array(n * 2), pontos: [], viva: false, solta: true };
+      geo.setAttribute('position', new THREE.BufferAttribute(f.pos, 3).setUsage(THREE.DynamicDrawUsage));
+      geo.setAttribute('alfa', new THREE.BufferAttribute(f.alfa, 1).setUsage(THREE.DynamicDrawUsage));
+      geo.setAttribute('dist', new THREE.BufferAttribute(f.dist, 1).setUsage(THREE.DynamicDrawUsage));
+      geo.setAttribute('lado', new THREE.BufferAttribute(lado, 1));
+      f.malha = new THREE.Mesh(geo, c.material);
+      f.malha.frustumCulled = false;
+      f.malha.renderOrder = 2;
+      f.malha.visible = false;
+      scene.add(f.malha);
+      c.livres.push(f);
+    }
+  }
+  // pega uma fita livre (ou nada, se todas estiverem no ar); soltar deixa o que já foi desenhado sumir sozinho
+  function pegarFita(tipo) {
+    const f = FITAS[tipo].livres.pop();
+    if (!f) return null;
+    f.pontos.length = 0;
+    f.solta = false;
+    if (!f.viva) { f.viva = true; fitasVivas.push(f); }
+    return f;
+  }
+  function soltarFita(f) { if (f) f.solta = true; }
+  // O ponto mais novo da fita acompanha quem a solta; quando ele se afasta "passo" metros do anterior, vira um ponto
+  // fixo e nasce outro. forca (0 a 1) é quanto o rastro aparece ali.
+  function pontoNaFita(f, x, y, z, forca) {
+    if (!f) return;
+    const P = f.pontos, n = P.length;
+    if (n >= 2) {
+      const a = P[n - 2], u = P[n - 1];
+      if (Math.hypot(x - a.x, y - a.y, z - a.z) < f.cfg.passo) {
+        u.x = x; u.y = y; u.z = z; u.t = tempoFitas; u.forca = forca;
+        return;
+      }
+    }
+    if (n >= f.cfg.pontos) P.shift();
+    const ant = P[P.length - 1];
+    P.push({ x, y, z, t: tempoFitas, forca, d: ant ? ant.d + Math.hypot(x - ant.x, y - ant.y, z - ant.z) : Math.random() * 500 });
+  }
+  const fitaA = new THREE.Vector3(), fitaB = new THREE.Vector3(), fitaC = new THREE.Vector3();
+  function atualizarFitas(dt) {
+    tempoFitas += dt;
+    for (let k = fitasVivas.length - 1; k >= 0; k--) {
+      const f = fitasVivas[k], c = f.cfg, P = f.pontos;
+      while (P.length && tempoFitas - P[0].t > c.vida) P.shift();
+      const n = P.length;
+      let visivel = false;
+      if (n >= 2) {
+        for (let i = 0; i < n; i++) {
+          const p = P[i], a = P[Math.max(0, i - 1)], b = P[Math.min(n - 1, i + 1)];
+          const idade = clamp((tempoFitas - p.t) / c.vida, 0, 1);
+          fitaA.set(b.x - a.x, b.y - a.y, b.z - a.z);
+          fitaB.set(camera.position.x - p.x, camera.position.y - p.y, camera.position.z - p.z);
+          fitaC.crossVectors(fitaA, fitaB);
+          const len = fitaC.length();
+          const meia = (c.largura0 + (c.largura1 - c.largura0) * Math.sqrt(idade)) * 0.5 / (len > 1e-6 ? len : 1);
+          const o = i * 6;
+          f.pos[o] = p.x - fitaC.x * meia; f.pos[o + 1] = p.y - fitaC.y * meia; f.pos[o + 2] = p.z - fitaC.z * meia;
+          f.pos[o + 3] = p.x + fitaC.x * meia; f.pos[o + 4] = p.y + fitaC.y * meia; f.pos[o + 5] = p.z + fitaC.z * meia;
+          // a ponta nova entra macia e a velha some; a cabeça (último ponto) já nasce cheia
+          const alfa = p.forca * c.alfa * Math.pow(1 - idade, c.queda) * (i === 0 ? 0 : 1);
+          f.alfa[i * 2] = f.alfa[i * 2 + 1] = alfa;
+          f.dist[i * 2] = f.dist[i * 2 + 1] = p.d;
+          if (alfa > 0.004) visivel = true;
+        }
+        for (const nome of ['position', 'alfa', 'dist']) {
+          const at = f.geo.attributes[nome];
+          at.updateRange.offset = 0;
+          at.updateRange.count = n * 2 * at.itemSize;
+          at.needsUpdate = true;
+        }
+        f.geo.setDrawRange(0, (n - 1) * 6);
+      }
+      f.malha.visible = visivel;
+      if (f.solta && n < 2) {
+        // acabou de sumir: volta para o estoque
+        f.viva = false;
+        f.malha.visible = false;
+        fitasVivas.splice(k, 1);
+        c.livres.push(f);
+      }
+    }
+  }
+  function limparFitas() {
+    for (const f of fitasVivas) { f.pontos.length = 0; f.malha.visible = false; }
+  }
+  // Rastros de um caça (o do jogador ou um do computador): vapor nas pontas das asas conforme a curva, e fumaça escura
+  // quando o casco está ruim. p guarda a direção do quadro anterior para medir quanto o nariz girou.
+  const rastroFrente = new THREE.Vector3(), rastroLado = new THREE.Vector3(), rastroCima = new THREE.Vector3();
+  function rastrosDoCaca(p, envergadura, comprimento, dt, ligado) {
+    rastroFrente.set(0, 0, -1).applyQuaternion(p.quat);
+    if (!p.frenteAnt) p.frenteAnt = rastroFrente.clone();
+    const giro = dt > 0 ? p.frenteAnt.angleTo(rastroFrente) / dt : 0;
+    p.frenteAnt.copy(rastroFrente);
+    if (!p.fitas) p.fitas = [pegarFita('vapor'), pegarFita('vapor')];
+    // aparece a partir de uns 23° por segundo de curva e fica cheio perto dos 43°; devagar não condensa
+    const forca = ligado ? clamp((giro - 0.4) / 0.35, 0, 1) * clamp((p.vel - 110) / 80, 0, 1) : 0;
+    rastroLado.set(1, 0, 0).applyQuaternion(p.quat);
+    for (let k = 0; k < 2; k++) {
+      const lado = (k ? 1 : -1) * envergadura * 0.48;
+      pontoNaFita(p.fitas[k], p.pos.x + rastroLado.x * lado - rastroFrente.x * comprimento * 0.16,
+        p.pos.y + rastroLado.y * lado - rastroFrente.y * comprimento * 0.16, p.pos.z + rastroLado.z * lado - rastroFrente.z * comprimento * 0.16, forca);
+    }
+    // casco abaixo de 45%: fumaça saindo de trás, mais escura e mais grossa quanto pior (no caça do jogador, mais fina,
+    // para não tapar a vista da câmera, que fica logo atrás)
+    if (ligado && p.vida < 45 && p.vida > 0) {
+      p.tempoFumaca = (p.tempoFumaca || 0) - dt;
+      if (p.tempoFumaca <= 0) {
+        const ruim = 1 - p.vida / 45, meu = p === aviao;
+        p.tempoFumaca = (meu ? 0.09 : 0.06) - 0.025 * ruim;
+        const x = p.pos.x - rastroFrente.x * comprimento * 0.45, y = p.pos.y - rastroFrente.y * comprimento * 0.45, z = p.pos.z - rastroFrente.z * comprimento * 0.45;
+        particula(fumacas, { x, y, z, vx: (Math.random() - 0.5) * 3, vy: 1 + Math.random() * 2, vz: (Math.random() - 0.5) * 3, vida: (meu ? 0.9 : 2.2) + Math.random() * 0.8,
+          tam0: meu ? 1 : 2, tam1: (meu ? 4 : 9) + ruim * (meu ? 3 : 8), r: 0.42 - 0.3 * ruim, g: 0.42 - 0.3 * ruim, b: 0.44 - 0.3 * ruim, alfa: (meu ? 0.28 : 0.5) + 0.2 * ruim, arrasto: 0.8, grav: -1.5 });
+      }
+    }
+  }
+  function atualizarRastros(dt) {
+    const voando = estado === 'voando' || estado === 'inicio';
+    if (cacaAtual) rastrosDoCaca(aviao, cacaAtual.envergadura, cacaAtual.config.comprimento, dt, voando && !destruido);
+    for (const ini of inimigos) rastrosDoCaca(ini, ini.envergadura, ini.config.comprimento, dt, ini.vivo && ini.pos.distanceToSquared(camera.position) < 16e6);
+    atualizarFitas(dt);
   }
 
   // --- explosões grandes: as sequências de imagens (explosão renderizada quadro a quadro) num cartão
@@ -5682,6 +6034,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     flares.length = 0;
     salvas.length = 0;
     for (const s of spritesFlare) s.visible = false;
+    limparFitas();
   }
 
   // --- flares: chamarizes de calor soltos em salvas atrás do avião. Um míssil guiado que vê os flares pode trocar o alvo
@@ -5828,6 +6181,12 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     const d = ini.pos.distanceTo(aviao.pos);
     if (d < 3000 && !tocar('missil', 0.55 * clamp(1.3 - d / 3000, 0.2, 1), { pan: panDe(ini.pos), taxa: 0.95 })) somMissil();
     if (guiado && alvo === aviao) mensagem('Míssil inimigo! Faça uma curva bem fechada ou solte flares', 3);
+    // rádio: o companheiro avisa que disparou; se o míssil é contra o jogador, alguém grita o aviso
+    if (guiado && ini.time === aviao.time && ini.ficha) radio(ini.ficha, 'missil', 1);
+    else if (guiado && alvo === aviao) {
+      const c = modo === 'equipe' ? companheiro() : null;
+      if (c) radio(c, 'aviso', 2); else radio('comando', 'missilAr', 2);
+    }
   }
   function dispararMissil(tipo) {
     if (estado !== 'voando') return;
@@ -5862,9 +6221,11 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
   // rastro do motor do míssil: brilho no bocal e fumaça branca que fica no ar
   function rastroMissil(m, dt) {
     tmpC.set(0, 0, 1).applyQuaternion(m.quat).multiplyScalar(1.9).add(m.pos);
+    if (!m.fita && !m.semFita) { m.fita = pegarFita('fumaca'); m.semFita = !m.fita; }
+    pontoNaFita(m.fita, tmpC.x, tmpC.y, tmpC.z, 1);
     m.fumaca -= dt;
     while (m.fumaca <= 0) {
-      m.fumaca += 0.022;
+      m.fumaca += m.fita ? 0.05 : 0.022;
       particula(fumacas, { x: tmpC.x, y: tmpC.y, z: tmpC.z, vx: (Math.random() - 0.5) * 2, vy: (Math.random() - 0.5) * 2, vz: (Math.random() - 0.5) * 2,
         vida: 2.4 + Math.random(), tam0: 1.2, tam1: 7 + Math.random() * 3, r: 0.9, g: 0.9, b: 0.92, alfa: 0.45, arrasto: 0.4, grav: -0.3 });
     }
@@ -5945,6 +6306,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       if (acertou) ferir(acertou, m.guiado ? DANO_GUIADO : DANO_FOGUETE, m.dono, m.guiado ? 'guiado' : 'foguete');
       if (acertou || noFlare || m.vida <= 0 || m.pos.y < superficie(m.pos.x, m.pos.z)) {
         explodir(m.pos, acertou === aviao ? 1 : acertou ? 0.8 : 0.6);
+        soltarFita(m.fita);
         scene.remove(m.malha);
         pararSom(m.som, 0.3);
         misseis.splice(i, 1);
@@ -6022,7 +6384,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       tempoMissil: dif.recarga * (0.4 + Math.random() * 0.4), tempoFoguete: dif.recarga * (0.6 + Math.random() * 0.6), trava: 0,
       seguindo: null, tempoMira: 0,            // metralhadora: a mesma trava do jogador
       desvio: 0, fuga: 0, ladoFuga: 1, inclinacao: 0, evita: 0, rumoEvita: new THREE.Vector3(),
-      raio: base.config.comprimento * 0.42, detalhe, longe,
+      raio: base.config.comprimento * 0.42, envergadura: base.envergadura, detalhe, longe,
       som: null, somEspera: 0,                 // som de passagem perto do jogador
     };
     if (onde) {
@@ -6048,6 +6410,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     return ini;
   }
   function removerInimigo(ini) {
+    if (ini.fitas) { soltarFita(ini.fitas[0]); soltarFita(ini.fitas[1]); ini.fitas = null; }
     pararSom(ini.som, 1.2);
     ini.som = null;
     scene.remove(ini.grupo);
@@ -6355,6 +6718,13 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     }
     if (alvo === aviao) flashDano = 1;
     if (atacante === aviao && (arma === 'tiro' || arma === 'guiado' || arma === 'foguete')) mostrarDano(alvo, tirou);
+    // rádio: o companheiro acuado pede ajuda; quando o jogador apanha, a equipe e o Comando avisam
+    if (alvo.vida > 0.01 && atacante && !jogo.acabou) {
+      if (alvo === aviao) {
+        if (alvo.vida < 30) radio('comando', 'danificado', 1, 0.3);
+        else if (alvo.vida < 65 && modo === 'equipe') { const c = companheiro(); if (c) radio(c, 'ferido', 1, 0.3); }
+      } else if (alvo.time === aviao.time && alvo.ficha && alvo.vida < 55) radio(alvo.ficha, 'ajuda', 1);
+    }
     if (alvo.vida > 0.01) {
       if (alvo !== aviao && alvo.pos.distanceToSquared(camera.position) < 9e6) explodir(alvo.pos, 0.35);
       if (atacante === aviao) somAcerto();
@@ -6397,6 +6767,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
       alvo.ficha.mortes++;
     }
     noticia(alvo, atacante, arma, bonus);
+    falasDaQueda(alvo, atacante);
     if (alvoTravado === alvo) alvoTravado = null;
     if (candidato === alvo) { candidato = null; tempoTrava = 0; }
     if (alvoSeguido === alvo) alvoSeguido = null;
@@ -6415,6 +6786,25 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     }
     alvo.caindo = 2.6;
     explosaoAr(alvo.pos, velExp, 1);
+  }
+  // rádio: quem derrubou comemora, quem caiu avisa, a equipe sente a perda e o Comando confirma
+  function falasDaQueda(alvo, atacante) {
+    if (jogo.acabou) return;
+    const nosso = (p) => p && p.time === aviao.time;
+    if (alvo === aviao) {
+      if (modo === 'equipe') { const c = companheiro(); if (c) radio(c, 'liderCaiu', 2, 0.4); }
+      return;
+    }
+    if (nosso(alvo)) {
+      radio(alvo.ficha, 'caiu', 1);
+      const c = companheiro(alvo.ficha);
+      if (c && Math.random() < 0.6) radio(c, 'perda', 1, 2.2);
+      return;
+    }
+    if (atacante === aviao) {
+      const c = modo === 'equipe' && Math.random() < 0.55 ? companheiro() : null;
+      if (c) radio(c, 'elogio', 1, 0.5); else radio('comando', 'confirmado', 1, 0.6);
+    } else if (nosso(atacante) && atacante.ficha) radio(atacante.ficha, 'abati', 1, 0.3);
   }
   // Um caça bateu no chão, num prédio ou no mar. O que faltava da vida dele conta para quem o atacou por último (até
   // 15 s antes) ou, se ninguém, para quem ele perseguia: fugir rente aos obstáculos derruba o perseguidor.
@@ -6533,13 +6923,14 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
   }
   function limparCombate() {
     for (const ini of inimigos.slice()) removerInimigo(ini);
-    for (const m of misseis) { scene.remove(m.malha); pararSom(m.som, 0.2); }
+    for (const m of misseis) { scene.remove(m.malha); pararSom(m.som, 0.2); soltarFita(m.fita); }
     misseis.length = 0;
     for (const t of tiros) { t.vida = 0; t.malha.visible = false; t.brilho.visible = false; }
     limparEfeitos();
     alvoTravado = candidato = naMira = alvoSeguido = candidatoMira = null;
     tempoTrava = tempoMira = 0;
     jogo.acabou = false;
+    RADIO.fila.length = 0;
     feed.length = 0;
     desenharFeed();
   }
@@ -6563,6 +6954,8 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     jogo.totalNivel = 0;
     jogo.tempoProximo = 0;
     novoNivel();
+    limparRadio();
+    radio('comando', 'inicioSobrev', 1, 1.5);
   }
   // Mata-mata: o jogador e mais 4 caças do computador (equipe 1) contra 5 (equipe 2), cada equipe nascendo de um lado.
   function iniciarEquipe() {
@@ -6574,6 +6967,11 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     fichas = [fichaJogador];
     for (let k = 0; k < 9; k++) fichas.push({ nome: nomes[k], time: k < 4 ? 0 : 1, jogador: false, pontos: 0, abates: 0, mortes: 0, caca: null, volta: 0, vaga: k < 4 ? k + 1 : k - 4 });
     for (const f of fichas) if (!f.jogador) nascer(f);
+    limparRadio();
+    jogo.avisouMinuto = false;
+    radio('comando', 'inicioEquipe', 1, 1.5);
+    const c = companheiro();
+    if (c) radio(c, 'pronto', 1, 4.5);
   }
   // Lugar de nascer no mata-mata. Vaga 0 (o jogador) no meio; as outras em leque, 160 m para cada lado e um pouco
   // atrás. A equipe 1 nasce no início do cenário; a 2, do outro lado (inicio2), virada para a 1.
@@ -6599,6 +6997,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     recarregarArmas();
     estado = 'voando';
     mensagem('De volta à base com as armas cheias!' + (V.renascerProtecao >= 1 ? ' Por ' + Math.floor(V.renascerProtecao) + ' s nada acerta você' : ''), 2.4);
+    radio('comando', 'liderVolta', 1, 0.6);
   }
   const porPontos = (a, b) => b.pontos - a.pontos || b.abates - a.abates || a.mortes - b.mortes;
   function pontosEquipes() {
@@ -6626,6 +7025,8 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     jogo.acabou = true;
     const [a, b] = pontosEquipes();
     const venceu = a > b ? 0 : b > a ? 1 : -1;
+    RADIO.fila.length = 0;
+    radio('comando', venceu === 0 ? 'vitoria' : venceu === 1 ? 'derrota' : 'empate', 2, 0.4);
     estado = 'fim';
     teclas.clear();
     soltarToques();
@@ -6653,8 +7054,14 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
 
     // mata-mata: relógio e volta dos caças do computador que caíram
     if (modo === 'equipe' && !jogo.acabou && (estado === 'voando' || estado === 'batido')) {
-      for (const f of fichas) if (!f.jogador && !f.caca) { f.volta -= dt; if (f.volta <= 0) nascer(f); }
+      for (const f of fichas) if (!f.jogador && !f.caca) { f.volta -= dt; if (f.volta <= 0) { nascer(f); if (f.time === aviao.time && f.caca && Math.random() < 0.5) radio(f, 'volta', 0, 1); } }
       jogo.tempo -= dt;
+      if (jogo.tempo <= 60 && !jogo.avisouMinuto && jogo.tempo > 20) {
+        jogo.avisouMinuto = true;
+        const [nos, eles] = pontosEquipes();
+        radio('comando', 'umMinuto', 1);
+        if (nos !== eles) radio('comando', nos > eles ? 'frente' : 'atras', 1, 3.5);
+      }
       if (jogo.tempo <= 0) { jogo.tempo = 0; fimDaPartida(); return; }
     }
     if (estado !== 'voando') return;
@@ -6676,6 +7083,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
           novoNivel();
           aviao.vida = Math.min(100, aviao.vida + V.consertoCasco);
           if (aviao.vida > antes) mensagem('Nível ' + jogo.nivel + ': ' + jogo.totalNivel + ' caças chegando. Casco consertado: ' + Math.round(aviao.vida) + '%', 4);
+          radio('comando', jogo.nivel % 3 === 0 ? 'nivel' : 'onda', 1, 0.5);
         }
       }
     }
@@ -7070,12 +7478,28 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     }`, true);
   // junta a cena com o brilho e ajusta as cores. ajuste: força do brilho, exposição, saturação e contraste; vinheta: quanto
   // os cantos escurecem
-  const matFinal = matPos({ brilho: { value: null }, ajuste: { value: new THREE.Vector4(0.32, 1.04, 1.1, 1.05) }, vinheta: { value: 0.16 } }, `
+  const matFinal = matPos({ brilho: { value: null }, ajuste: { value: new THREE.Vector4(0.32, 1.04, 1.1, 1.05) }, vinheta: { value: 0.16 },
+    calor: { value: [new THREE.Vector4(), new THREE.Vector4(), new THREE.Vector4(), new THREE.Vector4()] }, tempoCalor: { value: 0 }, aspecto: { value: 1 } }, `
     uniform sampler2D brilho;
     uniform vec4 ajuste;
     uniform float vinheta;
+    uniform vec4 calor[4];        // onde sai o ar quente na tela (x, y), raio e força (0 = nada)
+    uniform float tempoCalor;
+    uniform float aspecto;
     void main() {
-      vec3 c = pow(max(texture2D(mapa, vUv).rgb, 0.0), vec3(2.2)) + texture2D(brilho, vUv).rgb * ajuste.x;
+      // ar quente atrás dos motores: a imagem treme um pouco em volta do bocal
+      vec2 uv = vUv;
+      for (int i = 0; i < 4; i++) {
+        vec4 q = calor[i];
+        if (q.w <= 0.0) continue;
+        vec2 d = (vUv - q.xy) * vec2(aspecto, 1.0);
+        float f = 1.0 - smoothstep(0.0, q.z, length(d));
+        if (f <= 0.0) continue;
+        vec2 onda = vec2(sin(vUv.y * 150.0 + tempoCalor * 31.0) + 0.5 * sin(vUv.y * 331.0 - tempoCalor * 47.0 + vUv.x * 97.0),
+                         cos(vUv.x * 130.0 - tempoCalor * 27.0) + 0.5 * sin(vUv.x * 277.0 + tempoCalor * 39.0 + vUv.y * 61.0));
+        uv += onda * f * f * q.w * q.z * 0.011;
+      }
+      vec3 c = pow(max(texture2D(mapa, uv).rgb, 0.0), vec3(2.2)) + texture2D(brilho, uv).rgb * ajuste.x;
       c *= ajuste.y;
       // até 0,75 a luz passa igual; acima disso dobra devagar até o branco
       const float A = 0.75;
@@ -7152,8 +7576,32 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     for (let i = 1; i < N.length; i++) passe(matReduzir, N[i - 1], N[i]);
     for (let i = N.length - 1; i > 0; i--) passe(matAumentar, N[i], N[i - 1]);
     matFinal.uniforms.brilho.value = N[0].texture;
+    arQuente();
     passe(matFinal, pos.cena, null);
     renderer.autoClear = limpar;
+  }
+  // Ar quente: acha na tela a saída do motor do jogador e dos 3 caças mais perto (até 400 m) e passa para a última
+  // passada do quadro, que treme a imagem ali. A força segue o motor; o raio é o de uns 8 m naquela distância.
+  const pontoCalor = new THREE.Vector3(), trasCalor = new THREE.Vector3();
+  function arQuente() {
+    const U = matFinal.uniforms, lista = [];
+    U.tempoCalor.value = (performance.now() / 1000) % 1000;
+    U.aspecto.value = camera.aspect;
+    const tan = Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2) / camera.zoom;
+    const junta = (p, comprimento, forca) => {
+      if (forca <= 0.02) return;
+      trasCalor.set(0, 0, 1).applyQuaternion(p.quat);
+      pontoCalor.copy(p.pos).addScaledVector(trasCalor, comprimento * 0.75);
+      const d = pontoCalor.distanceTo(camera.position);
+      if (d > 400 || d < 2) return;
+      pontoCalor.project(camera);
+      if (pontoCalor.z > 1 || Math.abs(pontoCalor.x) > 1.2 || Math.abs(pontoCalor.y) > 1.2) return;
+      lista.push({ x: pontoCalor.x * 0.5 + 0.5, y: pontoCalor.y * 0.5 + 0.5, r: Math.min(0.22, 8 / (2 * d * tan)), f: forca, d });
+    };
+    if (cacaAtual && !destruido && estado !== 'inicio' && modoCamera !== 'cabine') junta(aviao, cacaAtual.config.comprimento, 0.3 + 0.7 * clamp((aviao.motor - 0.6) / 0.4, 0, 1));
+    for (const ini of inimigos) if (ini.vivo) junta(ini, ini.config.comprimento, 0.7);
+    lista.sort((a, b) => a.d - b.d);
+    U.calor.value.forEach((v, i) => { const q = lista[i]; if (q) v.set(q.x, q.y, q.r, q.f); else v.set(0, 0, 0, 0); });
   }
   // liga ou desliga o que passa do branco: o fogo, os tiros, os clarões e o sol
   function aplicarBrilho() {
@@ -7254,7 +7702,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     }
     if (estado === 'voando' && (aviao.pos.y < chaoAqui + 1.4 || bateuArvore)) baterAviao();
     if (estado !== 'pausado' && estado !== 'inicio') atualizarCombate(dt);
-    if (estado !== 'pausado') atualizarEfeitos(dt);
+    if (estado !== 'pausado') { atualizarEfeitos(dt); atualizarRastros(dt); }
 
     atualizarNuvens(estado === 'pausado' ? 0 : dt, aviao.pos.x, aviao.pos.z);
     chao.position.set(aviao.pos.x, 0, aviao.pos.z);
@@ -7281,6 +7729,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     desenharRadar(dt);
     atualizarToque();
     atualizarSonsVoo();
+    atualizarRadio();
     atualizarMusica();
     atualizarCapa();
 
@@ -7334,6 +7783,7 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     }
     for (const id in CEUS) l.push('ceu/' + CEUS[id].id + '_' + resCeu + '.jpg', 'ceu/' + CEUS[id].id + '_mini.jpg');
     for (const n in ARQ_SONS) l.push(encodeURI(ARQ_SONS[n]));
+    l.push(...ARQ_RADIO);
     for (const a of ATLAS_EXPLOSAO) l.push(a.arquivo + (LEVE ? '_peq' : '') + '.webp');
     l.push('efeitos/explosao_chapas.json');
     for (const n of ['rocha', 'grama', 'terra', 'areia']) l.push('texturas/' + n + (LEVE ? '_peq' : '') + '.jpg');
@@ -7613,6 +8063,22 @@ body.toque .instrumentos.combate { transform: scale(0.82); transform-origin: top
     sombras: (v) => { comSombras = !!v; },
     ajusteLuz: () => matFinal.uniforms,
     controle: (v) => { if (v) controleFacil = v === 'facil'; return controleFacil ? 'facil' : 'pro'; },
+    // rádio: estado, a fila e um pedido direto (quem: 'comando' ou o número da vaga de um companheiro)
+    radio: () => ({ carregado: !!RADIO.vozes, falas: RADIO.vozes ? Object.values(RADIO.vozes).reduce((n, v) => n + Object.values(v).reduce((m, f) => m + f.length, 0), 0) : 0, pronto: !!RADIO.buf, fila: RADIO.fila.map((f) => f.voz + ':' + f.fala), legenda: elRadio.hidden ? null : elRadioQuem.textContent + ': ' + elRadioTexto.textContent, ocupado: performance.now() < RADIO.livreEm }),
+    falar: (quem, fala) => radio(quem === 'comando' ? 'comando' : fichas.find((f) => f.vaga === quem && f.time === aviao.time && !f.jogador), fala, 2),
+    carregarRadio: () => carregarRadio(),
+    // volume que está saindo do rádio agora (0 = silêncio), medido na saída dele
+    nivelRadio: () => {
+      if (!RADIO.saida) return null;
+      if (!RADIO.medidor) { RADIO.medidor = audio.createAnalyser(); RADIO.medidor.fftSize = 2048; RADIO.saida.connect(RADIO.medidor); }
+      const d = new Float32Array(2048);
+      RADIO.medidor.getFloatTimeDomainData(d);
+      let q = 0;
+      for (const v of d) q += v * v;
+      return +Math.sqrt(q / d.length).toFixed(4);
+    },
+    contexto: () => (audio ? audio.state : null),
+    fitas: () => ({ vivas: fitasVivas.length, visiveis: fitasVivas.filter((f) => f.malha.visible).length, vapor: FITAS.vapor.livres.length, fumaca: FITAS.fumaca.livres.length, pontos: fitasVivas.map((f) => f.pontos.length).reduce((a, b) => a + b, 0), calor: matFinal.uniforms.calor.value.filter((v) => v.w > 0).length }),
     // parte do mapa de sombras que tem alguma coisa desenhada (0 a 1) e quantas malhas fazem sombra
     mapaSombra: () => {
       const m = sol.shadow.map;

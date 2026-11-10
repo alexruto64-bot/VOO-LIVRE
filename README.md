@@ -20,7 +20,8 @@ o caça e o cenário escolhidos, com a câmera passeando em volta dele:
 - **Jogar:** modo, caça, cenário (com miniaturas, `cenarios/*_mini.jpg`) e céu, e o botão Decolar. As escolhas ficam
   guardadas no navegador.
 - **Configurações:** gráficos em baixo, médio ou alto (o jogo recarrega para trocar); brilho de luz e sombras do sol
-  (ligam e desligam na hora); volume geral, da música e dos efeitos; o jeito de pilotar (fácil ou profissional);
+  (ligam e desligam na hora); volume geral, da música, dos efeitos e do rádio dos pilotos; o jeito de pilotar (fácil ou
+  profissional);
   sensibilidade do manche; inverter o manche; câmera tremendo com as explosões; e o jogo sem internet. A pausa também
   abre as Configurações (menos os gráficos, que só mudam no menu).
 - **Como jogar:** os comandos do teclado e do celular, as armas, os pontos e os modos.
@@ -114,6 +115,14 @@ a cidade e as vilas estão no dobro do tamanho original do modelo, o aeroporto e
 2,6 a 3,4 vezes (uns 700 m) e as pedras em 6 a 9 vezes (300 a 470 m).
 
 ## Visual
+
+- **Rastros** (versão 8.1): nas curvas fechadas sai um risco branco da ponta de cada asa (o ar que condensa), no caça
+  do jogador e nos do computador; aparece a partir de uns 23° por segundo de curva e fica cheio perto dos 43°. Os mísseis
+  e foguetes deixam uma trilha de fumaça contínua, que alarga e some em uns 3,6 s (antes eram bolinhas, que a mais de
+  1 km por segundo ficavam pontilhadas). São fitas: tiras que guardam por onde o ponto passou e ficam sempre de frente
+  para a câmera; coladas na câmera elas somem, para não tapar a vista. Um caça com o casco abaixo de 45% solta fumaça
+  escura por trás, mais grossa quanto pior. Com o brilho de luz ligado, o ar treme atrás dos motores (o do jogador e os
+  3 caças mais perto, até 400 m).
 
 - **Brilho de luz** (versão 8.0): o quadro é desenhado primeiro numa imagem que guarda luz acima do branco da tela. O
   que passa do branco (o fogo do motor, os tiros, as explosões, os flares, o sol e o reflexo dele no mar) é separado,
@@ -249,6 +258,34 @@ Do Freesound, licença CC0:
 [explosion big 01](https://freesound.org/people/derplayer/sounds/587194/), por derplayer;
 [Deep Explosion with Falling Debris](https://freesound.org/people/Robo9418/sounds/841831/), por Robo9418;
 [CTS 7290](https://freesound.org/people/areniporgen/sounds/693421/), por areniporgen.
+
+**Rádio dos pilotos** (versão 8.1, em `radio/`): nos combates a equipe conversa pelo rádio. No mata-mata falam os 4
+companheiros, cada um com a sua voz, e o Comando; na sobrevivência, só o Comando. Momentos em que falam:
+
+| Quando | Quem fala | Exemplo |
+| --- | --- | --- |
+| Começo do combate | Comando e um companheiro | "Esquadrão, armas liberadas. Boa caçada." |
+| Um companheiro derruba um inimigo | Ele mesmo | "Alvo abatido!" |
+| Você derruba um inimigo | Um companheiro ou o Comando | "Boa, líder!" / "Abate confirmado." |
+| Um companheiro é derrubado | Ele e outro da equipe | "Fui atingido! Ejetando!" / "Perdemos um dos nossos!" |
+| Um companheiro apanha (casco abaixo de 55%) | Ele mesmo | "Tenho um na minha cauda!" |
+| Um companheiro lança míssil guiado | Ele mesmo | "Fox dois!" |
+| Um míssil guiado vem em você | Um companheiro ou o Comando | "Líder, míssil na sua cauda! Quebra, quebra!" |
+| Você apanha (casco abaixo de 65% e de 30%) | Um companheiro e o Comando | "Líder, você foi atingido!" |
+| Você é derrubado e volta | Um companheiro e o Comando | "Líder abatido! Líder abatido!" |
+| Nova onda ou nível (sobrevivência) | Comando | "Nova onda de caças chegando." |
+| Último minuto e fim da partida | Comando | "Um minuto para o fim do combate." |
+
+Toca uma fala por vez: as outras esperam numa fila (até 4), as urgentes passam na frente e as que esperam mais de 5 s
+caem. Cada tipo de fala tem um intervalo mínimo, para não repetir sem parar. Embaixo do placar aparece a legenda com o
+nome de quem falou. O volume fica em Configurações (em 0 o rádio desliga).
+
+As 108 falas foram geradas com as vozes Daniel e Maria do Windows, com tom e ritmo diferentes para cada piloto, e
+tratadas para soar como rádio: só a faixa de 420 a 3.000 Hz, volume apertado e um pouco de saturação. Ficam todas em
+fila num arquivo só (`radio/vozes_1.bin`, 8.000 amostras por segundo, 8 bits em lei mu, 1,8 MB), com o índice e os
+textos em `radio/falas_1.json`. O estalo de quem aperta o botão, o chiado por baixo e o "kshh" de quem solta são
+feitos pelo jogo na hora. Para trocar as falas, gere os dois arquivos com outro número no nome (o jogo guarda os
+arquivos pelo nome) e mude `ARQ_RADIO` no `index.html`.
 
 **Música** (em `musica/`): o tema do menu toca nas telas do menu, no voo livre e no fim de voo; o de batalha, nos
 combates. A troca é suave e a música abaixa na pausa; o volume dela fica em Configurações. As duas são de Kevin MacLeod
